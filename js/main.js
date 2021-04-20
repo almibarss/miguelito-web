@@ -1,4 +1,4 @@
-import "../css/paper.min.css";
+import "../node_modules/papercss/dist/paper.min.css";
 import "../css/wave.css";
 import "../css/main.css";
 

@@ -14,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "http-server": "^0.12.3",
-    "jquery": "^3.6.0"
+    "jquery": "^3.6.0",
+    "papercss": "^1.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.13.13",
