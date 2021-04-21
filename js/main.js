@@ -9,7 +9,7 @@ String.prototype.isEmpty = function () {
 };
 
 function toggleMode() {
-  $("html").toggleClass("dark");
+  document.documentElement.classList.toggle("dark");
 }
 
 function waitingDots() {

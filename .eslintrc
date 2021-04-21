@@ -7,11 +7,13 @@
   "plugins": [
     "eslint-plugin-html",
     "simple-import-sort",
-    "import"
+    "import",
+    "jquery"
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:jquery/deprecated"
   ],
   "rules": {
     "no-console": ["error", { "allow": ["error"] }],
