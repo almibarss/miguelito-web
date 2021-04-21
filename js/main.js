@@ -61,24 +61,27 @@ function displayShortenedUrl(longUrl, shortUrl) {
 }
 
 function showCustomize() {
-  $("button#customize").hide();
-  $("div#custom-path").show();
-  $("input#custom-path").val("").focus();
+  document.querySelector("button#customize").style.display = "none";
+  document.querySelector("div#custom-path").style.display = "block";
+  const customPath = document.querySelector("input#custom-path");
+  customPath.value = "";
+  customPath.focus();
 }
 
 function resetCustomize() {
-  $("button#customize").show();
-  $("div#custom-path").hide();
-  $("input#custom-path").val("");
+  document.querySelector("button#customize").style.display = "block";
+  document.querySelector("div#custom-path").style.display = "none";
+  document.querySelector("input#custom-path").value = "";
 }
 
 function resetUi() {
-  $("#url").val("");
+  document.getElementById("url").value = "";
   resetCustomize();
 }
 
 function copyLinkToClipboard() {
-  navigator.clipboard.writeText($("a#short-url").text());
+  const shortUrl = document.querySelector("a#short-url").textContent;
+  navigator.clipboard.writeText(shortUrl);
 }
 
 function filterStatusOk(response) {
