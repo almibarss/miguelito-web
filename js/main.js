@@ -28,13 +28,11 @@ function showWaitingDots() {
   messageBox.style.display = "block";
 }
 
-function errorMessage(text) {
-  $("#message")
-    .text(text)
-    .attr("class", "alert alert-danger")
-    .show()
-    .delay(5000)
-    .fadeOut();
+function showErrorMessage(text) {
+  const messageBox = document.getElementById("message");
+  messageBox.textContent = text;
+  messageBox.className = "alert alert-danger";
+  messageBox.style.display = "block";
 }
 
 function displayShortenedUrl(longUrl, shortUrl) {
@@ -100,9 +98,9 @@ function shortenLink(apiUrl, longUrl, customPath) {
         console.error(data.responseJSON.detail);
       }
       if (data.status === 400) {
-        errorMessage(data.responseJSON.message);
+        showErrorMessage(data.responseJSON.message);
       } else {
-        errorMessage("unexpected error ¯_(ツ)_/¯");
+        showErrorMessage("unexpected error ¯_(ツ)_/¯");
       }
       $("#url").select();
     });
