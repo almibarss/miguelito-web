@@ -133,30 +133,37 @@ document.forms.item(0).addEventListener("submit", function (ev) {
   );
 });
 
-$("#url").on("input", function () {
-  $("#submit").attr("disabled", $(this).val().isEmpty());
-  if ($("#message").is(":visible")) {
-    $("#message").delay(2000).fadeOut();
-  }
+document.getElementById("url").addEventListener("input", function () {
+  document.getElementById("submit").disabled = this.value.isEmpty();
 });
-$("#dark-mode-toggle").change(function () {
-  toggleMode();
-  $("#url").focus();
-});
-$("button#customize").on("click", showCustomize);
-$(document).ready(function () {
-  $("#url").focus();
-  $("#custom-path").hide();
+
+document
+  .getElementById("dark-mode-toggle")
+  .addEventListener("change", function () {
+    toggleMode();
+    document.getElementById("url").focus();
+  });
+
+document
+  .querySelector("button#customize")
+  .addEventListener("click", showCustomize);
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("url").focus();
+  document.getElementById("custom-path").style.display = "none";
   if (
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
   ) {
-    $("#dark-mode-toggle").prop("checked", true);
-    toggleMode();
+    document.getElementById("dark-mode-toggle").click();
   }
 });
-$(document).keydown(function (event) {
-  if (event.key == "Escape" && $("input#custom-path").is(":focus")) {
+
+document.addEventListener("keydown", function (ev) {
+  if (
+    ev.key == "Escape" &&
+    document.querySelector("input#custom-path") == document.activeElement
+  ) {
     resetCustomize();
   }
 });
