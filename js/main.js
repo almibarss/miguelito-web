@@ -3,6 +3,7 @@ import "../css/wave.css";
 import "../css/main.css";
 
 import $ from "jquery";
+import { doc } from "prettier";
 
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
@@ -37,23 +38,28 @@ function errorMessage(text) {
 }
 
 function displayShortenedUrl(longUrl, shortUrl) {
-  const link = $("<a></a>")
-    .attr("id", "short-url")
-    .attr("href", shortUrl)
-    .text(shortUrl)
-    .attr("popover-left", longUrl);
-  const copyButton = $("<button></button>")
-    .attr("type", "button")
-    .attr("popover-right", "Copy to clipboard")
-    .addClass("simple-button inline-button")
-    .click(copyLinkToClipboard);
-  const icon = $("<i></i>").addClass("far fa-clipboard");
-  $("#message")
-    .html("")
-    .append(link)
-    .append(copyButton.append(icon))
-    .attr("class", "alert alert-success")
-    .show();
+  const shortLink = document.createElement("a");
+  shortLink.id = "short-url";
+  shortLink.href = shortUrl;
+  shortLink.textContent = shortUrl;
+  shortLink.setAttribute("popover-left", longUrl);
+
+  const copyIcon = document.createElement("i");
+  copyIcon.classList.add("far", "fa-clipboard");
+
+  const copyButton = document.createElement("button");
+  copyButton.type = "button";
+  copyButton.setAttribute("popover-right", "Copy to clipboard");
+  copyButton.classList.add("simple-button", "inline-button");
+  copyButton.addEventListener("click", copyLinkToClipboard);
+  copyButton.appendChild(copyIcon);
+
+  const messageBox = document.getElementById("message");
+  messageBox.innerHTML = "";
+  messageBox.appendChild(shortenLink);
+  messageBox.appendChild(copyButton);
+  messageBox.classList.add("alert", "alert-success");
+  messageBox.style.display = "block";
 }
 
 function showCustomize() {
