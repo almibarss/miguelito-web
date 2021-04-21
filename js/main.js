@@ -2,8 +2,6 @@ import "../node_modules/papercss/dist/paper.min.css";
 import "../css/wave.css";
 import "../css/main.css";
 
-import $ from "jquery";
-
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
 };
