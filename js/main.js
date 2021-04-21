@@ -54,7 +54,7 @@ function displayShortenedUrl(longUrl, shortUrl) {
 
   const messageBox = document.getElementById("message");
   messageBox.innerHTML = "";
-  messageBox.appendChild(shortenLink);
+  messageBox.appendChild(shortenUrl);
   messageBox.appendChild(copyButton);
   messageBox.classList.add("alert", "alert-success");
   messageBox.style.display = "block";
@@ -81,28 +81,41 @@ function copyLinkToClipboard() {
   navigator.clipboard.writeText($("a#short-url").text());
 }
 
-function shortenLink(apiUrl, longUrl, customPath) {
-  $.ajax(apiUrl, {
-    type: "POST",
-    data: JSON.stringify({ url: longUrl, custom_path: customPath }),
+function filterStatusOk(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response);
+  } else if (response.status == 400) {
+    return Promise.reject(response);
+  } else {
+    return Promise.reject(new Error(response.statusText));
+  }
+}
+
+function toJson(response) {
+  return response.json();
+}
+
+function shortenUrl(apiUrl, inputUrl, customPath) {
+  fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({ url: inputUrl, custom_path: customPath }),
   })
-    .done(function (responseJSON) {
-      const protocol = `${window.location.protocol}//`;
-      const host = `${window.location.host}/`;
-      const shortUrl = protocol + host + responseJSON.path;
-      displayShortenedUrl(longUrl, shortUrl);
+    .then(filterStatusOk)
+    .then(toJson)
+    .then(function (response) {
+      const shortUrl = `${window.location.protocol}//${window.location.host}/${response.path}`;
+      displayShortenedUrl(inputUrl, shortUrl);
       resetUi();
     })
-    .fail(function (data) {
-      if (data.responseJSON.detail) {
-        console.error(data.responseJSON.detail);
-      }
-      if (data.status === 400) {
-        showErrorMessage(data.responseJSON.message);
+    .catch(function (error) {
+      if (error instanceof Error) {
+        console.error(error);
       } else {
-        showErrorMessage("unexpected error ¯_(ツ)_/¯");
+        error.json().then(function (errorJson) {
+          showErrorMessage(errorJson.message);
+        });
       }
-      $("#url").select();
+      document.getElementById("url").focus();
     });
 }
 
@@ -110,7 +123,7 @@ document.forms.item(0).addEventListener("submit", function (ev) {
   ev.preventDefault();
 
   showWaitingDots();
-  shortenLink(
+  shortenUrl(
     ev.target.action,
     ev.target.url.value,
     ev.target["custom-path"].value
