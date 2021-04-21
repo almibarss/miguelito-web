@@ -11,13 +11,13 @@ function toggleMode() {
 }
 
 function showWaitingDots() {
-  const dot = document.createElement("span");
-  dot.classList.add("dot");
-
   const div = document.createElement("div");
-  div.appendChild(dot);
-  div.appendChild(dot);
-  div.appendChild(dot);
+  div.id = "wave";
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    div.appendChild(dot);
+  }
 
   const messageBox = document.getElementById("message");
   messageBox.innerHTML = "";
