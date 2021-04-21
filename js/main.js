@@ -3,7 +3,6 @@ import "../css/wave.css";
 import "../css/main.css";
 
 import $ from "jquery";
-import { doc } from "prettier";
 
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
@@ -13,19 +12,20 @@ function toggleMode() {
   document.documentElement.classList.toggle("dark");
 }
 
-function waitingDots() {
-  $("#message")
-    .html(
-      `
-            <div id="wave">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </div>
-    `
-    )
-    .attr("class", "alert alert-primary")
-    .show();
+function showWaitingDots() {
+  const dot = document.createElement("span");
+  dot.classList.add("dot");
+
+  const div = document.createElement("div");
+  div.appendChild(dot);
+  div.appendChild(dot);
+  div.appendChild(dot);
+
+  const messageBox = document.getElementById("message");
+  messageBox.innerHTML = "";
+  messageBox.appendChild(div);
+  messageBox.className = "alert alert-primary";
+  messageBox.style.display = "block";
 }
 
 function errorMessage(text) {
@@ -110,7 +110,7 @@ function shortenLink(apiUrl, longUrl, customPath) {
 
 $("form").submit(function (event) {
   event.preventDefault();
-  waitingDots();
+  showWaitingDots();
   shortenLink(
     event.target.action,
     event.target.url.value,
