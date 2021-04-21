@@ -106,15 +106,17 @@ function shortenLink(apiUrl, longUrl, customPath) {
     });
 }
 
-$("form").submit(function (event) {
-  event.preventDefault();
+document.forms.item(0).addEventListener("submit", function (ev) {
+  ev.preventDefault();
+
   showWaitingDots();
   shortenLink(
-    event.target.action,
-    event.target.url.value,
-    event.target["custom-path"].value
+    ev.target.action,
+    ev.target.url.value,
+    ev.target["custom-path"].value
   );
 });
+
 $("#url").on("input", function () {
   $("#submit").attr("disabled", $(this).val().isEmpty());
   if ($("#message").is(":visible")) {
