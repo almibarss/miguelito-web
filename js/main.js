@@ -1,9 +1,8 @@
 import "../node_modules/papercss/dist/paper.min.css";
-import "../css/wave.css";
 import "../css/main.css";
+import "../css/waiting.css";
 
 import { shorten } from "./api";
-import { doc } from "prettier";
 
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
@@ -14,66 +13,40 @@ function toggleMode() {
 }
 
 function showWaitingDots() {
-  const div = document.createElement("div");
-  div.id = "wave";
-  for (let i = 0; i < 3; i++) {
-    const dot = document.createElement("span");
-    dot.className = "dot";
-    div.appendChild(dot);
-  }
-
-  const messageBox = document.getElementById("message");
-  messageBox.innerHTML = "";
-  messageBox.appendChild(div);
-  messageBox.className = "alert alert-primary";
-  messageBox.style.display = "block";
+  document.getElementById("message").className = "";
 }
 
 function showErrorMessage(text) {
-  const messageBox = document.getElementById("message");
-  messageBox.textContent = text;
-  messageBox.className = "alert alert-danger";
-  messageBox.style.display = "block";
+  document.getElementById("error").textContent = text;
+  document.getElementById("message").className = "alert alert-danger";
 }
 
 function handleShortenOk(longUrl, shortUrl) {
-  const shortLink = document.createElement("a");
-  shortLink.id = "short-url";
+  const shortLink = document.getElementById("short-url");
   shortLink.href = shortUrl;
   shortLink.textContent = shortUrl;
   shortLink.setAttribute("popover-left", longUrl);
 
-  const copyIcon = document.createElement("i");
-  copyIcon.classList.add("far", "fa-clipboard");
+  document
+    .getElementById("copy-to-clipboard")
+    .addEventListener("click", () => navigator.clipboard.writeText(shortUrl));
 
-  const copyButton = document.createElement("button");
-  copyButton.type = "button";
-  copyButton.setAttribute("popover-right", "Copy to clipboard");
-  copyButton.classList.add("simple-button", "inline-button");
-  copyButton.addEventListener("click", copyLinkToClipboard);
-  copyButton.appendChild(copyIcon);
-
-  const messageBox = document.getElementById("message");
-  messageBox.innerHTML = "";
-  messageBox.appendChild(shortLink);
-  messageBox.appendChild(copyButton);
-  messageBox.classList.add("alert", "alert-success");
-  messageBox.style.display = "block";
+  document.getElementById("message").className = "alert alert-success";
 
   resetUi();
 }
 
 function showCustomize() {
-  document.querySelector("button#customize").style.display = "none";
-  document.querySelector("div#custom-path").style.display = "block";
+  document.querySelector("button#customize").classList.add("hidden");
+  document.querySelector("div#custom-path").classList.remove("hidden");
   const customPath = document.querySelector("input#custom-path");
   customPath.value = "";
   customPath.focus();
 }
 
 function resetCustomize() {
-  document.querySelector("button#customize").style.display = "block";
-  document.querySelector("div#custom-path").style.display = "none";
+  document.querySelector("button#customize").classList.remove("hidden");
+  document.querySelector("div#custom-path").classList.add("hidden");
   document.querySelector("input#custom-path").value = "";
 }
 
@@ -82,11 +55,6 @@ function resetUi() {
   urlInput.value = "";
   urlInput.focus();
   resetCustomize();
-}
-
-function copyLinkToClipboard() {
-  const shortUrl = document.querySelector("a#short-url").textContent;
-  navigator.clipboard.writeText(shortUrl);
 }
 
 document.forms.item(0).addEventListener("submit", function (ev) {
@@ -99,6 +67,7 @@ document.forms.item(0).addEventListener("submit", function (ev) {
 });
 
 document.getElementById("url").addEventListener("input", function () {
+  document.getElementById("message").classList.add("hidden");
   document.getElementById("submit").disabled = this.value.isEmpty();
 });
 
