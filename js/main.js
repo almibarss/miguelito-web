@@ -2,6 +2,9 @@ import "../node_modules/papercss/dist/paper.min.css";
 import "../css/wave.css";
 import "../css/main.css";
 
+import { shorten } from "./api";
+import { doc } from "prettier";
+
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
 };
@@ -33,7 +36,7 @@ function showErrorMessage(text) {
   messageBox.style.display = "block";
 }
 
-function displayShortenedUrl(longUrl, shortUrl) {
+function handleShortenOk(longUrl, shortUrl) {
   const shortLink = document.createElement("a");
   shortLink.id = "short-url";
   shortLink.href = shortUrl;
@@ -52,10 +55,12 @@ function displayShortenedUrl(longUrl, shortUrl) {
 
   const messageBox = document.getElementById("message");
   messageBox.innerHTML = "";
-  messageBox.appendChild(shortenUrl);
+  messageBox.appendChild(shortLink);
   messageBox.appendChild(copyButton);
   messageBox.classList.add("alert", "alert-success");
   messageBox.style.display = "block";
+
+  resetUi();
 }
 
 function showCustomize() {
@@ -73,7 +78,9 @@ function resetCustomize() {
 }
 
 function resetUi() {
-  document.getElementById("url").value = "";
+  const urlInput = document.getElementById("url");
+  urlInput.value = "";
+  urlInput.focus();
   resetCustomize();
 }
 
@@ -82,53 +89,13 @@ function copyLinkToClipboard() {
   navigator.clipboard.writeText(shortUrl);
 }
 
-function filterStatusOk(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return Promise.resolve(response);
-  } else if (response.status == 400) {
-    return Promise.reject(response);
-  } else {
-    return Promise.reject(new Error(response.statusText));
-  }
-}
-
-function toJson(response) {
-  return response.json();
-}
-
-function shortenUrl(apiUrl, inputUrl, customPath) {
-  fetch(apiUrl, {
-    method: "POST",
-    body: JSON.stringify({ url: inputUrl, custom_path: customPath }),
-  })
-    .then(filterStatusOk)
-    .then(toJson)
-    .then(function (response) {
-      const shortUrl = `${window.location.protocol}//${window.location.host}/${response.path}`;
-      displayShortenedUrl(inputUrl, shortUrl);
-      resetUi();
-    })
-    .catch(function (error) {
-      if (error instanceof Error) {
-        console.error(error);
-      } else {
-        error.json().then(function (errorJson) {
-          showErrorMessage(errorJson.message);
-        });
-      }
-      document.getElementById("url").focus();
-    });
-}
-
 document.forms.item(0).addEventListener("submit", function (ev) {
   ev.preventDefault();
 
   showWaitingDots();
-  shortenUrl(
-    ev.target.action,
-    ev.target.url.value,
-    ev.target["custom-path"].value
-  );
+  shorten(ev.target.url.value, ev.target["custom-path"].value)
+    .then((shortUrl) => handleShortenOk(ev.target.url.value, shortUrl))
+    .catch((error) => showErrorMessage(error.message));
 });
 
 document.getElementById("url").addEventListener("input", function () {
