@@ -1,4 +1,5 @@
 import "../node_modules/papercss/dist/paper.min.css";
+import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "../css/main.css";
 import "../css/waiting.css";
 
