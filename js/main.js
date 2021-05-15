@@ -90,7 +90,6 @@ document
 
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("url").focus();
-  document.getElementById("custom-path").style.display = "none";
   if (
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches

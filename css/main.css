@@ -13,7 +13,7 @@ body { background-color: var(--main-background); }
     padding: 0;
 }
 div#custom-path {
-    display: inline-flex;
+    /* display: inline-flex; */
     padding: .75rem;
 }
 div#custom-path label {
