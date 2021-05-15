@@ -1,3 +1,13 @@
+export function shorten(apiUrl, inputUrl, customPath) {
+  return fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({ url: inputUrl, custom_path: customPath }),
+  })
+    .then(filterStatusOk)
+    .then(toJson)
+    .then(buildUrl);
+}
+
 function filterStatusOk(response) {
   if (response.ok) {
     return Promise.resolve(response);
@@ -18,14 +28,4 @@ function toJson(response) {
 
 function buildUrl(path) {
   return `${window.location.protocol}//${window.location.host}/${path}`;
-}
-
-export function shorten(apiUrl, inputUrl, customPath) {
-  return fetch(apiUrl, {
-    method: "POST",
-    body: JSON.stringify({ url: inputUrl, custom_path: customPath }),
-  })
-    .then(filterStatusOk)
-    .then(toJson)
-    .then(buildUrl);
 }
