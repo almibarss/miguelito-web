@@ -62,8 +62,13 @@ document.forms.item(0).addEventListener("submit", function (ev) {
   ev.preventDefault();
 
   showWaitingDots();
-  shorten(ev.target.url.value, ev.target["custom-path"].value)
-    .then((shortUrl) => handleShortenOk(ev.target.url.value, shortUrl))
+  const {
+    // eslint-disable-next-line prettier/prettier
+    "url": { value: inputUrl },
+    "custom-path": { value: customPath },
+  } = ev.target;
+  shorten(inputUrl, customPath)
+    .then((shortUrl) => handleShortenOk(inputUrl, shortUrl))
     .catch((error) => showErrorMessage(error.message));
 });
 
