@@ -15,6 +15,7 @@
   "author": "mperezibars@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "@aws-amplify/auth": "^4.0.0",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "file-loader": "^6.2.0",
     "http-server": "^0.12.3",
