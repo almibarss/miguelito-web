@@ -1,13 +1,25 @@
 * { text-align: center; }
 body { background-color: var(--main-background); }
-#dark-mode-sel { float: right; }
+
+ul li:before {
+    content: "";
+}
+
 [popover-bottom] { margin: 0; }
-.simple-button, .simple-button:active, .simple-button:hover, .simple-button:focus {
+
+.simple-button, .simple-button:active, .simple-button:focus {
     border: 0;
     box-shadow: none;
     background: none;
     transform: none;
 }
+
+.simple-button:hover {
+    color: var(--secondary);
+    transform: none;
+    box-shadow: none;
+}
+
 .inline-button {
     margin: 0;
     padding: 0;
@@ -43,4 +55,69 @@ img#oops {
 }
 #message.alert-success #error {
     display: none;
+}
+
+.user .user__profile {
+    display: none;
+}
+
+.user--loggedIn .user__login {
+    display: none;
+}
+
+.user--loggedIn .user__profile {
+    display: flex;
+    flex-flow: row-reverse;
+    gap: .5rem;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.ui-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.ui-list--horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ui-list a {
+    text-decoration: none;
+    background-image: none;
+}
+
+.ui-list a:hover {
+    color: var(--secondary);
+}
+
+.user .simple-button {
+    padding: 0;
+}
+
+.header .col {
+    padding: .75rem;
+}
+
+.user__profile button:hover:before,
+.user__profile--expanded button:before {
+    content: "\002039";
+    margin-right: .25rem;
+}
+
+.user__profile--expanded button:hover:before {
+    content: "\00203A";
+    margin-right: .25rem;
+}
+
+.user__nav {
+    display: none;
+}
+
+.user__profile--expanded .user__nav {
+    display: flex;
 }

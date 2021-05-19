@@ -3,7 +3,13 @@ import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "../css/main.css";
 import "../css/waiting.css";
 
+import Auth from "@aws-amplify/auth";
+import Amplify from "@aws-amplify/core";
+
+import awsconfig from "../aws-exports";
 import { shorten } from "./api";
+
+Amplify.configure(awsconfig);
 
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
@@ -85,10 +91,34 @@ document
   });
 
 document
+  .querySelector(".user__profile>button")
+  .addEventListener("click", () =>
+  document .querySelector(".user__profile").classList.toggle("user__profile--expanded")
+);
+
+document
   .querySelector("button#customize")
   .addEventListener("click", showCustomize);
 
 document.addEventListener("DOMContentLoaded", function () {
+  Auth.currentAuthenticatedUser().then((user) => {
+      document.querySelector(".user").classList.add("user--loggedIn");
+      document.querySelector("button#customize").classList.remove("hidden");
+      document.querySelector(
+        ".user__profile .user__name"
+      ).textContent = user.signInUserSession.idToken.payload.given_name;
+    })
+    .catch((error) => {
+      console.error(error);
+      document.querySelector(".user").classList.remove("user--loggedIn");
+      document.querySelector("button#customize").classList.add("hidden");
+    });
+  document
+    .querySelector(".user__profile a")
+    .addEventListener("click", () => Auth.signOut());
+  document
+    .querySelector(".user__login>button")
+    .addEventListener("click", () => Auth.federatedSignIn({ provider: "Google" }));
   document.getElementById("url").focus();
   if (
     window.matchMedia &&
