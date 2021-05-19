@@ -121,3 +121,7 @@ img#oops {
 .user__profile--expanded .user__nav {
     display: flex;
 }
+
+.theme-selector__label--muted {
+    color: var(--muted);
+}

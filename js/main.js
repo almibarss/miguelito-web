@@ -17,6 +17,13 @@ String.prototype.isEmpty = function () {
 
 function toggleMode() {
   document.documentElement.classList.toggle("dark");
+
+  document.querySelectorAll(".theme-selector .theme-selector__label").forEach(label => {
+    label.classList.toggle("theme-selector__label--muted");
+    const icon = label.querySelector("i");
+    icon.classList.toggle("far");
+    icon.classList.toggle("fas");
+  });
 }
 
 function showWaitingDots() {
@@ -84,7 +91,7 @@ document.getElementById("url").addEventListener("input", function () {
 });
 
 document
-  .getElementById("dark-mode-toggle")
+  .querySelector(".theme-selector .theme-selector__toggle")
   .addEventListener("change", function () {
     toggleMode();
     document.getElementById("url").focus();
