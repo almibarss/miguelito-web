@@ -17,6 +17,8 @@ String.prototype.isEmpty = function () {
 
 function toggleMode() {
   document.documentElement.classList.toggle("dark");
+  localStorage.setItem('theme', 
+    document.querySelector(".theme-selector .theme-selector__toggle").checked ? "dark": "light");
 
   document.querySelectorAll(".theme-selector .theme-selector__label").forEach(label => {
     label.classList.toggle("theme-selector__label--muted");
@@ -132,13 +134,21 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelector(".user__login>button")
     .addEventListener("click", () => Auth.federatedSignIn({ provider: "Google" }));
   document.getElementById("url").focus();
-  if (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  ) {
-    document.getElementById("dark-mode-toggle").click();
-  }
+
+  applyTheme();
 });
+
+function applyTheme() {
+  const savedThemePref = localStorage.getItem("theme");
+  const systemThemePref = getSystemThemePreference();
+  if (savedThemePref == "dark" || !savedThemePref && systemThemePref == "dark") {
+    document.querySelector(".theme-selector .theme-selector__toggle").click();
+  }
+}
+
+function getSystemThemePreference() {
+  return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+}
 
 document.addEventListener("keydown", function (ev) {
   if (
