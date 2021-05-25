@@ -99,9 +99,14 @@ document
 
 document
   .querySelector(".user__profile>button")
-  .addEventListener("click", () =>
-  document .querySelector(".user__profile").classList.toggle("user__profile--expanded")
-);
+  .addEventListener("click", () => {
+    const userProfile = document.querySelector(".user__profile");
+    if (!userProfile.classList.toggle("user__profile--expanded")) {
+      userProfile.classList.add("user__profile--collapsed");
+    } else {
+      userProfile.classList.remove("user__profile--collapsed");
+    }
+  });
 
 document
   .querySelector("button#customize")
