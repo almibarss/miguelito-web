@@ -1,4 +1,4 @@
-const BASE_URL = "https://07c9kiq712.execute-api.eu-west-1.amazonaws.com/dev";
+import { RestAPI } from "@aws-amplify/api-rest";
 
 class ApiError extends Error {}
 class UnknownError extends Error {
@@ -8,38 +8,32 @@ class UnknownError extends Error {
 }
 
 export function shorten(longUrl, customPath) {
-  return fetch(BASE_URL, {
-    method: "POST",
-    body: JSON.stringify({ url: longUrl, custom_path: customPath }),
-  })
-    .then(filterStatusOk)
-    .then(toJson)
-    .then(buildUrl)
-    .catch((error) => {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      console.error(error);
-      throw new UnknownError();
-    });
-}
-
-function filterStatusOk(response) {
-  if (response.ok) {
-    return response;
-  } else if (response.status >= 400 && response.status < 500) {
-    return response.json().then((error) => {
-      throw new ApiError(error.message);
-    });
-  } else {
-    throw "whoops";
+  const useCustomPath = !customPath.trim().isEmpty();
+  const apiName = "miguelito";
+  const path = useCustomPath ? "/shorten-custom" : "/shorten";
+  const myInit = {
+    response: true,
+    body: {
+      url: longUrl,
+    },
+  };
+  if (useCustomPath) {
+    myInit.body["custom_path"] = customPath;
   }
+
+  return RestAPI.post(apiName, path, myInit).then(buildUrl).catch(handleError);
 }
 
-function toJson(response) {
-  return response.json();
+function buildUrl({ data: { path } }) {
+  return `${window.location.protocol}//${window.location.host}/${path}`;
 }
 
-function buildUrl(response) {
-  return `${window.location.protocol}//${window.location.host}/${response.path}`;
+function handleError(error) {
+  console.error(error);
+  const { response } = error;
+  if (response && response.status < 500) {
+    throw new ApiError(response.data.message);
+  } else {
+    throw new UnknownError();
+  }
 }
