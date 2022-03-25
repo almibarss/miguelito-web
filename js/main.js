@@ -1,7 +1,9 @@
 import "../node_modules/papercss/dist/paper.min.css";
-import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "../css/main.css";
 import "../css/waiting.css";
+import "@fortawesome/fontawesome-free/js/fontawesome";
+import "@fortawesome/fontawesome-free/js/regular";
+import "@fortawesome/fontawesome-free/js/solid";
 
 import Auth from "@aws-amplify/auth";
 import Amplify from "@aws-amplify/core";
