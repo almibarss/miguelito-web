@@ -7,6 +7,23 @@ class UnknownError extends Error {
   }
 }
 
+export function shorten(longUrl, customPath) {
+  return fetch(BASE_URL, {
+    method: "POST",
+    body: JSON.stringify({ url: longUrl, custom_path: customPath }),
+  })
+    .then(filterStatusOk)
+    .then(toJson)
+    .then(buildUrl)
+    .catch((error) => {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      console.error(error);
+      throw new UnknownError();
+    });
+}
+
 function filterStatusOk(response) {
   if (response.ok) {
     return response;
@@ -25,21 +42,4 @@ function toJson(response) {
 
 function buildUrl(response) {
   return `${window.location.protocol}//${window.location.host}/${response.path}`;
-}
-
-export function shorten(longUrl, customPath) {
-  return fetch(BASE_URL, {
-    method: "POST",
-    body: JSON.stringify({ url: longUrl, custom_path: customPath }),
-  })
-    .then(filterStatusOk)
-    .then(toJson)
-    .then(buildUrl)
-    .catch((error) => {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      console.error(error);
-      throw new UnknownError();
-    });
 }

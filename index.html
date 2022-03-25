@@ -9,18 +9,33 @@
 
 	</style>
 	<body>
-		<div class="row flex-right">
-			<div class="col-4 col">
-				<fieldset id="dark-mode-sel" class="form-group">
-					<label for="dark-mode-toggle" class="paper-switch-2-label">
-						Light
+		<div class="header row flex-right">
+			<div class="user col col-4">
+				<div class="user__login">
+					<button class="simple-button"><i class="far fa-user"></i> Signin with Google</button>
+				</div>
+				<div class="user__profile">
+					<button class="simple-button">
+						<i class="fas fa-user"></i> Hi <span class="user__name"></span>
+					</button>
+					<div class="container">
+						<ul class="user__nav ui-list ui-list--horizontal">
+							<li><a href="">👋&nbsp;Logout</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="theme-selector col col-4">
+				<fieldset class="form-group" style="margin: 0;">
+					<label for="dark-mode-toggle" class="theme-selector__label paper-switch-2-label">
+						<i class="far fa-sun"></i>
 					</label>
 					<label class="paper-switch-2">
-						<input id="dark-mode-toggle" name="dark-mode-toggle" type="checkbox" />
+						<input class="theme-selector__toggle" name="dark-mode-toggle" type="checkbox">
 						<span class="paper-switch-slider round"></span>
 					</label>
-					<label for="dark-mode-toggle" class="paper-switch-2-label">
-						Dark
+					<label for="dark-mode-toggle" class="theme-selector__label theme-selector__label--muted paper-switch-2-label">
+						<i class="far fa-moon"></i>
 					</label>
 				</fieldset>
 			</div>
@@ -32,7 +47,7 @@
 					<div class="form-group">
 						<label for="url">Enter URL to shorten</label>
 						<input class="input-block" name="url" id="url" autocomplete="off" required>
-						<button type="button" class="simple-button" id="customize">✨Customize</button>
+						<button type="button" class="simple-button hidden hidden" id="customize">✨Customize</button>
 						<div id="custom-path" class="hidden">
 							<label for="custom-path">https://migueli.to/</label>
 							<input class="input" name="custom-path" id="custom-path"

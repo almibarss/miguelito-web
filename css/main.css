@@ -1,46 +1,183 @@
 * { text-align: center; }
+
 body { background-color: var(--main-background); }
-#dark-mode-sel { float: right; }
+
+
 [popover-bottom] { margin: 0; }
-.simple-button, .simple-button:active, .simple-button:hover, .simple-button:focus {
+
+.container {
+    overflow: hidden;
+    width: auto;
+}
+
+.simple-button, .simple-button:active, .simple-button:focus {
     border: 0;
     box-shadow: none;
     background: none;
     transform: none;
 }
+
+.simple-button:hover {
+    color: var(--secondary);
+    transform: none;
+    box-shadow: none;
+}
+
 .inline-button {
     margin: 0;
     padding: 0;
 }
+
 div#custom-path {
     /* display: inline-flex; */
     padding: .75rem;
 }
+
 div#custom-path label {
     text-align: right;
 }
+
 div#custom-path input {
     display: inline;
     padding: .0rem;
     text-align: left;
     border: 0;
 }
+
 img#oops {
     border: 0;
     max-width: 60%;
     margin-left: auto;
     margin-right: auto;
 }
+
 .hidden {
     display: none;
 }
+
 #message.alert #waiting {
     display: none;
 }
+
 #message.alert-danger #short-url,
+
 #message.alert-danger #copy-to-clipboard {
     display: none;
 }
+
 #message.alert-success #error {
     display: none;
+}
+
+.user .user__profile {
+    display: none;
+}
+
+.user--loggedIn .user__login {
+    display: none;
+}
+
+.user--loggedIn .user__profile {
+    display: flex;
+    flex-flow: row-reverse;
+    gap: .5rem;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.ui-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.ui-list--horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ui-list a {
+    text-decoration: none;
+    background-image: none;
+}
+
+.ui-list a:hover {
+    color: var(--secondary);
+}
+
+.ui-list li {
+    text-indent: 0;
+}
+
+.ui-list li:before {
+    content: "";
+}
+
+.user .simple-button {
+    padding: 0;
+}
+
+.header .col {
+    padding: .75rem;
+}
+
+.header * {
+    flex-basis: auto;
+}
+
+.user__profile button:hover:before,
+.user__profile--expanded button:before {
+    content: "\002039";
+    margin-right: .25rem;
+}
+
+.user__profile--expanded button:hover:before {
+    content: "\00203A";
+    margin-right: .25rem;
+}
+
+.user__nav {
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.user__profile--expanded .user__nav {
+    animation: slide-left .4s both;
+}
+
+.user__profile--collapsed .user__nav {
+    animation: slide-right .4s both;
+}
+
+.theme-selector__label--muted {
+    color: var(--muted);
+}
+
+@keyframes slide-left {
+  from {
+    margin-left: 100%;
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    margin-left: 0%;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes slide-right {
+  from {
+    margin-left: 0%;
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    margin-left: 100%;
+    opacity: 0;
+    visibility: hidden;
+  }
 }

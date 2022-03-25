@@ -3,7 +3,13 @@ import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "../css/main.css";
 import "../css/waiting.css";
 
+import Auth from "@aws-amplify/auth";
+import Amplify from "@aws-amplify/core";
+
+import awsconfig from "../aws-exports";
 import { shorten } from "./api";
+
+Amplify.configure(awsconfig);
 
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
@@ -11,6 +17,15 @@ String.prototype.isEmpty = function () {
 
 function toggleMode() {
   document.documentElement.classList.toggle("dark");
+  localStorage.setItem('theme', 
+    document.querySelector(".theme-selector .theme-selector__toggle").checked ? "dark": "light");
+
+  document.querySelectorAll(".theme-selector .theme-selector__label").forEach(label => {
+    label.classList.toggle("theme-selector__label--muted");
+    const icon = label.querySelector("i");
+    icon.classList.toggle("far");
+    icon.classList.toggle("fas");
+  });
 }
 
 function showWaitingDots() {
@@ -78,10 +93,21 @@ document.getElementById("url").addEventListener("input", function () {
 });
 
 document
-  .getElementById("dark-mode-toggle")
+  .querySelector(".theme-selector .theme-selector__toggle")
   .addEventListener("change", function () {
     toggleMode();
     document.getElementById("url").focus();
+  });
+
+document
+  .querySelector(".user__profile>button")
+  .addEventListener("click", () => {
+    const userProfile = document.querySelector(".user__profile");
+    if (!userProfile.classList.toggle("user__profile--expanded")) {
+      userProfile.classList.add("user__profile--collapsed");
+    } else {
+      userProfile.classList.remove("user__profile--collapsed");
+    }
   });
 
 document
@@ -89,14 +115,40 @@ document
   .addEventListener("click", showCustomize);
 
 document.addEventListener("DOMContentLoaded", function () {
+  Auth.currentAuthenticatedUser().then((user) => {
+      document.querySelector(".user").classList.add("user--loggedIn");
+      document.querySelector("button#customize").classList.remove("hidden");
+      document.querySelector(
+        ".user__profile .user__name"
+      ).textContent = user.signInUserSession.idToken.payload.given_name;
+    })
+    .catch((error) => {
+      console.error(error);
+      document.querySelector(".user").classList.remove("user--loggedIn");
+      document.querySelector("button#customize").classList.add("hidden");
+    });
+  document
+    .querySelector(".user__profile a")
+    .addEventListener("click", () => Auth.signOut());
+  document
+    .querySelector(".user__login>button")
+    .addEventListener("click", () => Auth.federatedSignIn({ provider: "Google" }));
   document.getElementById("url").focus();
-  if (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  ) {
-    document.getElementById("dark-mode-toggle").click();
-  }
+
+  applyTheme();
 });
+
+function applyTheme() {
+  const savedThemePref = localStorage.getItem("theme");
+  const systemThemePref = getSystemThemePreference();
+  if (savedThemePref == "dark" || !savedThemePref && systemThemePref == "dark") {
+    document.querySelector(".theme-selector .theme-selector__toggle").click();
+  }
+}
+
+function getSystemThemePreference() {
+  return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+}
 
 document.addEventListener("keydown", function (ev) {
   if (
