@@ -7,7 +7,7 @@ class UnknownError extends Error {
   }
 }
 
-export function shorten(longUrl, customPath) {
+export async function shorten(longUrl, customPath) {
   const useCustomPath = !customPath.trim().isEmpty();
   const apiName = "miguelito";
   const path = useCustomPath ? "/shorten-custom" : "/shorten";
@@ -18,7 +18,10 @@ export function shorten(longUrl, customPath) {
     },
   };
   if (useCustomPath) {
-    myInit.body["custom_path"] = customPath;
+    myInit.body.custom_path = customPath;
+    myInit.headers = {
+        Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`
+    } 
   }
 
   return RestAPI.post(apiName, path, myInit).then(buildUrl).catch(handleError);

@@ -19,14 +19,7 @@ const awsconfig = {
     endpoints: [
       {
         name: "miguelito",
-        endpoint: "https://api.migueli.to/dev",
-        custom_header: async () => {
-          return {
-            Authorization: `Bearer ${(await Auth.currentSession())
-              .getIdToken()
-              .getJwtToken()}`,
-          };
-        },
+        endpoint: "https://api.migueli.to/dev"
       },
     ],
   },
