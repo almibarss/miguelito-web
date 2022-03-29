@@ -63,9 +63,11 @@ function showCustomize() {
 }
 
 function resetCustomize() {
-  document.querySelector("button#customize").classList.remove("hidden");
-  document.querySelector("div#custom-path").classList.add("hidden");
-  document.querySelector("input#custom-path").value = "";
+  currentUser().then(() => {
+    document.querySelector("button#customize").classList.remove("hidden");
+    document.querySelector("div#custom-path").classList.add("hidden");
+    document.querySelector("input#custom-path").value = "";
+  });
 }
 
 function resetUi() {
