@@ -1,4 +1,5 @@
 import { RestAPI } from "@aws-amplify/api-rest";
+import { currentUser } from "./auth";
 
 class ApiError extends Error {}
 class UnknownError extends Error {
@@ -16,15 +17,25 @@ export async function shorten(longUrl, customPath) {
     body: {
       url: longUrl,
     },
+    headers: {
+      ...(await authHeader()),
+    },
   };
   if (useCustomPath) {
     myInit.body.custom_path = customPath;
-    myInit.headers = {
-        Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`
-    } 
   }
 
   return RestAPI.post(apiName, path, myInit).then(buildUrl).catch(handleError);
+}
+
+function authHeader() {
+  return currentUser()
+    .then((user) => ({
+      Authorization: `Bearer ${user.jwtToken}`,
+    }))
+    .catch(() => {
+      // ignore no current user
+    });
 }
 
 function buildUrl({ data: { path } }) {

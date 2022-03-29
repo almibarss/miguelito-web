@@ -5,11 +5,11 @@ import "@fortawesome/fontawesome-free/js/fontawesome";
 import "@fortawesome/fontawesome-free/js/regular";
 import "@fortawesome/fontawesome-free/js/solid";
 
-import Auth from "@aws-amplify/auth";
 import Amplify from "@aws-amplify/core";
 
 import awsconfig from "../aws-exports";
 import { shorten } from "./api";
+import { currentUser, login, logout } from "./auth";
 
 Amplify.configure(awsconfig);
 
@@ -117,12 +117,12 @@ document
   .addEventListener("click", showCustomize);
 
 document.addEventListener("DOMContentLoaded", function () {
-  Auth.currentAuthenticatedUser().then((user) => {
+  currentUser().then((user) => {
       document.querySelector(".user").classList.add("user--loggedIn");
       document.querySelector("button#customize").classList.remove("hidden");
       document.querySelector(
         ".user__profile .user__name"
-      ).textContent = user.signInUserSession.idToken.payload.given_name;
+      ).textContent = user.name;
     })
     .catch((error) => {
       console.error(error);
@@ -131,10 +131,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   document
     .querySelector(".user__profile a")
-    .addEventListener("click", () => Auth.signOut());
+    .addEventListener("click", () => logout());
   document
     .querySelector(".user__login>button")
-    .addEventListener("click", () => Auth.federatedSignIn({ provider: "Google" }));
+    .addEventListener("click", () => login());
   document.getElementById("url").focus();
 
   applyTheme();
