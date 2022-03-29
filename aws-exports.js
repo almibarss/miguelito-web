@@ -1,6 +1,3 @@
-/* eslint-disable */
-import Auth from "@aws-amplify/auth";
-
 const awsconfig = {
   Auth: {
     region: "eu-west-1",
