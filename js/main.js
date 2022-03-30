@@ -10,6 +10,7 @@ import Amplify from "@aws-amplify/core";
 import awsconfig from "../aws-exports";
 import { shorten } from "./api";
 import { currentUser, login, logout } from "./auth";
+import { Customize } from "./customize";
 
 Amplify.configure(awsconfig);
 
@@ -54,27 +55,11 @@ function handleShortenOk(longUrl, shortUrl) {
   resetUi();
 }
 
-function showCustomize() {
-  document.querySelector("button#customize").classList.add("hidden");
-  document.querySelector("div#custom-path").classList.remove("hidden");
-  const customPath = document.querySelector("input#custom-path");
-  customPath.value = "";
-  customPath.focus();
-}
-
-function resetCustomize() {
-  currentUser().then(() => {
-    document.querySelector("button#customize").classList.remove("hidden");
-    document.querySelector("div#custom-path").classList.add("hidden");
-    document.querySelector("input#custom-path").value = "";
-  });
-}
-
 function resetUi() {
   const urlInput = document.getElementById("url");
   urlInput.value = "";
   urlInput.focus();
-  resetCustomize();
+  Customize.collapse();
 }
 
 document.forms.item(0).addEventListener("submit", function (ev) {
@@ -114,10 +99,6 @@ document
     }
   });
 
-document
-  .querySelector("button#customize")
-  .addEventListener("click", showCustomize);
-
 document.addEventListener("paste", (ev) => {
   ev.preventDefault();
   const paste = (ev.clipboardData || window.clipboard).getData("text");
@@ -127,24 +108,17 @@ document.addEventListener("paste", (ev) => {
 function userIsLoggedIn({ name: username }) {
   document.querySelector(".user").classList.add("user--loggedIn");
   document.querySelector(".user__profile .user__name").textContent = username;
-  allowCustomize();
+  Customize.allow();
 }
 
 function userIsNotLoggedIn() {
   document.querySelector(".user").classList.remove("user--loggedIn");
-  disallowCustomize();
+  Customize.disallow();
 }
 
-function allowCustomize() {
-  document.querySelector("button#customize").classList.remove("hidden");
-}
-
-function disallowCustomize() {
-  document.querySelector("button#customize").classList.add("hidden");
-}
-
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   currentUser().then(userIsLoggedIn).catch(userIsNotLoggedIn);
+  Customize.init();
   document
     .querySelector(".user__profile a")
     .addEventListener("click", () => logout());
@@ -170,9 +144,9 @@ function getSystemThemePreference() {
 
 document.addEventListener("keydown", function (ev) {
   if (
-    ev.key == "Escape" &&
-    document.querySelector("input#custom-path") == document.activeElement
+    ev.key === "Escape" &&
+    document.querySelector("input#custom-path") === document.activeElement
   ) {
-    resetCustomize();
+    Customize.collapse();
   }
 });
