@@ -124,19 +124,27 @@ document.addEventListener("paste", (ev) => {
   document.getElementById("url").value = paste;
 });
 
+function userIsLoggedIn({ name: username }) {
+  document.querySelector(".user").classList.add("user--loggedIn");
+  document.querySelector(".user__profile .user__name").textContent = username;
+  allowCustomize();
+}
+
+function userIsNotLoggedIn() {
+  document.querySelector(".user").classList.remove("user--loggedIn");
+  disallowCustomize();
+}
+
+function allowCustomize() {
+  document.querySelector("button#customize").classList.remove("hidden");
+}
+
+function disallowCustomize() {
+  document.querySelector("button#customize").classList.add("hidden");
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-  currentUser().then((user) => {
-      document.querySelector(".user").classList.add("user--loggedIn");
-      document.querySelector("button#customize").classList.remove("hidden");
-      document.querySelector(
-        ".user__profile .user__name"
-      ).textContent = user.name;
-    })
-    .catch((error) => {
-      console.error(error);
-      document.querySelector(".user").classList.remove("user--loggedIn");
-      document.querySelector("button#customize").classList.add("hidden");
-    });
+  currentUser().then(userIsLoggedIn).catch(userIsNotLoggedIn);
   document
     .querySelector(".user__profile a")
     .addEventListener("click", () => logout());
