@@ -55,18 +55,14 @@ img#oops {
     display: none;
 }
 
-#message.alert #waiting {
+#message > * {
     display: none;
 }
 
-#message.alert-danger #short-url,
-
-#message.alert-danger #copy-to-clipboard {
-    display: none;
-}
-
-#message.alert-success #error {
-    display: none;
+#message.waiting > #waiting,
+#message.success > #success,
+#message.error   > #error {
+    display: block;
 }
 
 .user .user__profile {

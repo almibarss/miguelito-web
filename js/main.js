@@ -31,12 +31,12 @@ function toggleMode() {
 }
 
 function showWaitingDots() {
-  document.getElementById("message").className = "";
+  document.getElementById("message").className = "waiting alert alert-warning";
 }
 
 function showErrorMessage(text) {
   document.getElementById("error").textContent = text;
-  document.getElementById("message").className = "alert alert-danger";
+  document.getElementById("message").className = "error alert alert-danger";
 }
 
 function handleShortenOk(longUrl, shortUrl) {
@@ -49,7 +49,7 @@ function handleShortenOk(longUrl, shortUrl) {
     .getElementById("copy-to-clipboard")
     .addEventListener("click", () => navigator.clipboard.writeText(shortUrl));
 
-  document.getElementById("message").className = "alert alert-success";
+  document.getElementById("message").className = "success alert alert-success";
 
   resetUi();
 }
