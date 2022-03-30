@@ -118,6 +118,12 @@ document
   .querySelector("button#customize")
   .addEventListener("click", showCustomize);
 
+document.addEventListener("paste", (ev) => {
+  ev.preventDefault();
+  const paste = (ev.clipboardData || window.clipboard).getData("text");
+  document.getElementById("url").value = paste;
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   currentUser().then((user) => {
       document.querySelector(".user").classList.add("user--loggedIn");
