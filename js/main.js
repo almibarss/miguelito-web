@@ -9,9 +9,9 @@ import Amplify from "@aws-amplify/core";
 
 import awsconfig from "../aws-exports";
 import { shorten } from "./api";
-import { currentUser, login, logout } from "./auth";
 import { Customize } from "./customize";
 import { Theme } from "./theme";
+import { User } from "./user";
 
 Amplify.configure(awsconfig);
 
@@ -69,45 +69,16 @@ document.getElementById("url").addEventListener("input", function () {
   document.getElementById("submit").disabled = this.value.isEmpty();
 });
 
-document
-  .querySelector(".user__profile>button")
-  .addEventListener("click", () => {
-    const userProfile = document.querySelector(".user__profile");
-    if (!userProfile.classList.toggle("user__profile--expanded")) {
-      userProfile.classList.add("user__profile--collapsed");
-    } else {
-      userProfile.classList.remove("user__profile--collapsed");
-    }
-  });
-
 document.addEventListener("paste", (ev) => {
   ev.preventDefault();
   const paste = (ev.clipboardData || window.clipboard).getData("text");
   document.getElementById("url").value = paste;
 });
 
-function userIsLoggedIn({ name: username }) {
-  document.querySelector(".user").classList.add("user--loggedIn");
-  document.querySelector(".user__profile .user__name").textContent = username;
-  Customize.allow();
-}
-
-function userIsNotLoggedIn() {
-  document.querySelector(".user").classList.remove("user--loggedIn");
-  Customize.disallow();
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  currentUser().then(userIsLoggedIn).catch(userIsNotLoggedIn);
+  User.init();
   Customize.init();
   Theme.init();
-  document
-    .querySelector(".user__profile a")
-    .addEventListener("click", () => logout());
-  document
-    .querySelector(".user__login>button")
-    .addEventListener("click", () => login());
-  document.getElementById("url").focus();
 });
 
 document.addEventListener("keydown", function (ev) {
