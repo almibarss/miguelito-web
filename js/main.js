@@ -11,25 +11,13 @@ import awsconfig from "../aws-exports";
 import { shorten } from "./api";
 import { currentUser, login, logout } from "./auth";
 import { Customize } from "./customize";
+import { Theme } from "./theme";
 
 Amplify.configure(awsconfig);
 
 String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
 };
-
-function toggleMode() {
-  document.documentElement.classList.toggle("dark");
-  localStorage.setItem('theme', 
-    document.querySelector(".theme-selector .theme-selector__toggle").checked ? "dark": "light");
-
-  document.querySelectorAll(".theme-selector .theme-selector__label").forEach(label => {
-    label.classList.toggle("theme-selector__label--muted");
-    const icon = label.querySelector("i");
-    icon.classList.toggle("far");
-    icon.classList.toggle("fas");
-  });
-}
 
 function showWaitingDots() {
   document.getElementById("message").className = "waiting alert alert-warning";
@@ -82,13 +70,6 @@ document.getElementById("url").addEventListener("input", function () {
 });
 
 document
-  .querySelector(".theme-selector .theme-selector__toggle")
-  .addEventListener("change", function () {
-    toggleMode();
-    document.getElementById("url").focus();
-  });
-
-document
   .querySelector(".user__profile>button")
   .addEventListener("click", () => {
     const userProfile = document.querySelector(".user__profile");
@@ -119,6 +100,7 @@ function userIsNotLoggedIn() {
 document.addEventListener("DOMContentLoaded", () => {
   currentUser().then(userIsLoggedIn).catch(userIsNotLoggedIn);
   Customize.init();
+  Theme.init();
   document
     .querySelector(".user__profile a")
     .addEventListener("click", () => logout());
@@ -126,21 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .querySelector(".user__login>button")
     .addEventListener("click", () => login());
   document.getElementById("url").focus();
-
-  applyTheme();
 });
-
-function applyTheme() {
-  const savedThemePref = localStorage.getItem("theme");
-  const systemThemePref = getSystemThemePreference();
-  if (savedThemePref == "dark" || !savedThemePref && systemThemePref == "dark") {
-    document.querySelector(".theme-selector .theme-selector__toggle").click();
-  }
-}
-
-function getSystemThemePreference() {
-  return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
-}
 
 document.addEventListener("keydown", function (ev) {
   if (
