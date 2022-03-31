@@ -80,12 +80,3 @@ document.addEventListener("DOMContentLoaded", () => {
   Customize.init();
   Theme.init();
 });
-
-document.addEventListener("keydown", function (ev) {
-  if (
-    ev.key === "Escape" &&
-    document.querySelector("input#custom-path") === document.activeElement
-  ) {
-    Customize.collapse();
-  }
-});
