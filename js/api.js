@@ -1,5 +1,10 @@
 import { RestAPI } from "@aws-amplify/api-rest";
+import Amplify from "@aws-amplify/core";
+
+import awsconfig from "../aws-exports";
 import { currentUser } from "./auth";
+
+Amplify.configure(awsconfig);
 
 class ApiError extends Error {}
 class UnknownError extends Error {
@@ -8,24 +13,27 @@ class UnknownError extends Error {
   }
 }
 
-export async function shorten(longUrl, customPath) {
-  const useCustomPath = !customPath.trim().isEmpty();
+export async function shorten(url, customPath) {
+  const withCustomPath = !customPath.trim().isEmpty();
   const apiName = "miguelito";
-  const path = useCustomPath ? "/shorten-custom" : "/shorten";
   const myInit = {
     response: true,
-    body: {
-      url: longUrl,
-    },
+    body: { url },
     headers: {
       ...(await authHeader()),
     },
   };
-  if (useCustomPath) {
+  if (withCustomPath) {
     myInit.body.custom_path = customPath;
   }
 
-  return RestAPI.post(apiName, path, myInit).then(buildUrl).catch(handleError);
+  return RestAPI.post(
+    apiName,
+    withCustomPath ? "/shorten-custom" : "/shorten",
+    myInit
+  )
+    .then(buildUrl)
+    .catch(handleError);
 }
 
 function authHeader() {
