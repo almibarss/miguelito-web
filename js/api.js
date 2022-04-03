@@ -13,27 +13,46 @@ class UnknownError extends Error {
   }
 }
 
+const apiName = "miguelito";
+
 export async function shorten(url, customPath) {
   const withCustomPath = !customPath.trim().isEmpty();
-  const apiName = "miguelito";
-  const myInit = {
-    response: true,
-    body: { url },
-    headers: {
-      ...(await authHeader()),
-    },
-  };
+  const body = { url };
   if (withCustomPath) {
-    myInit.body.custom_path = customPath;
+    body.custom_path = customPath;
   }
 
   return RestAPI.post(
     apiName,
     withCustomPath ? "/shorten-custom" : "/shorten",
-    myInit
+    await requestOptionsWithBody(body)
   )
+    .then((data) => data.path)
     .then(buildUrl)
     .catch(handleError);
+}
+
+export async function list() {
+  return RestAPI.get(apiName, "/urls", await requestOptions())
+    .then((data) => data.urls)
+    .then((urls) => urls.map(addShortenedUrl))
+    .catch(handleError);
+}
+
+function addShortenedUrl(url) {
+  return { ...url, shortened_url: buildUrl(url.path) };
+}
+
+async function requestOptionsWithBody(body) {
+  return { ...(await requestOptions()), body };
+}
+
+async function requestOptions() {
+  return {
+    headers: {
+      ...(await authHeader()),
+    },
+  };
 }
 
 function authHeader() {
@@ -46,8 +65,8 @@ function authHeader() {
     });
 }
 
-function buildUrl({ data: { path } }) {
-  return `${window.location.protocol}//${window.location.host}/${path}`;
+function buildUrl(path) {
+  return `${window.location.host}/${path}`;
 }
 
 function handleError(error) {

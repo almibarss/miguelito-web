@@ -17,6 +17,9 @@ export const Ui = {
   Text: {
     username: document.querySelector(".user__profile .user__name"),
   },
+  Lists: {
+    myLinks: document.querySelector("#my-links ul"),
+  },
   shortenedUrl: (longUrl, shortUrl) => {
     const shortLink = document.querySelector("#success a");
     shortLink.href = shortUrl;
