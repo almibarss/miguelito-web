@@ -1,4 +1,4 @@
-import { shorten } from "../api";
+import { API} from "../api";
 import { Ui } from "../ui";
 
 const customPathDiv = document.querySelector("div#custom-path");
@@ -46,7 +46,7 @@ function submitUrl(ev) {
     "url": { value: inputUrl },
     "custom-path": { value: customPath },
   } = ev.target;
-  shorten(inputUrl, customPath)
+  API.shorten(inputUrl, customPath)
     .then((shortUrl) => handleOk(inputUrl, shortUrl))
     .catch((error) => Ui.error(error.message));
 }

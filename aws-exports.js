@@ -16,7 +16,7 @@ const awsconfig = {
     endpoints: [
       {
         name: "miguelito",
-        endpoint: "https://api.migueli.to/dev"
+        endpoint: "https://api.migueli.to/dev",
       },
     ],
   },

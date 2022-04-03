@@ -1,13 +1,13 @@
-import { list } from "../api";
+import { API } from "../api";
 import { Ui } from "../ui";
 
 export const MyLinks = {
   init: () => {
-    list().then((urls) => urls.forEach(displayShortenedUrl));
+    API.list().then((urls) => urls.forEach(display));
   },
 };
 
-function displayShortenedUrl(url) {
+function display(url) {
   const newLinkItem = Ui.Lists.myLinks.querySelector("li").cloneNode(true);
   const a = newLinkItem.querySelector("a");
   a.setAttribute("href", url.links_to);
