@@ -152,6 +152,19 @@ img#oops {
     color: var(--muted);
 }
 
+/* Fix PaperCSS tab styles */
+.tabs input {
+    display: block;
+}
+
+.tabs .paper-btn {
+    display: inline-block;
+}
+
+.tabs input[name=tabs] {
+    display: none;
+}
+
 @keyframes slide-left {
   from {
     margin-left: 100%;
