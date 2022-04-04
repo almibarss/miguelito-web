@@ -35,6 +35,7 @@ export const API = {
   list: async () => {
     return RestAPI.get(apiName, "/urls", await requestOptions())
       .then((data) => data.urls)
+      .then((urls) => urls.sort(byCreationDate).reverse())
       .then((urls) => urls.map(augmentWithShortenedUrl))
       .catch(handleError);
   },
@@ -80,5 +81,6 @@ function handleError(error) {
   }
 }
 
-export class list {
+function byCreationDate(url1, url2) {
+  return Date.parse(url1.created_at) - Date.parse(url2.created_at);
 }
