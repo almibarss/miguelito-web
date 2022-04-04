@@ -15,8 +15,10 @@ function loadUserUrls() {
 function display(url) {
   const newLinkItem = Ui.Lists.myLinks.querySelector("li").cloneNode(true);
   const a = newLinkItem.querySelector("a");
-  a.setAttribute("href", url.links_to);
+  a.setAttribute("href", url.shortened_url);
   a.textContent = url.shortened_url;
+  const span = newLinkItem.querySelector("span");
+  span.textContent = url.links_to;
   newLinkItem.show();
   Ui.Lists.myLinks.appendChild(newLinkItem);
 }
