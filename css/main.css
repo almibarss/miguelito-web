@@ -168,6 +168,12 @@ img#oops {
 #my-links ul {
     height: 50vh;
     overflow-y: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+#my-links ul::-webkit-scrollbar {
+    display: none;
 }
 
 #my-links li {
@@ -186,8 +192,7 @@ img#oops {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 60%;
-    overflow-x: hidden;
+    width: 95%;
 }
 
 #my-links li a {
@@ -196,6 +201,8 @@ img#oops {
 
 #my-links li span {
     font-size: smaller;
+    word-break: break-word;
+    text-align: left;
 }
 
 @keyframes slide-left {
