@@ -168,9 +168,14 @@ img#oops {
     display: none;
 }
 
+#my-links * {
+    text-align: left;
+}
+
 #my-links ul {
     height: 50vh;
     overflow-y: auto;
+    padding-left: 0;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
@@ -188,8 +193,16 @@ img#oops {
     text-indent: 0;
 }
 
+#my-links .template-item {
+    display: none;
+}
+
 #my-links li:before {
     content: none;
+}
+
+#search-links {
+    width: 100%;
 }
 
 #my-links li > div {
@@ -206,7 +219,6 @@ img#oops {
 #my-links li span {
     font-size: smaller;
     word-break: break-word;
-    text-align: left;
 }
 
 @keyframes slide-left {

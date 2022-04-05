@@ -10,11 +10,12 @@ export const MyLinks = {
 
 function loadUserUrls() {
   API.list().then((urls) => urls.forEach(display));
+  Ui.Inputs.searchLinks.addEventListener("input", filterLinks);
 }
 
 function display(url) {
   const newLinkItem = Ui.Lists.myLinks.querySelector("li").cloneNode(true);
-  bindButtonActions(newLinkItem);
+  bindActions(newLinkItem);
 
   const a = newLinkItem.querySelector("a");
   a.setAttribute("href", url.shortened_url);
@@ -23,11 +24,11 @@ function display(url) {
   const span = newLinkItem.querySelector("span");
   span.textContent = url.links_to;
 
-  newLinkItem.show();
+  newLinkItem.classList.remove("template-item");
   Ui.Lists.myLinks.appendChild(newLinkItem);
 }
 
-function bindButtonActions(linkItem) {
+function bindActions(linkItem) {
   linkItem.querySelector(".confirm-button").addEventListener("click", doDelete);
   linkItem
     .querySelector(".cancel-button")
@@ -37,9 +38,40 @@ function bindButtonActions(linkItem) {
     .addEventListener("click", confirmDelete);
 }
 
+function filterLinks(event) {
+  const searchText = event.target.value;
+  const linkItems = Ui.Lists.myLinks.querySelectorAll("li");
+  for (const item of linkItems) {
+    if (matchesSearch(item, searchText)) {
+      highlightSearch(item, searchText);
+      item.show();
+    } else {
+      item.hide();
+    }
+  }
+}
+
+function highlightSearch(item, searchText) {
+  const regex = new RegExp(searchText, "gi");
+  for (const url of [item.querySelector("a"), item.querySelector("span")]) {
+    url.innerHTML = url.innerHTML
+      .replace(/(<mark class="background-warning">|<\/mark>)/gim, "")
+      .replace(regex, '<mark class="background-warning">$&</mark>');
+  }
+}
+
+function matchesSearch(item, searchText) {
+  const shortUrl = item.querySelector("a");
+  const longUrl = item.querySelector("span");
+  return (
+    shortUrl.textContent.includes(searchText) ||
+    longUrl.textContent.includes(searchText)
+  );
+}
+
 function confirmDelete() {
   const enclosingLinkItem = this.closest("li");
-  ["border-dashed", "border-danger"].forEach((cl) =>
+  ["border", "border-danger", "shadow"].forEach((cl) =>
     enclosingLinkItem.classList.add(cl)
   );
   showConfirmActions(enclosingLinkItem);
@@ -51,7 +83,7 @@ function doDelete() {
 
 function cancelDelete() {
   const enclosingLinkItem = this.closest("li");
-  ["border-dashed", "border-danger"].forEach((cl) =>
+  ["border", "border-danger", "shadow"].forEach((cl) =>
     enclosingLinkItem.classList.remove(cl)
   );
   hideConfirmActions(enclosingLinkItem);

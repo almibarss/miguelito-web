@@ -2,6 +2,7 @@ export const Ui = {
   Inputs: {
     url: document.getElementById("url"),
     customPath: document.querySelector("#custom-path input"),
+    searchLinks: document.querySelector("#search-links"),
   },
   Buttons: {
     submit: document.getElementById("submit"),
