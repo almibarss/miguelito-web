@@ -14,13 +14,59 @@ function loadUserUrls() {
 
 function display(url) {
   const newLinkItem = Ui.Lists.myLinks.querySelector("li").cloneNode(true);
+  bindButtonActions(newLinkItem);
+
   const a = newLinkItem.querySelector("a");
   a.setAttribute("href", url.shortened_url);
   a.textContent = url.shortened_url;
+
   const span = newLinkItem.querySelector("span");
   span.textContent = url.links_to;
+
   newLinkItem.show();
   Ui.Lists.myLinks.appendChild(newLinkItem);
+}
+
+function bindButtonActions(linkItem) {
+  linkItem.querySelector(".confirm-button").addEventListener("click", doDelete);
+  linkItem
+    .querySelector(".cancel-button")
+    .addEventListener("click", cancelDelete);
+  linkItem
+    .querySelector(".delete-button")
+    .addEventListener("click", confirmDelete);
+}
+
+function confirmDelete() {
+  const enclosingLinkItem = this.closest("li");
+  ["border-dashed", "border-danger"].forEach((cl) =>
+    enclosingLinkItem.classList.add(cl)
+  );
+  showConfirmActions(enclosingLinkItem);
+}
+
+function doDelete() {
+  this.closest("li").remove();
+}
+
+function cancelDelete() {
+  const enclosingLinkItem = this.closest("li");
+  ["border-dashed", "border-danger"].forEach((cl) =>
+    enclosingLinkItem.classList.remove(cl)
+  );
+  hideConfirmActions(enclosingLinkItem);
+}
+
+function showConfirmActions(linkItem) {
+  linkItem.querySelector(".confirm-button").show();
+  linkItem.querySelector(".cancel-button").show();
+  linkItem.querySelector(".delete-button").hide();
+}
+
+function hideConfirmActions(linkItem) {
+  linkItem.querySelector(".confirm-button").hide();
+  linkItem.querySelector(".cancel-button").hide();
+  linkItem.querySelector(".delete-button").show();
 }
 
 function showSimpleUi() {

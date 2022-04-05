@@ -2,6 +2,9 @@
 
 body { background-color: var(--main-background); }
 
+html.dark .btn-warning {
+    color: var(--primary-text);
+}
 
 [popover-bottom] { margin: 0; }
 
@@ -179,13 +182,14 @@ img#oops {
 #my-links li {
     display: flex;
     justify-content: center;
-    column-gap: 1rem;
-    padding: 0.75rem 0 0.75rem 0;
+    align-items: center;
+    column-gap: .5rem;
+    padding: 0.75rem;
     text-indent: 0;
 }
 
 #my-links li:before {
-    content: "";
+    content: none;
 }
 
 #my-links li > div {
