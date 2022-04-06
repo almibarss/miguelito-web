@@ -9,11 +9,11 @@ export const MyLinks = {
 };
 
 function loadUserUrls() {
-  API.list().then((urls) => urls.forEach(display));
-  Ui.Inputs.searchLinks.addEventListener("input", filterLinks);
+  API.list().then((urls) => urls.forEach(insertLink));
+  Ui.Inputs.searchLinks.addEventListener("input", filterList);
 }
 
-function display(url) {
+function insertLink(url) {
   const newLinkItem = Ui.Lists.myLinks.querySelector("li").cloneNode(true);
   bindActions(newLinkItem);
 
@@ -29,17 +29,17 @@ function display(url) {
 }
 
 function bindActions(linkItem) {
+  linkItem
+    .querySelector(".delete-button")
+    .addEventListener("click", confirmDelete);
   linkItem.querySelector(".confirm-button").addEventListener("click", doDelete);
   linkItem
     .querySelector(".cancel-button")
     .addEventListener("click", cancelDelete);
-  linkItem
-    .querySelector(".delete-button")
-    .addEventListener("click", confirmDelete);
 }
 
-function filterLinks(event) {
-  const searchText = event.target.value;
+function filterList(inputEvent) {
+  const searchText = inputEvent.target.value;
   const linkItems = Ui.Lists.myLinks.querySelectorAll("li");
   for (const item of linkItems) {
     if (matchesSearch(item, searchText)) {
@@ -48,15 +48,6 @@ function filterLinks(event) {
     } else {
       item.hide();
     }
-  }
-}
-
-function highlightSearch(item, searchText) {
-  const regex = new RegExp(searchText, "gi");
-  for (const url of [item.querySelector("a"), item.querySelector("span")]) {
-    url.innerHTML = url.innerHTML
-      .replace(/(<mark class="background-warning">|<\/mark>)/gim, "")
-      .replace(regex, '<mark class="background-warning">$&</mark>');
   }
 }
 
@@ -69,20 +60,29 @@ function matchesSearch(item, searchText) {
   );
 }
 
-function confirmDelete() {
-  const enclosingLinkItem = this.closest("li");
+function highlightSearch(item, searchText) {
+  const regex = new RegExp(searchText, "gi");
+  for (const url of [item.querySelector("a"), item.querySelector("span")]) {
+    url.innerHTML = url.innerHTML
+      .replace(/(<mark class="background-warning">|<\/mark>)/gim, "")
+      .replace(regex, '<mark class="background-warning">$&</mark>');
+  }
+}
+
+function confirmDelete(clickEvent) {
+  const enclosingLinkItem = clickEvent.target.closest("li");
   ["border", "border-danger", "shadow"].forEach((cl) =>
     enclosingLinkItem.classList.add(cl)
   );
   showConfirmActions(enclosingLinkItem);
 }
 
-function doDelete() {
-  this.closest("li").remove();
+function doDelete(clickEvent) {
+  clickEvent.target.closest("li").remove();
 }
 
-function cancelDelete() {
-  const enclosingLinkItem = this.closest("li");
+function cancelDelete(clickEvent) {
+  const enclosingLinkItem = clickEvent.target.closest("li");
   ["border", "border-danger", "shadow"].forEach((cl) =>
     enclosingLinkItem.classList.remove(cl)
   );
