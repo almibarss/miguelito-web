@@ -37,6 +37,10 @@ String.prototype.isEmpty = function () {
   return this.length === 0 || !this.trim();
 };
 
+String.prototype.includesCaseInsensitive = function (anotherString) {
+  return this.toLowerCase().includes(anotherString.toLowerCase());
+};
+
 function submitUrl(ev) {
   ev.preventDefault();
   Ui.waiting();

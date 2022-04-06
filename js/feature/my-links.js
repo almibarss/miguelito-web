@@ -55,8 +55,8 @@ function matchesSearch(item, searchText) {
   const shortUrl = item.querySelector("a");
   const longUrl = item.querySelector("span");
   return (
-    shortUrl.textContent.includes(searchText) ||
-    longUrl.textContent.includes(searchText)
+    shortUrl.textContent.includesCaseInsensitive(searchText) ||
+    longUrl.textContent.includesCaseInsensitive(searchText)
   );
 }
 
