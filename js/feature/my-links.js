@@ -9,8 +9,12 @@ export const MyLinks = {
 };
 
 function loadUserUrls() {
-  API.list().then((urls) => urls.forEach(insertLink));
+  API.list().then(insertAsLinkItems).then(updateCount);
   Ui.Inputs.searchLinks.addEventListener("input", filterList);
+}
+
+function insertAsLinkItems(urls) {
+  urls.forEach(insertLink);
 }
 
 function insertLink(url) {
@@ -40,7 +44,9 @@ function bindActions(linkItem) {
 
 function filterList(inputEvent) {
   const searchText = inputEvent.target.value;
-  const linkItems = Ui.Lists.myLinks.querySelectorAll("li");
+  const linkItems = Ui.Lists.myLinks.querySelectorAll(
+    "li:not([class='template-item'])"
+  );
   for (const item of linkItems) {
     if (matchesSearch(item, searchText)) {
       highlightSearch(item, searchText);
@@ -49,6 +55,7 @@ function filterList(inputEvent) {
       item.hide();
     }
   }
+  updateCount();
 }
 
 function matchesSearch(item, searchText) {
@@ -79,6 +86,7 @@ function confirmDelete(clickEvent) {
 
 function doDelete(clickEvent) {
   clickEvent.target.closest("li").remove();
+  updateCount();
 }
 
 function cancelDelete(clickEvent) {
@@ -99,6 +107,45 @@ function hideConfirmActions(linkItem) {
   linkItem.querySelector(".confirm-button").hide();
   linkItem.querySelector(".cancel-button").hide();
   linkItem.querySelector(".delete-button").show();
+}
+
+function updateCount() {
+  const searchText = Ui.Inputs.searchLinks.value;
+  const countBadge = Ui.Badges.linkCount;
+  const itemCount = visibleItemCount();
+  if (searchText.isEmpty()) {
+    updateCountUnfiltered(countBadge, itemCount);
+  } else {
+    updateCountFiltered(countBadge, itemCount);
+  }
+}
+
+function updateCountUnfiltered(countBadge, itemCount) {
+  if (itemCount === 0) {
+    countBadge.hide();
+    return;
+  }
+  countBadge.replaceChild(
+    document.createTextNode(itemCount),
+    countBadge.lastChild
+  );
+  countBadge.show();
+  countBadge.querySelector(".fa-filter").hide();
+}
+
+function updateCountFiltered(countBadge, itemCount) {
+  countBadge.replaceChild(
+    document.createTextNode(` ${itemCount > 0 ? itemCount : "-"}`),
+    countBadge.lastChild
+  );
+  countBadge.show();
+  countBadge.querySelector(".fa-filter").show();
+}
+
+function visibleItemCount() {
+  return Ui.Lists.myLinks.querySelectorAll(
+    "li:not([class='template-item']):not([class='hidden'])"
+  ).length;
 }
 
 function showSimpleUi() {

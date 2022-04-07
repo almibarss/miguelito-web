@@ -21,6 +21,17 @@ export const Ui = {
   Lists: {
     myLinks: document.querySelector("#my-links ul"),
   },
+  Tabs: {
+    Shorten: {
+      label: document.querySelector("label[for=tab1]"),
+    },
+    MyLinks: {
+      label: document.querySelector("label[for=tab2]"),
+    },
+  },
+  Badges: {
+    linkCount: document.querySelector("label[for=tab2] .badge"),
+  },
   shortenedUrl: (longUrl, shortUrl) => {
     const shortLink = document.querySelector("#success a");
     shortLink.href = shortUrl;
@@ -47,10 +58,10 @@ export const Ui = {
   },
 };
 
-HTMLElement.prototype.hide = function () {
+Element.prototype.hide = function () {
   this.classList.add("hidden");
 };
 
-HTMLElement.prototype.show = function () {
+Element.prototype.show = function () {
   this.classList.remove("hidden");
 };
