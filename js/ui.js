@@ -65,3 +65,11 @@ Element.prototype.hide = function () {
 Element.prototype.show = function () {
   this.classList.remove("hidden");
 };
+
+String.prototype.isEmpty = function () {
+  return this.length === 0 || !this.trim();
+};
+
+String.prototype.includesCaseInsensitive = function (anotherString) {
+  return this.toLowerCase().includes(anotherString.toLowerCase());
+};

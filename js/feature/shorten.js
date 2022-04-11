@@ -1,4 +1,4 @@
-import { API} from "../api";
+import { API } from "../api";
 import { Ui } from "../ui";
 
 const customPathDiv = document.querySelector("div#custom-path");
@@ -31,14 +31,6 @@ export const Shorten = {
       Ui.Buttons.customize.hide();
     },
   },
-};
-
-String.prototype.isEmpty = function () {
-  return this.length === 0 || !this.trim();
-};
-
-String.prototype.includesCaseInsensitive = function (anotherString) {
-  return this.toLowerCase().includes(anotherString.toLowerCase());
 };
 
 function submitUrl(ev) {
