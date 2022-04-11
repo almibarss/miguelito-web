@@ -68,6 +68,10 @@ img#oops {
     display: block;
 }
 
+#short-url {
+    margin-right: 0;
+}
+
 .user .user__profile {
     display: none;
 }
