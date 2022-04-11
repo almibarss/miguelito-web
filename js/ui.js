@@ -23,9 +23,11 @@ export const Ui = {
   },
   Tabs: {
     Shorten: {
+      isActive: () => document.getElementById("tab1").checked,
       label: document.querySelector("label[for=tab1]"),
     },
     MyLinks: {
+      isActive: () => document.getElementById("tab2").checked,
       label: document.querySelector("label[for=tab2]"),
     },
   },

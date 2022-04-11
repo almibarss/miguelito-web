@@ -52,11 +52,13 @@ function freezeUi() {
   Ui.waiting();
   Ui.Buttons.submit.disabled = true;
   Ui.Inputs.url.disabled = true;
+  document.removeEventListener("paste", pasteIntoUrlInputAsDefault);
 }
 
 function unfreezeUi() {
   Ui.Buttons.submit.disabled = false;
   Ui.Inputs.url.disabled = false;
+  document.addEventListener("paste", pasteIntoUrlInputAsDefault);
 }
 
 function handleOk(longUrl, shortUrl) {
@@ -66,11 +68,32 @@ function handleOk(longUrl, shortUrl) {
 }
 
 function pasteIntoUrlInputAsDefault(ev) {
-  ev.preventDefault();
-
+  if (ev.target === Ui.Inputs.url) {
+    // allow normal paste when url input is focused
+    return;
+  }
+  if (!Ui.Tabs.Shorten.isActive()) {
+    // do not intercept URLs when other tabs are active
+    return;
+  }
   const paste = (ev.clipboardData || window.clipboard).getData("text");
+  if (!containsValidUrl(paste)) {
+    // do not automatically paste other than URLs
+    return;
+  }
+
+  ev.preventDefault();
   Ui.Inputs.url.value = paste;
   Ui.Inputs.url.dispatchEvent(new Event("input"));
+}
+
+function containsValidUrl(text) {
+  try {
+    new URL(text);
+    return true;
+  } catch (ignored) {
+    return false;
+  }
 }
 
 function expandCustomize() {
