@@ -43,7 +43,7 @@ String.prototype.includesCaseInsensitive = function (anotherString) {
 
 function submitUrl(ev) {
   ev.preventDefault();
-  Ui.waiting();
+  freezeUi();
 
   const {
     // eslint-disable-next-line prettier/prettier
@@ -52,7 +52,19 @@ function submitUrl(ev) {
   } = ev.target;
   API.shorten(inputUrl, customPath)
     .then((shortUrl) => handleOk(inputUrl, shortUrl))
+    .then(unfreezeUi)
     .catch((error) => Ui.error(error.message));
+}
+
+function freezeUi() {
+  Ui.waiting();
+  Ui.Buttons.submit.disabled = true;
+  Ui.Inputs.url.disabled = true;
+}
+
+function unfreezeUi() {
+  Ui.Buttons.submit.disabled = false;
+  Ui.Inputs.url.disabled = false;
 }
 
 function handleOk(longUrl, shortUrl) {
