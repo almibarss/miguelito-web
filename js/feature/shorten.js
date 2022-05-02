@@ -6,13 +6,20 @@ const customPathDiv = document.querySelector("div#custom-path");
 export const Shorten = {
   init: () => {
     Ui.Forms.shorten.addEventListener("submit", submitUrl);
-    Ui.Inputs.url.addEventListener("input", Ui.clearMessage);
+    Ui.Inputs.url.addEventListener("input", Ui.hideAlert);
     Ui.Inputs.url.addEventListener("input", function () {
       Ui.Buttons.submit.disabled = this.value.isEmpty();
     });
     Ui.Inputs.customPath.addEventListener("keydown", collapseIfEscPressed);
     Ui.Buttons.customize.addEventListener("click", expandCustomize);
     document.addEventListener("paste", pasteIntoUrlInputAsDefault);
+  },
+  shorten: (inputUrl, customPath) => {
+    freezeUi();
+    API.shorten(inputUrl, customPath)
+      .then((shortUrl) => handleOk(inputUrl, shortUrl))
+      .catch((error) => Ui.error(error.message))
+      .finally(unfreezeUi);
   },
   Customize: {
     collapse: () => {
@@ -35,17 +42,13 @@ export const Shorten = {
 
 function submitUrl(ev) {
   ev.preventDefault();
-  freezeUi();
 
   const {
     // eslint-disable-next-line prettier/prettier
     "url": { value: inputUrl },
     "custom-path": { value: customPath },
   } = ev.target;
-  API.shorten(inputUrl, customPath)
-    .then((shortUrl) => handleOk(inputUrl, shortUrl))
-    .then(unfreezeUi)
-    .catch((error) => Ui.error(error.message));
+  Shorten.shorten(inputUrl, customPath);
 }
 
 function freezeUi() {

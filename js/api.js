@@ -17,7 +17,7 @@ const apiName = "miguelito";
 
 export const API = {
   shorten: async (url, customPath) => {
-    const withCustomPath = !customPath.trim().isEmpty();
+    const withCustomPath = !(customPath ?? "").trim().isEmpty();
     const body = { url };
     if (withCustomPath) {
       body.custom_path = customPath;

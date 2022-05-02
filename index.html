@@ -40,8 +40,48 @@
 				</fieldset>
 			</div>
 		</div>
+
+		<input class="modal-state" id="modal-check" type="checkbox">
+		<div id="clipboard-modal" class="modal">
+			<label class="modal-bg" for="modal-check"></label>
+			<div class="modal-body">
+				<label class="btn-close" for="modal-check">X</label>
+				<h4 class="modal-title">👀📋 Clipboard read permission</h4>
+				<p class="modal-text">We request access to the clipboard in order to catch
+					copied URLs and make them easier to shorten. Promise we won't be evil 😇</p>
+				<label for="modal-check" class="paper-btn simple-button">Nice!</label>
+			</div>
+		</div>
+
 		<div class="row flex-center">
 			<div class="col-8 col">
+
+				<input class="alert-state" id="alert-check" type="checkbox" checked>
+				<div id="alert" class="alert dismissible">
+
+					<div id="clipboard-alert">
+						<span></span>
+						<button type="button" class="simple-button">Shorten</button>
+						<label class="btn-close" for="alert-check">X</label>
+					</div>
+
+					<div id="waiting">
+						<span class="dot"></span>
+						<span class="dot"></span>
+						<span class="dot"></span>
+					</div>
+
+					<div id="url-shortened">
+						<a id="short-url" target="_blank"></a>
+						<button id="copy-to-clipboard" class="simple-button">
+							<i class="far fa-clipboard"></i>
+						</button>
+					</div>
+
+					<div id="simple-message">
+					</div>
+				</div>
+
 				<h2>Serverless url shortener</h2>
 
 				<div class="row flex-spaces tabs">
@@ -61,23 +101,6 @@
 									<label for="custom-path">https://migueli.to/</label>
 									<input class="input" name="custom-path" autocomplete="off" spellcheck="false"
 												 placeholder="custom-path">
-								</div>
-							</div>
-							<div id="message" class="hidden">
-								<div id="waiting">
-									<span class="dot"></span>
-									<span class="dot"></span>
-									<span class="dot"></span>
-								</div>
-
-								<span id="error"></span>
-
-								<div id="success">
-									<a id="short-url"></a>
-									<button type="button" id="copy-to-clipboard" class="simple-button inline-button"
-													popover-right="Copy to clipboard">
-										<i class="far fa-clipboard"></i>
-									</button>
 								</div>
 							</div>
 							<input id="submit" class="paper-btn btn-primary" type="submit" value="Shorten link" disabled>

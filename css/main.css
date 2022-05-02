@@ -26,11 +26,6 @@ html.dark .btn-warning {
     box-shadow: none;
 }
 
-.inline-button {
-    margin: 0;
-    padding: 0;
-}
-
 div#custom-path {
     /* display: inline-flex; */
     padding: .75rem;
@@ -58,14 +53,37 @@ img#oops {
     display: none !important;
 }
 
-#message > * {
-    display: none;
+.alert button {
+    padding: 0;
+    margin: 0;
 }
 
-#message.waiting > #waiting,
-#message.success > #success,
-#message.error   > #error {
+#alert > * {
+    display: none;
+    width: 100%;
+}
+
+#alert.waiting > #waiting,
+#alert.url-shortened > #url-shortened,
+#alert.clipboard-alert > #clipboard-alert,
+#alert.simple-message   > #simple-message {
     display: block;
+}
+
+#alert.clipboard-alert > #clipboard-alert {
+    display: flex;
+    gap: .25rem;
+}
+
+#clipboard-alert span {
+    margin-left: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#clipboard-alert .btn-close {
+    margin-left: auto;
 }
 
 #short-url {

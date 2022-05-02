@@ -1,3 +1,5 @@
+import { Clipboard } from "./feature/clipboard";
+
 export const Ui = {
   Inputs: {
     url: document.getElementById("url"),
@@ -11,6 +13,7 @@ export const Ui = {
     logout: document.querySelector(".user__profile a"),
     userProfile: document.querySelector(".user__profile>button"),
     theme: document.querySelector(".theme-selector .theme-selector__toggle"),
+    shortenFromClipBoard: document.querySelector("#clipboard-alert button"),
   },
   Forms: {
     shorten: document.forms.item(0),
@@ -35,30 +38,70 @@ export const Ui = {
     linkCount: document.querySelector("label[for=tab2] .badge"),
   },
   shortenedUrl: (longUrl, shortUrl) => {
-    const shortLink = document.querySelector("#success a");
+    const shortLink = document.querySelector("#url-shortened a");
     shortLink.href = shortUrl;
     shortLink.textContent = shortUrl;
-    shortLink.setAttribute("popover-left", longUrl);
 
     document
       .getElementById("copy-to-clipboard")
-      .addEventListener("click", () => navigator.clipboard.writeText(shortUrl));
+      .addEventListener("click", () => {
+        Clipboard.copyAndIgnoreUrl(shortUrl).then(() => {
+          Ui.successWithTimeout("URL copied!", 2000);
+        });
+      });
 
-    document.getElementById("message").className =
-      "success alert alert-success";
+    displayAlertType("url-shortened");
   },
   waiting: () => {
-    document.getElementById("message").className =
-      "waiting alert alert-warning";
+    displayAlertType("waiting");
+  },
+  success: (message) => {
+    document.getElementById("simple-message").textContent = message;
+    displayAlertType("simple-message-success");
+  },
+  successWithTimeout: (message, timeout) => {
+    Ui.success(message);
+    setTimeout(Ui.hideAlert, timeout);
   },
   error: (message) => {
-    document.getElementById("error").textContent = message;
-    document.getElementById("message").className = "error alert alert-danger";
+    document.getElementById("simple-message").textContent = message;
+    displayAlertType("simple-message-error");
   },
-  clearMessage: () => {
-    document.getElementById("message").hide();
+  warning: (message) => {
+    document.getElementById("simple-message").textContent = message;
+    displayAlertType("simple-message-warning");
+  },
+  warningWithTimeout: (message, timeout) => {
+    Ui.warning(message);
+    setTimeout(Ui.hideAlert, timeout);
+  },
+  clipboardAlert: (url) => {
+    document.querySelector("#clipboard-alert span").textContent = url;
+    displayAlertType("clipboard-alert");
+  },
+  hideAlert: () => {
+    document.getElementById("alert-check").checked = true;
   },
 };
+function displayAlertType(type) {
+  const alert = document.getElementById("alert");
+  alert.className = "alert dismissible";
+  const alertClasses = {
+    "url-shortened": "alert-success",
+    "simple-message-success": "alert-success",
+    "simple-message-error": "alert-danger",
+    "clipboard-alert": "alert-warning",
+    waiting: "alert-warning",
+    "simple-message-warning": "alert-warning",
+  };
+  alert.classList.add(alertClasses[type]);
+  if (type.startsWith("simple-message-")) {
+    type = "simple-message";
+  }
+  alert.classList.add(type);
+
+  document.getElementById("alert-check").checked = false;
+}
 
 Element.prototype.hide = function () {
   this.classList.add("hidden");

@@ -5,6 +5,7 @@ import "@fortawesome/fontawesome-free/js/fontawesome";
 import "@fortawesome/fontawesome-free/js/regular";
 import "@fortawesome/fontawesome-free/js/solid";
 
+import { Clipboard } from "./feature/clipboard";
 import { MyLinks } from "./feature/my-links";
 import { Shorten } from "./feature/shorten";
 import { Theme } from "./theme";
@@ -15,4 +16,5 @@ document.addEventListener("DOMContentLoaded", () => {
   Theme.init();
   Shorten.init();
   MyLinks.init();
+  Clipboard.init();
 });
