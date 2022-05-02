@@ -59,13 +59,17 @@ function freezeUi() {
 }
 
 function unfreezeUi() {
-  Ui.Buttons.submit.disabled = false;
   Ui.Inputs.url.disabled = false;
+  Ui.Buttons.submit.disabled = this.value.isEmpty();
   document.addEventListener("paste", pasteIntoUrlInputAsDefault);
 }
 
 function handleOk(longUrl, shortUrl) {
   Ui.shortenedUrl(longUrl, shortUrl);
+  resetUi();
+}
+
+function resetUi() {
   Ui.Inputs.url.value = "";
   Shorten.Customize.collapse();
 }
