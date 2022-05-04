@@ -20,6 +20,7 @@ function insertAsLinkItems(urls) {
 function insertLink(url) {
   const newLinkItem = Ui.Lists.myLinks.querySelector("li").cloneNode(true);
   bindActions(newLinkItem);
+  newLinkItem.dataset["path"] = url.path;
 
   const a = newLinkItem.querySelector("a");
   a.setAttribute("href", url.shortened_url);
@@ -78,22 +79,30 @@ function highlightSearch(item, searchText) {
 
 function confirmDelete(clickEvent) {
   const enclosingLinkItem = clickEvent.target.closest("li");
-  ["border", "border-danger", "shadow"].forEach((cl) =>
-    enclosingLinkItem.classList.add(cl)
-  );
+  highlight(enclosingLinkItem);
   showConfirmActions(enclosingLinkItem);
 }
 
 function doDelete(clickEvent) {
-  clickEvent.target.closest("li").remove();
-  updateCount();
+  const enclosingLinkItem = clickEvent.target.closest("li");
+  unhighlight(enclosingLinkItem);
+  hideConfirmActions(enclosingLinkItem);
+  startWaiting(enclosingLinkItem);
+  API.remove(enclosingLinkItem.dataset.path)
+    .then(() => {
+      clickEvent.target.closest("li").remove();
+      updateCount();
+      Ui.successWithTimeout("Link removed successfully", 2000);
+    })
+    .catch((error) => {
+      Ui.errorWithTimeout(error.message, 5000);
+      doneWaiting(enclosingLinkItem);
+    });
 }
 
 function cancelDelete(clickEvent) {
   const enclosingLinkItem = clickEvent.target.closest("li");
-  ["border", "border-danger", "shadow"].forEach((cl) =>
-    enclosingLinkItem.classList.remove(cl)
-  );
+  unhighlight(enclosingLinkItem);
   hideConfirmActions(enclosingLinkItem);
 }
 
@@ -107,6 +116,18 @@ function hideConfirmActions(linkItem) {
   linkItem.querySelector(".confirm-button").hide();
   linkItem.querySelector(".cancel-button").hide();
   linkItem.querySelector(".delete-button").show();
+}
+
+function highlight(enclosingLinkItem) {
+  ["border", "border-danger", "shadow"].forEach((cl) =>
+    enclosingLinkItem.classList.add(cl)
+  );
+}
+
+function unhighlight(enclosingLinkItem) {
+  ["border", "border-danger", "shadow"].forEach((cl) =>
+    enclosingLinkItem.classList.remove(cl)
+  );
 }
 
 function updateCount() {
@@ -146,6 +167,24 @@ function visibleItemCount() {
   return Ui.Lists.myLinks.querySelectorAll(
     "li:not([class='template-item']):not([class='hidden'])"
   ).length;
+}
+
+function startWaiting(enclosingLinkItem) {
+  const deleteButton = enclosingLinkItem.querySelector(".delete-button");
+  const deleteIcon = deleteButton.querySelector(":last-child");
+  deleteIcon.style["visibility"] = "hidden";
+  const waitingDot = deleteButton.querySelector(".dot");
+  waitingDot.show();
+  deleteButton.disabled = "true";
+}
+
+function doneWaiting(enclosingLinkItem) {
+  const deleteButton = enclosingLinkItem.querySelector(".delete-button");
+  deleteButton.disabled = false;
+  const deleteIcon = deleteButton.querySelector(":last-child");
+  deleteIcon.style["visibility"] = "visible";
+  const waitingDot = deleteButton.querySelector(".dot");
+  waitingDot.hide();
 }
 
 function showSimpleUi() {

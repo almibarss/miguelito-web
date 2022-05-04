@@ -67,6 +67,10 @@ export const Ui = {
     document.getElementById("simple-message").textContent = message;
     displayAlertType("simple-message-error");
   },
+  errorWithTimeout: (message, timeout) => {
+    Ui.error(message);
+    setTimeout(Ui.hideAlert, timeout);
+  },
   warning: (message) => {
     document.getElementById("simple-message").textContent = message;
     displayAlertType("simple-message-warning");

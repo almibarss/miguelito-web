@@ -223,6 +223,14 @@ img#oops {
     content: none;
 }
 
+.delete-button {
+    position: relative;
+}
+
+.delete-button[disabled] {
+    opacity: 1;
+}
+
 #search-links {
     width: 100%;
 }

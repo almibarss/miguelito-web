@@ -39,6 +39,10 @@ export const API = {
       .then((urls) => urls.map(augmentWithShortenedUrl))
       .catch(handleError);
   },
+  remove: async (path) => {
+    return RestAPI.del(apiName, `/urls/${path}`, await requestOptions())
+      .catch(handleError);
+  },
 };
 
 function augmentWithShortenedUrl(url) {

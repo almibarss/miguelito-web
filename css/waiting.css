@@ -6,7 +6,7 @@ div#waiting {
 	margin-right: auto;
 }
 
-div#waiting .dot {
+.dot {
 	display:inline-block;
 	width:10px;
 	height:10px;
@@ -16,11 +16,19 @@ div#waiting .dot {
 	animation: wave 1.3s linear infinite;
 }
 
-div#waiting .dot:nth-child(2) {
+.delete-button .dot {
+	position: absolute;
+	left: 40%;
+	bottom: 40%;
+	background-color: var(--danger-text);
+	margin-right: 0;
+}
+
+.dot:nth-child(2) {
 	animation-delay: -1.1s;
 }
 
-div#waiting .dot:nth-child(3) {
+.dot:nth-child(3) {
 	animation-delay: -0.9s;
 }
 
