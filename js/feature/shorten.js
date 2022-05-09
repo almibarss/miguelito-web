@@ -60,7 +60,7 @@ function freezeUi() {
 
 function unfreezeUi() {
   Ui.Inputs.url.disabled = false;
-  Ui.Buttons.submit.disabled = this.value.isEmpty();
+  Ui.Buttons.submit.disabled = Ui.Inputs.url.value.isEmpty();
   document.addEventListener("paste", pasteIntoUrlInputAsDefault);
 }
 
