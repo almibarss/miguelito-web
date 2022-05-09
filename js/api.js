@@ -17,16 +17,16 @@ const apiName = "miguelito";
 
 export const API = {
   shorten: async (url, customPath) => {
+    const requestBody = { url };
     const withCustomPath = !(customPath ?? "").trim().isEmpty();
-    const body = { url };
     if (withCustomPath) {
-      body.custom_path = customPath;
+      requestBody.custom_path = customPath;
     }
 
     return RestAPI.post(
       apiName,
-      withCustomPath ? "/shorten-custom" : "/shorten",
-      await requestOptionsWithBody(body)
+      await shortenApiPath(),
+      await requestOptionsWithBody(requestBody)
     )
       .then((data) => data.path)
       .then(buildUrl)
@@ -40,10 +40,17 @@ export const API = {
       .catch(handleError);
   },
   remove: async (path) => {
-    return RestAPI.del(apiName, `/urls/${path}`, await requestOptions())
-      .catch(handleError);
+    return RestAPI.del(apiName, `/urls/${path}`, await requestOptions()).catch(
+      handleError
+    );
   },
 };
+
+function shortenApiPath() {
+  return currentUser()
+    .then(() => "/urls")
+    .catch(() => "/public/urls");
+}
 
 function augmentWithShortenedUrl(url) {
   return { ...url, shortened_url: buildUrl(url.path) };
@@ -66,9 +73,7 @@ function authHeader() {
     .then((user) => ({
       Authorization: `Bearer ${user.jwtToken}`,
     }))
-    .catch(() => {
-      // ignore no current user
-    });
+    .catch(noop);
 }
 
 function buildUrl(path) {
@@ -88,3 +93,5 @@ function handleError(error) {
 function byCreationDate(url1, url2) {
   return Date.parse(url1.created_at) - Date.parse(url2.created_at);
 }
+
+function noop() {}
