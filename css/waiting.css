@@ -12,16 +12,8 @@ div#waiting {
 	height:10px;
 	border-radius:50%;
 	margin-right:3px;
-	background:#303131;
+	background-color: var(--primary-text);
 	animation: wave 1.3s linear infinite;
-}
-
-.delete-button .dot {
-	position: absolute;
-	left: 40%;
-	bottom: 40%;
-	background-color: var(--danger-text);
-	margin-right: 0;
 }
 
 .dot:nth-child(2) {

@@ -83,7 +83,7 @@ function buildUrl(path) {
 function handleError(error) {
   console.error(error);
   const { response } = error;
-  if (response && response.status < 500) {
+  if (response?.status === 400) {
     throw new ApiError(response.data.message);
   } else {
     throw new UnknownError();
