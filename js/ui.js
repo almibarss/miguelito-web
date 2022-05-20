@@ -95,7 +95,7 @@ function displayAlertType(type) {
     "simple-message-success": "alert-success",
     "simple-message-error": "alert-danger",
     "clipboard-alert": "alert-warning",
-    waiting: "alert-warning",
+    waiting: "alert-primary",
     "simple-message-warning": "alert-warning",
   };
   alert.classList.add(alertClasses[type]);
