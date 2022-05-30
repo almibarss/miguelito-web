@@ -138,7 +138,7 @@ function updateCountFiltered(countBadge, itemCount) {
 
 function visibleItemCount() {
   return Ui.Lists.myLinks.querySelectorAll(
-    "li:not([class='template-item']):not([class='hidden'])"
+    "li:not(.template-item):not(.hidden)"
   ).length;
 }
 
