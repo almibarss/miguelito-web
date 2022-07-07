@@ -1,0 +1,222 @@
+@use "papercss/dist/paper";
+@use "../../css/waiting.css";
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+
+:host(.is-hidden) {
+  display: none;
+}
+
+:host([action]) {
+  & .btn-action {
+    display: none;
+  }
+
+  & li {
+    @extend .border;
+    border-style: solid;
+    border-width: 2px;
+  }
+
+
+  & .btn-confirm-ok {
+    $hidden: ico-success, ico-failure;
+    @each $h in $hidden {
+      & .#{$h} {
+      }
+    }
+  }
+}
+
+:host(:not(.is-success)) {
+  & .btn-confirm-ok .ico-success {
+    display: none;
+  }
+}
+
+:host(:not(.is-failure)) {
+  & .btn-confirm-ok .ico-failure {
+    display: none;
+  }
+}
+
+:host(:not([action])) {
+  & .btn-confirm {
+    display: none;
+  }
+}
+
+:host(.is-confirm) {
+  & .btn-confirm-ok {
+    @extend .btn-primary-outline;
+
+    $hidden: ico-success, ico-confirm, ico-failure;
+    @each $h in $hidden {
+      & .#{$h} {
+        display: none;
+      }
+    }
+  }
+}
+
+:host(.is-success) {
+  & .btn-confirm-ok {
+    @extend .btn-success;
+
+    $hidden: ico-confirm, ico-failure;
+    @each $h in $hidden {
+      & .#{$h} {
+        display: none;
+      }
+    }
+  }
+}
+
+:host(.is-failure) {
+  & .btn-confirm-ok {
+    @extend .btn-danger;
+
+    $hidden: ico-success, ico-confirm;
+    @each $h in $hidden {
+      & .#{$h} {
+        display: none;
+      }
+    }
+  }
+}
+
+:host([action="edit"]) {
+  & .data {
+    display: none;
+  }
+
+  & li {
+    @extend .border-warning;
+  }
+}
+
+:host([action="delete"]) {
+  & li {
+    @extend .border-danger;
+  }
+}
+
+:host(:not([action="edit"])) {
+  & .edit {
+    display: none;
+  }
+}
+
+@mixin data {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-grow: 2;
+  gap: .2rem;
+}
+
+li {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: .5rem;
+  padding: 0.75rem;
+  text-indent: 0;
+  margin: .5rem 0;
+
+  $align: btn-action, btn-confirm;
+  @each $a in $align {
+    & .#{$a} {
+      // override papercss settings
+      align-self: flex-start;
+    }
+  }
+}
+
+.data {
+  @include data;
+
+  & .url {
+    align-self: flex-start;
+  }
+}
+
+.edit {
+  @include data;
+  gap: .5rem;
+}
+
+.url {
+  font-size: larger;
+}
+
+.origin {
+  font-size: smaller;
+  word-break: break-word;
+}
+
+@mixin button {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+}
+
+.btn-action {
+  @include button;
+
+  &-edit {
+    @extend .btn-primary-outline;
+  }
+  &-delete {
+    @extend .btn-danger-outline;
+  }
+}
+
+.btn-confirm {
+  @include button;
+
+  &-cancel {
+    @extend .btn-primary-outline;
+  }
+  &-ok {
+    @extend .btn-success;
+  }
+}
+
+.input-url {
+  @extend input;
+  display: flex;
+  color: var(--muted);
+
+  & input {
+    flex-grow: 2;
+    display: inline;
+    border: 0;
+    padding: 0;
+  }
+}
+
+li.removed-item {
+  animation: slide-left .8s cubic-bezier(.65,-0.02,.72,.29);
+}
+
+@keyframes slide-left {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(50px);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(-800px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-800px);
+  }
+}

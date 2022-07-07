@@ -1,10 +1,9 @@
 const awsconfig = {
   Auth: {
     region: "eu-west-1",
-    userPoolId: "eu-west-1_v1Na5QJZt",
-    userPoolWebClientId: "3kfh1rbtndqb7oqqpeeu3iqqpb",
+    userPoolId: "eu-west-1_UhSJz7ahQ",
+    userPoolWebClientId: "5dcfv1qheg2ea8g4vub01min37",
     oauth: {
-      // domain: "auth.migueli.to",
       domain: "auth-dev-migueli-to.auth.eu-west-1.amazoncognito.com",
       scope: ["openid"],
       redirectSignIn: "http://localhost:8080/",

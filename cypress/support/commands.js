@@ -25,3 +25,65 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 import "@testing-library/cypress/add-commands";
+
+import { RestAPI } from "@aws-amplify/api-rest";
+import { Auth } from "@aws-amplify/auth";
+
+import awsconfig from "../../aws-exports";
+
+Auth.configure(awsconfig);
+RestAPI.configure(awsconfig);
+
+const testUser = {
+  username: Cypress.env("username"),
+  password: Cypress.env("password"),
+};
+
+const dataTestAttr = "data-testid";
+
+Cypress.Commands.add("signIn", () => {
+  const idToken = Auth.signIn(testUser.username, testUser.password).then(
+    (cognitoUser) => cognitoUser.signInUserSession.idToken.jwtToken
+  );
+  cy.wrap(idToken).as("idToken");
+});
+
+Cypress.Commands.add("grantClipboardPermission", () => {
+  cy.wrap(
+    Cypress.automation("remote:debugger:protocol", {
+      command: "Browser.grantPermissions",
+      params: {
+        permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
+        // make the permission tighter by allowing the current origin only
+        // like "http://localhost:56978"
+        origin: window.location.origin,
+      },
+    })
+  );
+});
+
+Cypress.Commands.add("createLinkCustom", (url, path) => {
+  cy.get("@idToken").then((idToken) => {
+    return RestAPI.post("miguelito", "/urls", {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: { url, custom_path: path },
+    });
+  });
+});
+
+Cypress.Commands.add("removeLink", (path) => {
+  cy.get("@idToken").then((idToken) => {
+    return RestAPI.del("miguelito", `/urls/${path}`, {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+  });
+});
+
+Cypress.Commands.add("getByTestId", (...dataTestIds) => {
+  const sel = dataTestIds.map((id) => `[${dataTestAttr}="${id}"]`).join(",");
+  return cy.get(sel);
+});

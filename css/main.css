@@ -2,10 +2,6 @@
 
 body { background-color: var(--main-background); }
 
-html.dark .btn-warning {
-    color: var(--primary-text);
-}
-
 [popover-bottom] { margin: 0; }
 
 .container {
@@ -178,11 +174,7 @@ img#oops {
 
 /* Fix PaperCSS tab styles */
 .tabs input {
-    display: block;
-}
-
-.tabs .paper-btn {
-    display: inline-block;
+    display: inline;
 }
 
 .tabs input[name=tabs] {
@@ -203,57 +195,6 @@ img#oops {
 
 #my-links ul::-webkit-scrollbar {
     display: none;
-}
-
-#my-links li {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    column-gap: .5rem;
-    padding: 0.75rem;
-    text-indent: 0;
-}
-
-#my-links .template-item {
-    display: none;
-}
-
-#my-links li:before {
-    content: none;
-}
-
-.link-item:not(.link-item--confirmDelete) :is(.btn-confirm, .btn-cancel) {
-    display: none;
-}
-
-.link-item--confirmDelete .btn-delete {
-    display: none;
-}
-
-.btn-square {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.btn-delete[disabled] {
-    opacity: .8;
-}
-
-.btn-delete:not(.btn-delete--success) .ico-success,
-.btn-delete:not(.btn-delete--failure) .ico-failure,
-.btn-delete:not(.btn-delete--waiting) .dot {
-    display: none;
-}
-
-.btn-delete:is(.btn-delete--waiting, .btn-delete--success, .btn-delete--failure) .ico-delete {
-    display: none;
-}
-
-li.removed-item {
-    animation: removed-item-animation .8s cubic-bezier(.65,-0.02,.72,.29);
 }
 
 .shake-horizontal {
@@ -301,46 +242,12 @@ li.removed-item {
     }
 }
 
-@keyframes removed-item-animation {
-    0% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    30% {
-        opacity: 1;
-        transform: translateX(50px);
-    }
-
-    80% {
-        opacity: 1;
-        transform: translateX(-800px);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateX(-800px);
-    }
-}
-
 #search-links {
     width: 100%;
 }
 
-#my-links li > div {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 95%;
-}
-
-#my-links li a {
-    font-size: larger;
-}
-
-#my-links li span {
-    font-size: smaller;
-    word-break: break-word;
+.badge:not(.is-filtered) i {
+    display: none;
 }
 
 @keyframes slide-left {

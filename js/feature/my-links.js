@@ -1,7 +1,8 @@
+import "../components/link-item";
+
 import { API } from "../api";
 import { currentUser } from "../auth";
 import { Ui } from "../ui";
-import { LinkItem } from "./link-item";
 
 export const MyLinks = {
   init: () => {
@@ -11,7 +12,7 @@ export const MyLinks = {
 
 function loadUserUrls() {
   API.list().then(insertAsLinkItems).then(updateCount);
-  Ui.Inputs.searchLinks.addEventListener("input", filterList);
+  Ui.Inputs.searchLinks.addEventListener("input", filter);
 }
 
 function insertAsLinkItems(urls) {
@@ -19,127 +20,55 @@ function insertAsLinkItems(urls) {
 }
 
 function insertLink(url) {
-  const newLinkItem = Ui.Lists.myLinks.querySelector("li").cloneNode(true);
-  bindActions(newLinkItem);
-  newLinkItem.dataset["path"] = url.path;
-
-  const a = newLinkItem.querySelector("a");
-  a.setAttribute("href", url.shortened_url);
-  a.textContent = url.shortened_url;
-
-  const span = newLinkItem.querySelector("span");
-  span.textContent = url.links_to;
-
-  newLinkItem.classList.remove("template-item");
-  Ui.Lists.myLinks.appendChild(newLinkItem);
-}
-
-function bindActions(linkItem) {
-  linkItem
-    .querySelector(".btn-delete")
-    .addEventListener("click", confirmDelete);
-  linkItem.querySelector(".btn-confirm").addEventListener("click", doDelete);
-  linkItem.querySelector(".btn-cancel").addEventListener("click", cancelDelete);
-}
-
-function filterList(inputEvent) {
-  const searchText = inputEvent.target.value;
-  const linkItems = Ui.Lists.myLinks.querySelectorAll(
-    "li:not([class='template-item'])"
-  );
-  for (const item of linkItems) {
-    if (matchesSearch(item, searchText)) {
-      highlightSearch(item, searchText);
-      item.show();
+  const linkItem = document.createElement("link-item");
+  linkItem.setAttribute("url", url.shortened_url);
+  linkItem.setAttribute("origin", url.links_to);
+  linkItem.addEventListener("confirm", (ev) => {
+    if (ev.detail.type === "delete") {
+      handleConfirmDelete(linkItem);
     } else {
-      item.hide();
+      handleConfirmEdit(linkItem, ev);
     }
-  }
-  updateCount();
+  });
+  Ui.Lists.myLinks.appendChild(linkItem);
 }
 
-function matchesSearch(item, searchText) {
-  const shortUrl = item.querySelector("a");
-  const longUrl = item.querySelector("span");
-  return (
-    shortUrl.textContent.includesCaseInsensitive(searchText) ||
-    longUrl.textContent.includesCaseInsensitive(searchText)
-  );
-}
-
-function highlightSearch(item, searchText) {
-  const regex = new RegExp(searchText, "gi");
-  for (const url of [item.querySelector("a"), item.querySelector("span")]) {
-    url.innerHTML = url.innerHTML
-      .replace(/(<mark class="background-warning">|<\/mark>)/gim, "")
-      .replace(regex, '<mark class="background-warning">$&</mark>');
-  }
-}
-
-function confirmDelete(clickEvent) {
-  const linkItem = new LinkItem(clickEvent.target.closest("li"));
-  linkItem.toggleHighlight().toggleConfirmDelete();
-}
-
-function cancelDelete(clickEvent) {
-  const linkItem = new LinkItem(clickEvent.target.closest("li"));
-  linkItem.toggleHighlight().toggleConfirmDelete();
-}
-
-function doDelete(clickEvent) {
-  const linkItem = new LinkItem(clickEvent.target.closest("li"));
-  linkItem.toggleHighlight().toggleConfirmDelete().startWaiting();
+function handleConfirmDelete(linkItem) {
   API.remove(linkItem.path)
-    .then(() => handleDeleteOk(linkItem))
-    .catch((error) => handleDeleteError(linkItem, error));
+    .then(() => linkItem.confirm({ success: true }))
+    .then(() => linkItem.deleteAnimated())
+    .catch((error) => {
+      Ui.errorWithTimeout(error.message, 2000);
+      linkItem.confirm({ success: false });
+    });
 }
 
-function handleDeleteOk(linkItem) {
-  linkItem.doneWaiting().success().removeAfter(1000).then(updateCount);
+function handleConfirmEdit(linkItem, confirmEvent) {
+  API.update(linkItem.path, confirmEvent.detail.newData)
+    .then(() => linkItem.confirm({ success: true }))
+    .catch((error) => {
+      Ui.errorWithTimeout(error.message, 2000);
+      linkItem.confirm({ success: false });
+    });
 }
 
-function handleDeleteError(linkItem, error) {
-  Ui.errorWithTimeout(error.message, 5000);
-  linkItem.doneWaiting().failure().resetAfter(1500);
+function filter(inputEvent) {
+  const searchText = inputEvent.target.value;
+  const links = Ui.Lists.myLinks.querySelectorAll("link-item");
+  links.forEach((link) => link.filter(searchText));
+  updateCount();
 }
 
 function updateCount() {
   const searchText = Ui.Inputs.searchLinks.value;
   const countBadge = Ui.Badges.linkCount;
   const itemCount = visibleItemCount();
-  if (searchText.isEmpty()) {
-    updateCountUnfiltered(countBadge, itemCount);
-  } else {
-    updateCountFiltered(countBadge, itemCount);
-  }
-}
-
-function updateCountUnfiltered(countBadge, itemCount) {
-  if (itemCount === 0) {
-    countBadge.hide();
-    return;
-  }
-  countBadge.replaceChild(
-    document.createTextNode(itemCount),
-    countBadge.lastChild
-  );
-  countBadge.show();
-  countBadge.querySelector(".fa-filter").hide();
-}
-
-function updateCountFiltered(countBadge, itemCount) {
-  countBadge.replaceChild(
-    document.createTextNode(` ${itemCount > 0 ? itemCount : "-"}`),
-    countBadge.lastChild
-  );
-  countBadge.show();
-  countBadge.querySelector(".fa-filter").show();
+  countBadge.classList.toggle("is-filtered", !searchText.isEmpty());
+  countBadge.replaceAllText("beforeend", itemCount > 0 ? itemCount : "-");
 }
 
 function visibleItemCount() {
-  return Ui.Lists.myLinks.querySelectorAll(
-    "li:not(.template-item):not(.hidden)"
-  ).length;
+  return Ui.Lists.myLinks.querySelectorAll("link-item:not(.is-hidden)").length;
 }
 
 function showSimpleUi() {

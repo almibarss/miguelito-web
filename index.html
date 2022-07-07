@@ -4,6 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name=viewport content="width=device-width,initial-scale=1">
 		<title>Serverless URL shortener</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	</head>
 	<style>
 
@@ -12,11 +13,13 @@
 		<div class="header row flex-right">
 			<div class="user col col-4">
 				<div class="user__login">
-					<button class="simple-button"><i class="far fa-user"></i> Signin with Google</button>
+					<button class="simple-button">
+						<i class="fa fa-user" aria-hidden="true"></i> Signin with Google
+					</button>
 				</div>
 				<div class="user__profile user__profile--collapsed">
 					<button class="simple-button">
-						<i class="fas fa-user"></i> Hi <span class="user__name"></span>
+						<i class="fa fa-user"></i> Hi <span class="user__name"></span>
 					</button>
 					<div class="container">
 						<ul class="user__nav ui-list ui-list--horizontal">
@@ -57,7 +60,7 @@
 			<div class="col-8 col">
 
 				<input class="alert-state" id="alert-check" type="checkbox" checked>
-				<div id="alert" class="alert dismissible">
+				<div data-testid="alert" id="alert" class="alert dismissible">
 
 					<div id="clipboard-alert">
 						<span></span>
@@ -74,7 +77,7 @@
 					<div id="url-shortened">
 						<a id="short-url" target="_blank"></a>
 						<button id="copy-to-clipboard" class="simple-button">
-							<i class="far fa-clipboard"></i>
+							<i class="fa fa-clipboard"></i>
 						</button>
 					</div>
 
@@ -89,7 +92,7 @@
 					<label for="tab1">Shorten</label>
 
 					<input id="tab2" type="radio" name="tabs">
-					<label for="tab2">My Links <span class="badge hidden"><i class="fas fa-filter hidden"></i>X</span></label>
+					<label for="tab2">My Links <span class="badge"><i class="fa fa-filter"></i>-</span></label>
 
 					<div class="content" id="content1">
 						<form>
@@ -111,24 +114,7 @@
 						<div id="my-links">
 							<input id="search-links" placeholder="Search"/>
 							<ul>
-								<li class="template-item link-item">
-									<div>
-										<a></a>
-										<span></span>
-									</div>
-									<button type="button" class="btn-cancel btn-square">
-										<i class="fas fa-xmark"></i>
-									</button>
-									<button type="button" class="btn-confirm btn-square btn-warning">
-										<i class="fas fa-check"></i>
-									</button>
-									<button type="button" class="btn-delete btn-square btn-danger">
-										<i class="far fa-trash-alt ico-delete"></i>
-										<span class="dot"></span>
-										<i class="fas fa-check ico-success"></i>
-										<i class="fas fa-xmark ico-failure"></i>
-									</button>
-								</li>
+<!--								<link-item url="http://migueli.to/google" path="google" origin="https://www.google.com"></link-item>-->
 							</ul>
 						</div>
 					</div>

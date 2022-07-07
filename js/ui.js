@@ -87,6 +87,7 @@ export const Ui = {
     document.getElementById("alert-check").checked = true;
   },
 };
+
 function displayAlertType(type) {
   const alert = document.getElementById("alert");
   alert.className = "alert dismissible";
@@ -106,6 +107,25 @@ function displayAlertType(type) {
 
   document.getElementById("alert-check").checked = false;
 }
+
+HTMLSpanElement.prototype.replaceAllText = function (position, newText) {
+  const notText = [...this.childNodes].filter(
+    (n) => n.nodeType !== Node.TEXT_NODE
+  );
+  this.replaceChildren(...notText);
+  this.insertAdjacentText(position, newText);
+};
+
+DOMTokenList.prototype.removeStartingWith = function (...prefixes) {
+  const values = [...this.values()];
+  const toBeRemoved = [];
+  values.forEach((v) => {
+    if (prefixes.filter((prefix) => v.startsWith(prefix)).length > 0) {
+      toBeRemoved.push(v);
+    }
+  });
+  this.remove(...toBeRemoved);
+};
 
 Element.prototype.hide = function () {
   this.classList.add("hidden");

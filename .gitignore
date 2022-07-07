@@ -3,4 +3,5 @@ dist/
 
 cypress/screenshots/
 
-amplify/
+/**/components/*.css*
+cypress.env.json

@@ -44,6 +44,13 @@ export const API = {
       handleError
     );
   },
+  update: async (oldPath, newData) => {
+    return RestAPI.patch(
+      apiName,
+      `/urls/${oldPath}`,
+      await requestOptionsWithBody(newData)
+    ).catch(handleError);
+  },
 };
 
 function shortenApiPath() {
@@ -77,7 +84,7 @@ function authHeader() {
 }
 
 function buildUrl(path) {
-  return `${window.location.host}/${path}`;
+  return `${window.location.origin}/${path}`;
 }
 
 function handleError(error) {
