@@ -35,7 +35,7 @@ export const API = {
   list: async () => {
     return RestAPI.get(apiName, "/links", await requestOptions())
       .then((data) => data.data)
-      .then((links) => links.sort(byCreationDate).reverse())
+      .then((links) => links.sort(byUpdateDate).reverse())
       .then((links) => links.map(augmentWithShortenedUrl))
       .catch(handleError);
   },
@@ -99,8 +99,11 @@ function handleError(error) {
   }
 }
 
-function byCreationDate(url1, url2) {
-  return Date.parse(url1.created_at) - Date.parse(url2.created_at);
+function byUpdateDate(url1, url2) {
+  return (
+    Date.parse(url1.updated_at ?? url1.created_at) -
+    Date.parse(url2.updated_at ?? url2.created_at)
+  );
 }
 
 function noop() {}
