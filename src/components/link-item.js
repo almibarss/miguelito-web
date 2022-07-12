@@ -20,13 +20,13 @@ class LinkItem extends HTMLElement {
       origin: this.shadowRoot.querySelector(".origin"),
     };
     this.inputs = {
-      path: this.shadowRoot.querySelector(".input-url input"),
+      backhalf: this.shadowRoot.querySelector(".input-url input"),
       origin: this.shadowRoot.querySelector(".input-origin"),
     };
     this.item = this.shadowRoot.querySelector("li");
 
-    this.inputs.path.addEventListener("focus", this);
-    this.inputs.path.addEventListener("blur", this);
+    this.inputs.backhalf.addEventListener("focus", this);
+    this.inputs.backhalf.addEventListener("blur", this);
     Object.values(this.buttons).forEach((btn) => {
       btn.addEventListener("click", this);
     });
@@ -65,11 +65,11 @@ class LinkItem extends HTMLElement {
   updateUrl() {
     this.data.url.href = this.url.href;
     this.data.url.textContent = this.url.host + this.url.pathname;
-    this.inputs.path.parentElement.replaceAllText(
+    this.inputs.backhalf.parentElement.replaceAllText(
       "afterbegin",
       `${this.url.host}/`
     );
-    this.inputs.path.value = this.url.pathname.replace(/^\//, "");
+    this.inputs.backhalf.value = this.url.pathname.replace(/^\//, "");
   }
 
   setOrigin(newValue) {
@@ -80,11 +80,12 @@ class LinkItem extends HTMLElement {
   // noinspection JSUnusedGlobalSymbols
 
   handleEvent({ currentTarget: target, type }) {
-    if (target === this.inputs.path) {
+    if (target === this.inputs.backhalf) {
       if (type === "focus") {
-        this.inputs.path.parentElement.style.borderColor = "var(--secondary)";
+        this.inputs.backhalf.parentElement.style.borderColor =
+          "var(--secondary)";
       } else if (type === "blur") {
-        this.inputs.path.parentElement.removeAttribute("style");
+        this.inputs.backhalf.parentElement.removeAttribute("style");
       }
     }
 
@@ -103,8 +104,8 @@ class LinkItem extends HTMLElement {
   }
 
   startEdit() {
-    this.inputs.path.select();
-    this.inputs.path.focus();
+    this.inputs.backhalf.select();
+    this.inputs.backhalf.focus();
   }
 
   handleConfirm() {
@@ -138,8 +139,8 @@ class LinkItem extends HTMLElement {
     });
     if (currentAction === "edit") {
       event.detail.newData = {
-        ...(this.inputs.path.value !== this.path && {
-          path: this.inputs.path.value,
+        ...(this.inputs.backhalf.value !== this.backhalf && {
+          backhalf: this.inputs.backhalf.value,
         }),
         ...(this.inputs.origin.value !== this.data.origin.textContent && {
           origin: this.inputs.origin.value,
@@ -172,7 +173,7 @@ class LinkItem extends HTMLElement {
 
   confirmSuccess() {
     if (this.getAttribute("action") === "edit") {
-      this.url.pathname = this.inputs.path.value;
+      this.url.pathname = this.inputs.backhalf.value;
       this.updateUrl();
       this.setAttribute("origin", this.inputs.origin.value);
     }
@@ -216,7 +217,7 @@ class LinkItem extends HTMLElement {
     }
   }
 
-  get path() {
+  get backhalf() {
     return this.url.pathname.replace(/^\//, "");
   }
 }

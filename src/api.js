@@ -16,11 +16,11 @@ class UnknownError extends Error {
 const apiName = "miguelito";
 
 export const API = {
-  shorten: async (url, customPath) => {
-    const requestBody = { url };
-    const withCustomPath = !(customPath ?? "").trim().isEmpty();
-    if (withCustomPath) {
-      requestBody.custom_path = customPath;
+  shorten: async (url, backhalf) => {
+    const requestBody = { origin: url };
+    const isCustom = !(backhalf ?? "").trim().isEmpty();
+    if (isCustom) {
+      requestBody.backhalf = backhalf;
     }
 
     return RestAPI.post(
@@ -28,26 +28,28 @@ export const API = {
       await shortenApiPath(),
       await requestOptionsWithBody(requestBody)
     )
-      .then((data) => data.path)
+      .then((data) => data.backhalf)
       .then(buildUrl)
       .catch(handleError);
   },
   list: async () => {
-    return RestAPI.get(apiName, "/urls", await requestOptions())
-      .then((data) => data.urls)
-      .then((urls) => urls.sort(byCreationDate).reverse())
-      .then((urls) => urls.map(augmentWithShortenedUrl))
+    return RestAPI.get(apiName, "/links", await requestOptions())
+      .then((data) => data.data)
+      .then((links) => links.sort(byCreationDate).reverse())
+      .then((links) => links.map(augmentWithShortenedUrl))
       .catch(handleError);
   },
-  remove: async (path) => {
-    return RestAPI.del(apiName, `/urls/${path}`, await requestOptions()).catch(
-      handleError
-    );
+  remove: async (backhalf) => {
+    return RestAPI.del(
+      apiName,
+      `/links/${backhalf}`,
+      await requestOptions()
+    ).catch(handleError);
   },
-  update: async (oldPath, newData) => {
+  update: async (backhalf, newData) => {
     return RestAPI.patch(
       apiName,
-      `/urls/${oldPath}`,
+      `/links/${backhalf}`,
       await requestOptionsWithBody(newData)
     ).catch(handleError);
   },
@@ -55,12 +57,12 @@ export const API = {
 
 function shortenApiPath() {
   return currentUser()
-    .then(() => "/urls")
-    .catch(() => "/public/urls");
+    .then(() => "/links")
+    .catch(() => "/public/links");
 }
 
-function augmentWithShortenedUrl(url) {
-  return { ...url, shortened_url: buildUrl(url.path) };
+function augmentWithShortenedUrl(link) {
+  return { ...link, shortened_url: buildUrl(link.backhalf) };
 }
 
 async function requestOptionsWithBody(body) {
