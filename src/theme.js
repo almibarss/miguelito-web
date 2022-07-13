@@ -12,21 +12,6 @@ function switchTheme() {
 
   const newTheme = Ui.Buttons.theme.checked ? "dark" : "light";
   saveUserSetting(newTheme);
-
-  updateIcon("sun", newTheme === "light" ? "solid" : "regular");
-  updateIcon("moon", newTheme === "dark" ? "solid" : "regular");
-}
-
-function updateIcon(name, style) {
-  const icon = document.querySelector(`.fa-${name}`);
-  icon.parentElement.replaceChild(newIcon(name, style), icon);
-
-  // font-awesome transforms the icon element into a svg at runtime 🤷
-  function newIcon(name, style) {
-    const i = document.createElement("i");
-    [`fa-${name}`, `fa-${style}`].forEach((cl) => i.classList.add(cl));
-    return i;
-  }
 }
 
 function applyUserSetting() {
