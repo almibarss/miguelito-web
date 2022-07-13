@@ -97,14 +97,12 @@
 					<div class="content" id="content1">
 						<form>
 							<div class="form-group">
-								<label for="url">Enter URL to shorten</label>
-								<input class="input-block" name="url" id="url" autocomplete="off" required>
-								<button type="button" class="simple-button hidden hidden" id="customize">✨Customize</button>
-								<div id="custom-path" class="hidden">
-									<label for="custom-path">https://migueli.to/</label>
-									<input class="input" name="custom-path" autocomplete="off" spellcheck="false"
-												 placeholder="custom-path">
-								</div>
+								<label for="input-url">Enter URL to shorten</label>
+								<input name="url" id="input-url" class="input-block" autocomplete="off" required>
+								<button type="button" id="btn-customize" class="simple-button">✨Customize</button>
+								<span id="input-backhalf" class="is-hidden">
+									<input name="backhalf" type="text" placeholder="my-custom-link" spellCheck="false" />
+								</span>
 							</div>
 							<input id="submit" class="paper-btn btn-primary" type="submit" value="Shorten link" disabled>
 						</form>

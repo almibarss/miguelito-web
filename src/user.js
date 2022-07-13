@@ -14,12 +14,10 @@ export const User = {
 function userIsLoggedIn({ name: username }) {
   document.querySelector(".user").classList.add("user--loggedIn");
   Ui.Text.username.textContent = username;
-  Shorten.Customize.allow();
 }
 
 function userIsNotLoggedIn() {
   document.querySelector(".user").classList.remove("user--loggedIn");
-  Shorten.Customize.disallow();
 }
 
 function toggleUserProfileOpen() {

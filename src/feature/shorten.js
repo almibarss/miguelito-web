@@ -1,54 +1,48 @@
 import { API } from "../api";
+import { currentUser } from "../auth";
 import { Ui } from "../ui";
-
-const customPathDiv = document.querySelector("div#custom-path");
 
 export const Shorten = {
   init: () => {
+    fetchBaseUrl();
     Ui.Forms.shorten.addEventListener("submit", submitUrl);
     Ui.Inputs.url.addEventListener("input", Ui.hideAlert);
     Ui.Inputs.url.addEventListener("input", function () {
       Ui.Buttons.submit.disabled = this.value.isEmpty();
     });
-    Ui.Inputs.customPath.addEventListener("keydown", collapseIfEscPressed);
+    Ui.Inputs.backhalfEditable.addEventListener(
+      "keydown",
+      collapseIfEscPressed
+    );
     Ui.Buttons.customize.addEventListener("click", expandCustomize);
     document.addEventListener("paste", pasteIntoUrlInputAsDefault);
   },
-  shorten: (inputUrl, customPath) => {
+  shorten: (url, backhalf) => {
     freezeUi();
-    API.shorten(inputUrl, customPath)
-      .then((shortUrl) => handleOk(inputUrl, shortUrl))
+    API.shorten(url, backhalf)
+      .then(handleOk)
       .catch((error) => Ui.error(error.message))
       .finally(unfreezeUi);
   },
-  Customize: {
-    collapse: () => {
-      if (customPathDiv.classList.contains("hidden")) {
-        return;
-      }
-
-      Ui.Buttons.customize.show();
-      customPathDiv.hide();
-      Ui.Inputs.customPath.value = "";
-    },
-    allow: () => {
-      Ui.Buttons.customize.show();
-    },
-    disallow: () => {
-      Ui.Buttons.customize.hide();
-    },
-  },
 };
+
+function fetchBaseUrl() {
+  API.info()
+    .then(({ base_url }) => {
+      localStorage.setItem("baseUrl", base_url);
+      return new URL(base_url);
+    })
+    .then((url) => `${url.hostname}/`)
+    .then((url) => Ui.Inputs.backhalf.replaceAllText("afterbegin", url));
+}
 
 function submitUrl(ev) {
   ev.preventDefault();
-
   const {
-    // eslint-disable-next-line prettier/prettier
-    "url": { value: inputUrl },
-    "custom-path": { value: customPath },
+    url: { value: url },
+    backhalf: { value: backhalf },
   } = ev.target;
-  Shorten.shorten(inputUrl, customPath);
+  Shorten.shorten(url, backhalf);
 }
 
 function freezeUi() {
@@ -64,14 +58,16 @@ function unfreezeUi() {
   document.addEventListener("paste", pasteIntoUrlInputAsDefault);
 }
 
-function handleOk(longUrl, shortUrl) {
-  Ui.shortenedUrl(longUrl, shortUrl);
+function handleOk(link) {
+  const originUrl = link.origin;
+  const shortUrl = localStorage.getItem("baseUrl") + link.backhalf;
+  Ui.shortenedUrl(originUrl, shortUrl);
   resetUi();
 }
 
 function resetUi() {
   Ui.Inputs.url.value = "";
-  Shorten.Customize.collapse();
+  collapseCustomize();
 }
 
 function pasteIntoUrlInputAsDefault(ev) {
@@ -104,13 +100,34 @@ function containsValidUrl(text) {
 }
 
 function expandCustomize() {
+  currentUser().then(doExpandCustomize).catch(denyCustomizeAndPromptLogin);
+}
+
+function collapseCustomize() {
+  Ui.Inputs.backhalf.hide();
+  Ui.Inputs.backhalfEditable.value = "";
+  Ui.Buttons.customize.show();
+}
+
+function doExpandCustomize() {
   Ui.Buttons.customize.hide();
-  customPathDiv.show();
-  Ui.Inputs.customPath.focus();
+  Ui.Inputs.backhalf.show();
+  Ui.Inputs.backhalfEditable.focus();
+}
+
+function denyCustomizeAndPromptLogin() {
+  Ui.Buttons.customize.classList.add("shake-horizontal");
+  Ui.Buttons.customize.addEventListener("animationend", function () {
+    this.classList.remove("shake-horizontal");
+    Ui.Buttons.login.classList.add("shake-top");
+    Ui.Buttons.login.addEventListener("animationend", function () {
+      this.classList.remove("shake-top");
+    });
+  });
 }
 
 function collapseIfEscPressed({ key }) {
   if (key === "Escape") {
-    Shorten.Customize.collapse();
+    collapseCustomize();
   }
 }

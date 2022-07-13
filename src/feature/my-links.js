@@ -11,17 +11,27 @@ export const MyLinks = {
 };
 
 function loadUserLinks() {
-  API.list().then(insertAsLinkItems).then(updateCount);
+  API.list().then(includeShortUrl).then(insertAsLinkItems).then(updateCount);
   Ui.Inputs.searchLinks.addEventListener("input", filter);
 }
 
-function insertAsLinkItems(urls) {
-  urls.forEach(insertLink);
+function includeShortUrl(links) {
+  return links.map((link) => {
+    return { ...link, url: buildShortUrl(link.backhalf) };
+  });
+}
+
+function buildShortUrl(backhalf) {
+  return localStorage.getItem("baseUrl") + backhalf;
+}
+
+function insertAsLinkItems(links) {
+  links.forEach(insertLink);
 }
 
 function insertLink(link) {
   const linkItem = document.createElement("link-item");
-  linkItem.setAttribute("url", link.shortened_url);
+  linkItem.setAttribute("url", link.url);
   linkItem.setAttribute("origin", link.origin);
   linkItem.addEventListener("confirm", (ev) => {
     if (ev.detail.type === "delete") {

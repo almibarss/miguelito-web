@@ -45,7 +45,7 @@ img#oops {
     margin-right: auto;
 }
 
-.hidden {
+.is-hidden {
     display: none !important;
 }
 
@@ -197,8 +197,34 @@ img#oops {
     display: none;
 }
 
+#input-backhalf {
+    display: block;
+    color: var(--muted);
+    padding: .75rem;
+}
+
+#input-backhalf input {
+    text-align: left;
+    border: 0;
+    padding: 0;
+}
+
+#search-links {
+    width: 100%;
+}
+
+.badge:not(.is-filtered) i {
+    display: none;
+}
+
 .shake-horizontal {
+    -webkit-animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
     animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+}
+
+.shake-top {
+    -webkit-animation: shake-top 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+    animation: shake-top 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
 }
 
 /* ----------------------------------------------
@@ -208,11 +234,40 @@ img#oops {
  * w: http://animista.net, t: @cssanimista
  * ---------------------------------------------- */
 
-/**
- * ----------------------------------------
- * animation shake-horizontal
- * ----------------------------------------
- */
+@keyframes shake-top {
+    0%,
+    100% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        -webkit-transform-origin: 50% 0;
+        transform-origin: 50% 0;
+    }
+    10% {
+        -webkit-transform: rotate(2deg);
+        transform: rotate(2deg);
+    }
+    20%,
+    40%,
+    60% {
+        -webkit-transform: rotate(-4deg);
+        transform: rotate(-4deg);
+    }
+    30%,
+    50%,
+    70% {
+        -webkit-transform: rotate(4deg);
+        transform: rotate(4deg);
+    }
+    80% {
+        -webkit-transform: rotate(-2deg);
+        transform: rotate(-2deg);
+    }
+    90% {
+        -webkit-transform: rotate(2deg);
+        transform: rotate(2deg);
+    }
+}
+
 @keyframes shake-horizontal {
     0%,
     100% {
@@ -240,14 +295,6 @@ img#oops {
         -webkit-transform: translateX(-8px);
         transform: translateX(-8px);
     }
-}
-
-#search-links {
-    width: 100%;
-}
-
-.badge:not(.is-filtered) i {
-    display: none;
 }
 
 @keyframes slide-left {

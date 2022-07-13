@@ -16,6 +16,9 @@ class UnknownError extends Error {
 const apiName = "miguelito";
 
 export const API = {
+  info: async () => {
+    return RestAPI.get(apiName, "/info", {}).catch(handleError);
+  },
   shorten: async (url, backhalf) => {
     const requestBody = { origin: url };
     const isCustom = !(backhalf ?? "").trim().isEmpty();
@@ -27,16 +30,12 @@ export const API = {
       apiName,
       await shortenApiPath(),
       await requestOptionsWithBody(requestBody)
-    )
-      .then((data) => data.backhalf)
-      .then(buildUrl)
-      .catch(handleError);
+    ).catch(handleError);
   },
   list: async () => {
     return RestAPI.get(apiName, "/links", await requestOptions())
       .then((data) => data.data)
       .then((links) => links.sort(byUpdateDate).reverse())
-      .then((links) => links.map(augmentWithShortenedUrl))
       .catch(handleError);
   },
   remove: async (backhalf) => {
@@ -61,10 +60,6 @@ function shortenApiPath() {
     .catch(() => "/public/links");
 }
 
-function augmentWithShortenedUrl(link) {
-  return { ...link, shortened_url: buildUrl(link.backhalf) };
-}
-
 async function requestOptionsWithBody(body) {
   return { ...(await requestOptions()), body };
 }
@@ -83,10 +78,6 @@ function authHeader() {
       Authorization: `Bearer ${user.jwtToken}`,
     }))
     .catch(noop);
-}
-
-function buildUrl(path) {
-  return `${window.location.origin}/${path}`;
 }
 
 function handleError(error) {

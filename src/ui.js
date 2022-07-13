@@ -2,13 +2,14 @@ import { Clipboard } from "./feature/clipboard";
 
 export const Ui = {
   Inputs: {
-    url: document.getElementById("url"),
-    customPath: document.querySelector("#custom-path input"),
+    url: document.getElementById("input-url"),
+    backhalf: document.querySelector("#input-backhalf"),
+    backhalfEditable: document.querySelector("#input-backhalf input"),
     searchLinks: document.querySelector("#search-links"),
   },
   Buttons: {
     submit: document.getElementById("submit"),
-    customize: document.getElementById("customize"),
+    customize: document.getElementById("btn-customize"),
     login: document.querySelector(".user__login>button"),
     logout: document.querySelector(".user__profile a"),
     userProfile: document.querySelector(".user__profile>button"),
@@ -128,11 +129,11 @@ DOMTokenList.prototype.removeStartingWith = function (...prefixes) {
 };
 
 Element.prototype.hide = function () {
-  this.classList.add("hidden");
+  this.classList.add("is-hidden");
 };
 
 Element.prototype.show = function () {
-  this.classList.remove("hidden");
+  this.classList.remove("is-hidden");
 };
 
 String.prototype.isEmpty = function () {
