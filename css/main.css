@@ -2,6 +2,11 @@
 
 body { background-color: var(--main-background); }
 
+/* https://adamsilver.io/blog/buttons-shouldnt-have-a-hand-cursor/ */
+button, .paper-btn, .form-group .paper-switch-2 .paper-switch-slider {
+    cursor: default;
+}
+
 [popover-bottom] { margin: 0; }
 
 .container {
