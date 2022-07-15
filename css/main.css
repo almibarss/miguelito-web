@@ -234,6 +234,10 @@ img#oops {
     display: none;
 }
 
+.badge {
+    transition: background-color 1s ease-in 0s;
+}
+
 .form-group .paper-btn {
     box-shadow: none;
     background: none;

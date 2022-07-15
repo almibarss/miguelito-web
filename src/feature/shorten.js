@@ -62,11 +62,17 @@ function unfreezeUi() {
   document.addEventListener("paste", pasteIntoUrlInputAsDefault);
 }
 
-function handleOk(link) {
-  const originUrl = link.origin;
-  const shortUrl = localStorage.getItem("baseUrl") + link.backhalf;
-  Ui.shortenedUrl(originUrl, shortUrl);
+function handleOk(newLink) {
+  Ui.shortenedUrl(newLink.origin, newLink.url);
   resetUi();
+  sendEvent(newLink);
+}
+
+function sendEvent(newLink) {
+  const event = new CustomEvent("linkCreated", {
+    detail: newLink,
+  });
+  document.dispatchEvent(event);
 }
 
 function resetUi() {

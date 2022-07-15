@@ -7,29 +7,42 @@ import { Ui } from "../ui";
 export const MyLinks = {
   init: () => {
     currentUser().then(loadUserLinks).catch(showSimpleUi);
+    document.addEventListener("linkCreated", ({ detail: link }) => {
+      insertLinkFirst(link);
+      updateCount();
+      flashCountBadge();
+    });
   },
 };
 
 function loadUserLinks() {
-  API.list().then(includeShortUrl).then(insertAsLinkItems).then(updateCount);
+  API.list()
+    .then((links) => links.sort(byUpdateDate).reverse())
+    .then(insertAsLinkItems)
+    .then(updateCount);
   Ui.Inputs.searchLinks.addEventListener("input", filter);
 }
 
-function includeShortUrl(links) {
-  return links.map((link) => {
-    return { ...link, url: buildShortUrl(link.backhalf) };
-  });
-}
-
-function buildShortUrl(backhalf) {
-  return localStorage.getItem("baseUrl") + backhalf;
+function byUpdateDate(link1, link2) {
+  return (
+    Date.parse(link1.updated_at ?? link1.created_at) -
+    Date.parse(link2.updated_at ?? link2.created_at)
+  );
 }
 
 function insertAsLinkItems(links) {
-  links.forEach(insertLink);
+  links.forEach(insertLinkLast);
 }
 
-function insertLink(link) {
+function insertLinkFirst(link) {
+  Ui.Lists.myLinks.prepend(createLinkItem(link));
+}
+
+function insertLinkLast(link) {
+  Ui.Lists.myLinks.appendChild(createLinkItem(link));
+}
+
+function createLinkItem(link) {
   const linkItem = document.createElement("link-item");
   linkItem.setAttribute("url", link.url);
   linkItem.setAttribute("origin", link.origin);
@@ -40,7 +53,7 @@ function insertLink(link) {
       handleConfirmEdit(linkItem, ev);
     }
   });
-  Ui.Lists.myLinks.appendChild(linkItem);
+  return linkItem;
 }
 
 function handleConfirmDelete(linkItem) {
@@ -75,6 +88,11 @@ function updateCount() {
   const itemCount = visibleItemCount();
   countBadge.classList.toggle("is-filtered", !searchText.isEmpty());
   countBadge.replaceAllText("beforeend", itemCount > 0 ? itemCount : "-");
+}
+
+function flashCountBadge() {
+  Ui.Badges.linkCount.classList.add("success");
+  setTimeout(() => Ui.Badges.linkCount.classList.remove("success"), 2000);
 }
 
 function visibleItemCount() {

@@ -30,12 +30,14 @@ export const API = {
       apiName,
       await shortenApiPath(),
       await requestOptionsWithBody(requestBody)
-    ).catch(handleError);
+    )
+      .then(addShortUrl)
+      .catch(handleError);
   },
   list: async () => {
     return RestAPI.get(apiName, "/links", await requestOptions())
       .then((data) => data.data)
-      .then((links) => links.sort(byUpdateDate).reverse())
+      .then((links) => links.map(addShortUrl))
       .catch(handleError);
   },
   remove: async (backhalf) => {
@@ -90,11 +92,12 @@ function handleError(error) {
   }
 }
 
-function byUpdateDate(url1, url2) {
-  return (
-    Date.parse(url1.updated_at ?? url1.created_at) -
-    Date.parse(url2.updated_at ?? url2.created_at)
-  );
+function addShortUrl(link) {
+  return { ...link, url: concatenateBaseUrl(link.backhalf) };
+}
+
+function concatenateBaseUrl(backhalf) {
+  return localStorage.getItem("baseUrl") + backhalf;
 }
 
 function noop() {}
