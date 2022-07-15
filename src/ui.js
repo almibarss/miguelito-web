@@ -1,5 +1,3 @@
-import { Clipboard } from "./feature/clipboard";
-
 export const Ui = {
   Inputs: {
     url: document.getElementById("input-url"),
@@ -14,13 +12,22 @@ export const Ui = {
     logout: document.querySelector(".user__profile a"),
     userProfile: document.querySelector(".user__profile>button"),
     theme: document.querySelector(".theme-selector .theme-selector__toggle"),
-    shortenFromClipBoard: document.querySelector("#clipboard-alert button"),
+    shortenFromClipBoard: document.querySelector(
+      "#clipboard-alert #clipboard-alert__btn-shorten"
+    ),
+    customFromClipBoard: document.querySelector(
+      "#clipboard-alert #clipboard-alert__btn-custom"
+    ),
+    dismissAlert: document.querySelector("label[for='alert-check']"),
   },
   Forms: {
     shorten: document.forms.item(0),
   },
   Text: {
     username: document.querySelector(".user__profile .user__name"),
+    suggestedUrl: document.querySelector(
+      "#clipboard-alert .clipboard-alert__url"
+    ),
   },
   Lists: {
     myLinks: document.querySelector("#my-links ul"),
@@ -29,6 +36,7 @@ export const Ui = {
     Shorten: {
       isActive: () => document.getElementById("tab1").checked,
       label: document.querySelector("label[for=tab1]"),
+      activate: () => (document.getElementById("tab1").checked = true),
     },
     MyLinks: {
       isActive: () => document.getElementById("tab2").checked,
@@ -41,15 +49,12 @@ export const Ui = {
   shortenedUrl: (longUrl, shortUrl) => {
     const shortLink = document.querySelector("#url-shortened a");
     shortLink.href = shortUrl;
-    shortLink.textContent = shortUrl;
+    const url = new URL(shortUrl);
+    shortLink.textContent = `${url.hostname}${url.pathname}`;
 
     document
       .getElementById("copy-to-clipboard")
-      .addEventListener("click", () => {
-        Clipboard.copyAndIgnoreUrl(shortUrl).then(() => {
-          Ui.successWithTimeout("URL copied!", 2000);
-        });
-      });
+      .addEventListener("click", () => copyToClipboard(shortUrl));
 
     displayAlertType("url-shortened");
   },
@@ -81,13 +86,19 @@ export const Ui = {
     setTimeout(Ui.hideAlert, timeout);
   },
   clipboardAlert: (url) => {
-    document.querySelector("#clipboard-alert span").textContent = url;
+    Ui.Text.suggestedUrl.textContent = url;
     displayAlertType("clipboard-alert");
   },
   hideAlert: () => {
     document.getElementById("alert-check").checked = true;
   },
 };
+
+async function copyToClipboard(url) {
+  localStorage.setItem("lastCopiedUrl", url);
+  await navigator.clipboard.writeText(url);
+  Ui.successWithTimeout("URL copied!", 2000);
+}
 
 function displayAlertType(type) {
   const alert = document.getElementById("alert");
@@ -96,7 +107,7 @@ function displayAlertType(type) {
     "url-shortened": "alert-success",
     "simple-message-success": "alert-success",
     "simple-message-error": "alert-danger",
-    "clipboard-alert": "alert-warning",
+    "clipboard-alert": "alert-primary",
     waiting: "alert-primary",
     "simple-message-warning": "alert-warning",
   };

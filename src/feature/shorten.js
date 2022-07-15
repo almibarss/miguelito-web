@@ -14,7 +14,7 @@ export const Shorten = {
       "keydown",
       collapseIfEscPressed
     );
-    Ui.Buttons.customize.addEventListener("click", expandCustomize);
+    Ui.Buttons.customize.addEventListener("click", Shorten.expandCustomize);
     document.addEventListener("paste", pasteIntoUrlInputAsDefault);
   },
   shorten: (url, backhalf) => {
@@ -23,6 +23,10 @@ export const Shorten = {
       .then(handleOk)
       .catch((error) => Ui.error(error.message))
       .finally(unfreezeUi);
+  },
+
+  expandCustomize: () => {
+    currentUser().then(doExpandCustomize).catch(denyCustomizeAndPromptLogin);
   },
 };
 
@@ -99,19 +103,15 @@ function containsValidUrl(text) {
   }
 }
 
-function expandCustomize() {
-  currentUser().then(doExpandCustomize).catch(denyCustomizeAndPromptLogin);
-}
-
 function collapseCustomize() {
   Ui.Inputs.backhalf.hide();
-  Ui.Inputs.backhalfEditable.value = "";
   Ui.Buttons.customize.show();
 }
 
 function doExpandCustomize() {
   Ui.Buttons.customize.hide();
   Ui.Inputs.backhalf.show();
+  Ui.Inputs.backhalfEditable.value = "";
   Ui.Inputs.backhalfEditable.focus();
 }
 

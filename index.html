@@ -63,9 +63,16 @@
 				<div data-testid="alert" id="alert" class="alert dismissible">
 
 					<div id="clipboard-alert">
-						<span></span>
-						<button type="button" class="simple-button">Shorten</button>
-						<label class="btn-close" for="alert-check">X</label>
+						<span class="clipboard-alert__url"></span>
+						<div class="clipboard-alert__actions">
+							<button type="button" id="clipboard-alert__btn-shorten" class="paper-btn">
+								<i class="fa fa-link" aria-hidden="true"></i> Shorten
+							</button>
+							<button type="button" id="clipboard-alert__btn-custom" class="paper-btn">
+								<i class="fa fa-pencil" aria-hidden="true"></i> Custom</button>
+							<label class="paper-btn" for="alert-check">
+								<i class="fa fa-times" aria-hidden="true"></i> Dismiss</label>
+						</div>
 					</div>
 
 					<div id="waiting">
@@ -99,7 +106,9 @@
 							<div class="form-group">
 								<label for="input-url">Enter URL to shorten</label>
 								<input name="url" id="input-url" class="input-block" autocomplete="off" required>
-								<button type="button" id="btn-customize" class="simple-button">✨Customize</button>
+								<button type="button" id="btn-customize" class="paper-btn">
+									<i class="fa fa-pencil" aria-hidden="true"></i> Customize
+								</button>
 								<span id="input-backhalf" class="is-hidden">
 									<input name="backhalf" type="text" placeholder="my-custom-link" spellCheck="false" />
 								</span>
