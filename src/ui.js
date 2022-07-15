@@ -47,16 +47,18 @@ export const Ui = {
     linkCount: document.querySelector("label[for=tab2] .badge"),
   },
   shortenedUrl: (longUrl, shortUrl) => {
-    const shortLink = document.querySelector("#url-shortened a");
+    const shortLink = document.querySelector(
+      "#shortened-url-alert #shortened-url-alert__url"
+    );
     shortLink.href = shortUrl;
     const url = new URL(shortUrl);
     shortLink.textContent = `${url.hostname}${url.pathname}`;
 
     document
-      .getElementById("copy-to-clipboard")
+      .getElementById("shortened-url-alert__btn-copy")
       .addEventListener("click", () => copyToClipboard(shortUrl));
 
-    displayAlertType("url-shortened");
+    displayAlertType("shortened-url-alert");
   },
   waiting: () => {
     displayAlertType("waiting");
@@ -104,7 +106,7 @@ function displayAlertType(type) {
   const alert = document.getElementById("alert");
   alert.className = "alert dismissible";
   const alertClasses = {
-    "url-shortened": "alert-success",
+    "shortened-url-alert": "alert-success",
     "simple-message-success": "alert-success",
     "simple-message-error": "alert-danger",
     "clipboard-alert": "alert-primary",

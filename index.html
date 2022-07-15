@@ -81,11 +81,15 @@
 						<span class="dot"></span>
 					</div>
 
-					<div id="url-shortened">
-						<a id="short-url" target="_blank"></a>
-						<button id="copy-to-clipboard" class="simple-button">
-							<i class="fa fa-clipboard"></i>
-						</button>
+					<div id="shortened-url-alert">
+						<a id="shortened-url-alert__url" target="_blank"></a>
+						<div class="shortened-url-alert__actions">
+							<button id="shortened-url-alert__btn-copy" class="paper-btn">
+								<i class="fa fa-clipboard"></i> Copy
+							</button>
+							<label class="paper-btn" for="alert-check">
+								<i class="fa fa-times" aria-hidden="true"></i> Dismiss</label>
+						</div>
 					</div>
 
 					<div id="simple-message">

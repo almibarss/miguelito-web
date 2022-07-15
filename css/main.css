@@ -49,17 +49,26 @@ img#oops {
     display: none !important;
 }
 
-.alert button {
-    padding: 0;
-    margin: 0;
-}
+/*.alert button {*/
+/*    padding: 0;*/
+/*    margin: 0;*/
+/*}*/
 
 #alert > * {
     width: 100%;
 }
 
+#alert .paper-btn {
+    box-shadow: none;
+    background: none;
+    border: 0;
+    font-size: medium;
+    color: var(--primary-text);
+    padding: 0.3rem;
+}
+
 #alert:not(.waiting) #waiting,
-#alert:not(.url-shortened) #url-shortened,
+#alert:not(.shortened-url-alert) #shortened-url-alert,
 #alert:not(.clipboard-alert) #clipboard-alert,
 #alert:not(.simple-message) #simple-message {
     display: none;
@@ -85,17 +94,19 @@ img#oops {
     white-space: nowrap;
 }
 
-#clipboard-alert .paper-btn {
-    box-shadow: none;
-    background: none;
-    border: 0;
-    font-size: medium;
-    color: var(--primary-text);
-    padding: 0.3rem;
+#alert label[for="alert-check"] {
+    color: var(--danger-text);
 }
 
-#clipboard-alert label[for="alert-check"] {
-    color: var(--danger-text);
+#shortened-url-alert {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: .25rem;
+}
+
+#shortened-url-alert #shortened-url-alert__url {
+    align-self: center;
 }
 
 #short-url {
