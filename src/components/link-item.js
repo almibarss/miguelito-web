@@ -194,8 +194,11 @@ class LinkItem extends HTMLElement {
 
   deleteAnimated() {
     this.item.classList.add("removed-item");
-    this.item.addEventListener("animationend", () => {
-      this.remove();
+    return new Promise((resolve) => {
+      this.item.addEventListener("animationend", () => {
+        this.remove();
+        resolve();
+      });
     });
   }
 

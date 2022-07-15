@@ -10,7 +10,7 @@ export const MyLinks = {
     document.addEventListener("linkCreated", ({ detail: link }) => {
       insertLinkFirst(link);
       updateCount();
-      flashCountBadge();
+      flashCountBadge("success");
     });
   },
 };
@@ -60,6 +60,8 @@ function handleConfirmDelete(linkItem) {
   API.remove(linkItem.backhalf)
     .then(() => linkItem.confirm({ success: true }))
     .then(() => linkItem.deleteAnimated())
+    .then(updateCount)
+    .then(() => flashCountBadge("danger"))
     .catch((error) => {
       Ui.errorWithTimeout(error.message, 2000);
       linkItem.confirm({ success: false });
@@ -90,9 +92,9 @@ function updateCount() {
   countBadge.replaceAllText("beforeend", itemCount > 0 ? itemCount : "-");
 }
 
-function flashCountBadge() {
-  Ui.Badges.linkCount.classList.add("success");
-  setTimeout(() => Ui.Badges.linkCount.classList.remove("success"), 2000);
+function flashCountBadge(selector = "success") {
+  Ui.Badges.linkCount.classList.add(selector);
+  setTimeout(() => Ui.Badges.linkCount.classList.remove(selector), 2000);
 }
 
 function visibleItemCount() {
