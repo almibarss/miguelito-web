@@ -7,9 +7,11 @@ declare namespace Cypress {
 
     grantClipboardPermission(): Chainable<any>
 
+    fetchBaseUrl(): Chainable<any>
+
     createLinkCustom(url: string, path: string): Chainable<any>
 
-    removeLink(path: string): Chainable<any>
+    removeAllLinksOwnedByUser(): Chainable<any>
 
     getByTestId(...dataTestId: string[]): Chainable<any>
   }

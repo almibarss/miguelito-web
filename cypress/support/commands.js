@@ -1,86 +1,66 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
 import "@testing-library/cypress/add-commands";
 
-import { RestAPI } from "@aws-amplify/api-rest";
 import { Auth } from "@aws-amplify/auth";
 
 import awsconfig from "../../aws-exports";
+import { testuser } from "./e2e";
+
+const apiUrl = awsconfig.API.endpoints[0].endpoint;
 
 Auth.configure(awsconfig);
-RestAPI.configure(awsconfig);
-
-const testUser = {
-  username: Cypress.env("username"),
-  password: Cypress.env("password"),
-};
 
 const dataTestAttr = "data-testid";
 
 Cypress.Commands.add("signIn", () => {
-  const idToken = Auth.signIn(testUser.username, testUser.password).then(
+  const idToken = Auth.signIn(testuser.username, testuser.password).then(
     (cognitoUser) => cognitoUser.signInUserSession.idToken.jwtToken
   );
+  // idToken is actually a promise but as per the official documentation (https://docs.cypress.io/api/commands/wrap#Promises):
+  // "You can wrap promises returned by the application code. Cypress commands will
+  // automatically wait for the promise to resolve before continuing with the yielded
+  // value to the next command or assertion."
   cy.wrap(idToken).as("idToken");
 });
 
+Cypress.Commands.add("fetchBaseUrl", () => {
+  cy.request(`${apiUrl}/info`).then(({ body: { base_url } }) => {
+    cy.wrap(base_url).as("baseUrl");
+  });
+});
+
 Cypress.Commands.add("grantClipboardPermission", () => {
-  cy.wrap(
-    Cypress.automation("remote:debugger:protocol", {
-      command: "Browser.grantPermissions",
-      params: {
-        permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
-        // make the permission tighter by allowing the current origin only
-        // like "http://localhost:56978"
-        origin: window.location.origin,
-      },
-    })
-  );
-});
-
-Cypress.Commands.add("createLinkCustom", (url, path) => {
-  cy.get("@idToken").then((idToken) => {
-    return RestAPI.post("miguelito", "/urls", {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-      body: { url, custom_path: path },
-    });
+  Cypress.automation("remote:debugger:protocol", {
+    command: "Browser.grantPermissions",
+    params: {
+      permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
+      // make the permission tighter by allowing the current origin only
+      // like "http://localhost:56978"
+      origin: window.location.origin,
+    },
   });
 });
 
-Cypress.Commands.add("removeLink", (path) => {
-  cy.get("@idToken").then((idToken) => {
-    return RestAPI.del("miguelito", `/urls/${path}`, {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
-  });
+Cypress.Commands.add("createLinkCustom", function (url, backhalf) {
+  const options = {
+    url: `${apiUrl}/links`,
+    method: "POST",
+    body: { origin: url, backhalf },
+    auth: {
+      bearer: this.idToken,
+    },
+  };
+  cy.request(options);
+});
+
+Cypress.Commands.add("removeAllLinksOwnedByUser", function () {
+  const options = {
+    url: `${apiUrl}/links`,
+    method: "DELETE",
+    auth: {
+      bearer: this.idToken,
+    },
+  };
+  cy.request(options);
 });
 
 Cypress.Commands.add("getByTestId", (...dataTestIds) => {

@@ -3,6 +3,7 @@ import Amplify from "@aws-amplify/core";
 
 import awsconfig from "../aws-exports";
 import { currentUser } from "./auth";
+import { Ui } from "./ui";
 
 Amplify.configure(awsconfig);
 
@@ -16,6 +17,14 @@ class UnknownError extends Error {
 const apiName = "miguelito";
 
 export const API = {
+  init: async () => {
+    const { base_url: baseUrl } = await API.info();
+    const ev = new CustomEvent("baseUrlReceived", {
+      detail: new URL(baseUrl),
+    });
+    document.dispatchEvent(ev);
+    localStorage.setItem("baseUrl", baseUrl);
+  },
   info: async () => {
     return RestAPI.get(apiName, "/info", {}).catch(handleError);
   },
@@ -30,14 +39,11 @@ export const API = {
       apiName,
       await shortenApiPath(),
       await requestOptionsWithBody(requestBody)
-    )
-      .then(addShortUrl)
-      .catch(handleError);
+    ).catch(handleError);
   },
   list: async () => {
     return RestAPI.get(apiName, "/links", await requestOptions())
       .then((data) => data.data)
-      .then((links) => links.map(addShortUrl))
       .catch(handleError);
   },
   remove: async (backhalf) => {
@@ -90,14 +96,6 @@ function handleError(error) {
   } else {
     throw new UnknownError();
   }
-}
-
-function addShortUrl(link) {
-  return { ...link, url: concatenateBaseUrl(link.backhalf) };
-}
-
-function concatenateBaseUrl(backhalf) {
-  return localStorage.getItem("baseUrl") + backhalf;
 }
 
 function noop() {}

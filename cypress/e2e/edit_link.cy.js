@@ -1,65 +1,68 @@
-let myTestLink = "my-test-link";
+import awsconfig from "../../aws-exports";
+import { expectErrorMessageMatching } from "../support/utils";
 
-describe("Edit links", () => {
+const myTestLink = "my-test-link";
+
+const apiUrl = awsconfig.API.endpoints[0].endpoint;
+describe("Edit link", () => {
   beforeEach(() => {
     cy.signIn();
+    cy.removeAllLinksOwnedByUser();
     cy.grantClipboardPermission();
     cy.createLinkCustom("https://www.cypress.io/", myTestLink);
     cy.visit("/");
     cy.contains("My Links").click();
   });
 
-  afterEach(() => {
-    cy.removeLink(myTestLink);
-  });
-
-  it("performs successfully when given the correct input", () => {
+  it("updates the link data when given the correct input", function () {
+    cy.fetchBaseUrl();
     cy.get(`link-item[url$="/${myTestLink}"]`)
       .shadow()
       .within(() => {
-        const myTestLinkChanged = `${myTestLink}-changed`;
-        cy.getByTestId("btn-edit").click();
-        cy.getByTestId("btn-cancel", "btn-confirm").should("be.visible");
-        cy.getByTestId("input-url")
+        cy.intercept("PATCH", `${apiUrl}/links/${myTestLink}`).as("apiCall");
+        cy.getByTestId("edit").click();
+        cy.getByTestId("cancel", "confirm").should("be.visible");
+        cy.getByTestId("backhalf-edit")
           .clear()
-          .type(myTestLinkChanged, { force: true });
-        cy.getByTestId("input-origin")
+          .type(`${myTestLink}-changed`, { force: true });
+        cy.getByTestId("origin-edit")
           .clear()
           .type(`https://www.google.com`, { force: true });
 
-        cy.getByTestId("btn-confirm").click();
-        cy.getByTestId("btn-confirm", "btn-cancel").should("be.disabled");
+        cy.getByTestId("confirm").click();
+        cy.getByTestId("cancel", "confirm").should("be.disabled");
 
+        cy.wait("@apiCall");
         cy.getByTestId("ico-success").should("be.visible");
-        cy.getByTestId("link-url").then(($link) => {
-          const updatedLink = new RegExp(`/${myTestLinkChanged}$`);
-          expect($link.text()).to.match(updatedLink);
-          expect($link).to.have.attr("href").match(updatedLink);
-        });
+        cy.getByTestId("link-url").should(
+          "have.attr",
+          "href",
+          `${this.baseUrl}${myTestLink}-changed`
+        );
         cy.getByTestId("link-origin").should(
           "have.text",
           "https://www.google.com"
         );
-        myTestLink = myTestLinkChanged;
+        cy.getByTestId("edit", "delete").should("be.visible");
       });
   });
 
-  it("shows an error message when the changes are invalid", () => {
+  it("displays an error message when the new data is invalid", () => {
     cy.get(`link-item[url$="/${myTestLink}"]`)
       .shadow()
       .within(() => {
-        cy.getByTestId("btn-edit").click();
-        cy.getByTestId("input-url")
+        cy.intercept("PATCH", `${apiUrl}/links/${myTestLink}`).as("apiCall");
+        cy.getByTestId("edit").click();
+        cy.getByTestId("backhalf-edit")
           .clear()
           .type("inv*lid character$", { force: true });
 
-        cy.getByTestId("btn-confirm").click();
+        cy.getByTestId("confirm").click();
 
+        cy.wait("@apiCall");
         cy.getByTestId("ico-failure").should("be.visible");
+        cy.getByTestId("edit", "delete").should("be.visible");
       });
-    cy.getByTestId("alert")
-      .should("be.visible")
-      .and("have.class", "alert-danger")
-      .and("contain.text", "Path does not match");
+    expectErrorMessageMatching(/backhalf does not match/i);
   });
 });

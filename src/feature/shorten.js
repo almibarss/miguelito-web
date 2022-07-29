@@ -4,7 +4,9 @@ import { Ui } from "../ui";
 
 export const Shorten = {
   init: () => {
-    fetchBaseUrl();
+    document.addEventListener("baseUrlReceived", ({ detail: baseUrl }) => {
+      Ui.Inputs.backhalf.replaceAllText("afterbegin", `${baseUrl.hostname}/`);
+    });
     Ui.Forms.shorten.addEventListener("submit", submitUrl);
     Ui.Inputs.url.addEventListener("input", Ui.hideAlert);
     Ui.Inputs.url.addEventListener("input", function () {
@@ -29,16 +31,6 @@ export const Shorten = {
     currentUser().then(doExpandCustomize).catch(denyCustomizeAndPromptLogin);
   },
 };
-
-function fetchBaseUrl() {
-  API.info()
-    .then(({ base_url }) => {
-      localStorage.setItem("baseUrl", base_url);
-      return new URL(base_url);
-    })
-    .then((url) => `${url.hostname}/`)
-    .then((url) => Ui.Inputs.backhalf.replaceAllText("afterbegin", url));
-}
 
 function submitUrl(ev) {
   ev.preventDefault();

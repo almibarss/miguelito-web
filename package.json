@@ -8,8 +8,8 @@
     "build": "webpack --config webpack.prod.js",
     "lint": "eslint --ignore-path .gitignore . --ext .js,.html",
     "lint:fix": "npm run lint -- --fix",
-    "cy:run": "cypress run",
-    "cy:open": "cypress open",
+    "cy:run": "cypress run --browser chrome",
+    "cy:open": "cypress open --e2e",
     "start": "http-server dist"
   },
   "author": "mperezibars@gmail.com",
