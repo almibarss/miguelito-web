@@ -3,7 +3,6 @@ import Amplify from "@aws-amplify/core";
 
 import awsconfig from "../aws-exports";
 import { currentUser } from "./auth";
-import { Ui } from "./ui";
 
 Amplify.configure(awsconfig);
 

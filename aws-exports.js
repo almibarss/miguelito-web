@@ -5,7 +5,7 @@ const awsconfig = {
     userPoolWebClientId: "5dcfv1qheg2ea8g4vub01min37",
     oauth: {
       domain: "auth-dev-migueli-to.auth.eu-west-1.amazoncognito.com",
-      scope: ["openid"],
+      scope: ["openid", "aws.cognito.signin.user.admin"],
       redirectSignIn: "http://localhost:8080/",
       redirectSignOut: "http://localhost:8080/",
       responseType: "code",

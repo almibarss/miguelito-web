@@ -15,18 +15,15 @@
   "author": "mperezibars@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "@aws-amplify/api-rest": "^2.0.35",
+    "@aws-amplify/api-rest": "^2.0.0",
     "@aws-amplify/auth": "^4.0.0",
-    "@fortawesome/fontawesome-free": "^6.1.1",
     "css-loader": "^6.7.1",
-    "file-loader": "^6.2.0",
-    "http-server": "^0.12.3",
     "papercss": "^1.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.13.13",
     "@babel/preset-env": "^7.13.12",
-    "@testing-library/cypress": "^7.0.6",
+    "@testing-library/cypress": "^8.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "core-js": "^3.9.1",

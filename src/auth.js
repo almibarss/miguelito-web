@@ -1,11 +1,11 @@
 import Auth from "@aws-amplify/auth";
 
-export function login() {
-  Auth.federatedSignIn({ provider: "Google" });
+export async function signin() {
+  return await Auth.federatedSignIn({ provider: "Google" });
 }
 
-export function logout() {
-  Auth.signOut();
+export async function signout() {
+  return await Auth.deleteUser();
 }
 
 export function currentUser() {

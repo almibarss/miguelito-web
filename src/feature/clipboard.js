@@ -119,10 +119,7 @@ function denyCustomizeAndPromptLogin() {
   Ui.Buttons.customFromClipBoard.classList.add("shake-horizontal");
   Ui.Buttons.customFromClipBoard.addEventListener("animationend", function () {
     this.classList.remove("shake-horizontal");
-    Ui.Buttons.login.classList.add("shake-top");
-    Ui.Buttons.login.addEventListener("animationend", function () {
-      this.classList.remove("shake-top");
-    });
+    Ui.shakeSignin();
   });
 }
 

@@ -1,28 +1,25 @@
-import { currentUser, login, logout } from "./auth";
-import { Shorten } from "./feature/shorten";
+import { currentUser, signin, signout } from "./auth";
 import { Ui } from "./ui";
+
+const usermenu = document.querySelector("nav .container-exclusive.user");
 
 export const User = {
   init: () => {
-    Ui.Buttons.login.addEventListener("click", login);
-    Ui.Buttons.logout.addEventListener("click", logout);
-    Ui.Buttons.userProfile.addEventListener("click", toggleUserProfileOpen);
+    Ui.Links.signin.addEventListener("click", signin);
+    Ui.Links.signout.addEventListener("click", signout);
     currentUser().then(userIsLoggedIn).catch(userIsNotLoggedIn);
   },
 };
 
 function userIsLoggedIn({ name: username }) {
-  document.querySelector(".user").classList.add("user--loggedIn");
+  ["is-placeholder", "is-profile"].forEach((cl) =>
+    usermenu.classList.toggle(cl)
+  );
   Ui.Text.username.textContent = username;
 }
 
 function userIsNotLoggedIn() {
-  document.querySelector(".user").classList.remove("user--loggedIn");
-}
-
-function toggleUserProfileOpen() {
-  const userProfile = document.querySelector(".user__profile");
-  ["user__profile--expanded", "user__profile--collapsed"].forEach((cl) =>
-    userProfile.classList.toggle(cl)
+  ["is-placeholder", "is-lnk-signin"].forEach((cl) =>
+    usermenu.classList.toggle(cl)
   );
 }

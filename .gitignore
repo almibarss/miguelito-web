@@ -3,5 +3,9 @@ dist/
 
 cypress/screenshots/
 
-/**/components/*.css*
 cypress.env.json
+
+# Sass files
+/**/components/*.css*
+/css/placeholder.css*
+/css/navbar.css*

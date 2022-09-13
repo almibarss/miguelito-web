@@ -8,9 +8,6 @@ export const Ui = {
   Buttons: {
     submit: document.getElementById("submit"),
     customize: document.getElementById("btn-customize"),
-    login: document.querySelector(".user__login>button"),
-    logout: document.querySelector(".user__profile a"),
-    userProfile: document.querySelector(".user__profile>button"),
     theme: document.querySelector(".theme-selector .theme-selector__toggle"),
     shortenFromClipBoard: document.querySelector(
       "#clipboard-alert #clipboard-alert__btn-shorten"
@@ -20,11 +17,15 @@ export const Ui = {
     ),
     dismissAlert: document.querySelector("label[for='alert-check']"),
   },
+  Links: {
+    signin: document.getElementById("lnk-signin"),
+    signout: document.getElementById("lnk-signout"),
+  },
   Forms: {
     shorten: document.forms.item(0),
   },
   Text: {
-    username: document.querySelector(".user__profile .user__name"),
+    username: document.getElementById("username"),
     suggestedUrl: document.querySelector(
       "#clipboard-alert .clipboard-alert__url"
     ),
@@ -93,6 +94,13 @@ export const Ui = {
   },
   hideAlert: () => {
     document.getElementById("alert-check").checked = true;
+  },
+  shakeSignin: () => {
+    const signinContainer = Ui.Links.signin.closest("div");
+    signinContainer.classList.add("shake-top");
+    signinContainer.addEventListener("animationend", function () {
+      this.classList.remove("shake-top");
+    });
   },
 };
 
