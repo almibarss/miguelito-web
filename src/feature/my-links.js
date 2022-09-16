@@ -19,7 +19,7 @@ function loadUserLinks() {
   API.list()
     .then((links) => links.sort(byUpdateDate).reverse())
     .then(insertAsLinkItems)
-    .then(updateCount);
+    .finally(removePlaceholder);
   Ui.Inputs.searchLinks.addEventListener("input", filter);
 }
 
@@ -54,6 +54,13 @@ function createLinkItem(link) {
     }
   });
   return linkItem;
+}
+
+function removePlaceholder() {
+  Ui.Lists.myLinks
+    .querySelectorAll(".placeholder")
+    .forEach((pl) => pl.remove());
+  updateCount();
 }
 
 function handleConfirmDelete(linkItem) {

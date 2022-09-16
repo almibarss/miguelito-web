@@ -2,6 +2,31 @@
 @use "../../css/waiting.css";
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 
+:host(.placeholder) {
+  user-select: none;
+  -webkit-user-select: none;
+
+  .btn-action {
+    @extend .background-primary;
+    border-color: transparent;
+    i {
+      display: none;
+    }
+  }
+
+  a, button {
+    pointer-events: none;
+  }
+
+  .url, .origin {
+    @extend .background-primary;
+    @extend .border;
+    border-color: transparent;
+    color: transparent;
+    background-image: none;
+  }
+}
+
 :host(.is-hidden) {
   display: none;
 }
@@ -109,7 +134,7 @@
 @mixin data {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: start;
   flex-grow: 2;
   gap: .2rem;
 }
@@ -142,6 +167,7 @@ li {
 
 .edit {
   @include data;
+  align-items: stretch;
   gap: .5rem;
 }
 
