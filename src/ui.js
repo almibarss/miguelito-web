@@ -8,8 +8,10 @@ export const Ui = {
   Buttons: {
     submit: document.getElementById("submit"),
     customize: document.getElementById("btn-customize"),
-    theme: document.querySelector(".theme-selector .theme-selector__toggle"),
     dismissAlert: document.querySelector("label[for='alert-check']"),
+  },
+  Toggles: {
+    theme: document.getElementById("toggle-theme"),
   },
   Links: {
     signin: document.getElementById("lnk-signin"),

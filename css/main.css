@@ -136,7 +136,7 @@ img#oops {
     content: "";
 }
 
-.theme-selector__label--muted {
+.is-muted {
     color: var(--muted);
 }
 

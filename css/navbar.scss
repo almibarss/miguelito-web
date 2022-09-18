@@ -1,11 +1,11 @@
 nav {
   flex-flow: row-reverse;
 
-  div, ul, li {
-    margin: 0;
+  * {
+    font-size: 20px !important;  // fix problem when mixing text with the theme round toggle
   }
 
-  .theme-selector {
+  div, ul, li {
     margin: 0;
   }
 

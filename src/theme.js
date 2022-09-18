@@ -2,7 +2,7 @@ import { Ui } from "./ui";
 
 export const Theme = {
   init: () => {
-    Ui.Buttons.theme.addEventListener("change", switchTheme);
+    Ui.Toggles.theme.addEventListener("change", switchTheme);
     applyUserSetting();
   },
 };
@@ -10,15 +10,16 @@ export const Theme = {
 function switchTheme() {
   document.documentElement.classList.toggle("dark");
 
-  const newTheme = Ui.Buttons.theme.checked ? "dark" : "light";
+  const newTheme = Ui.Toggles.theme.checked ? "dark" : "light";
   saveUserSetting(newTheme);
+  dimLabel();
 }
 
 function applyUserSetting() {
   const savedTheme = loadUserSetting();
   const systemTheme = loadSystemSetting();
   if ([savedTheme, systemTheme].includes("dark")) {
-    Ui.Buttons.theme.click();
+    Ui.Toggles.theme.click();
   }
 }
 
@@ -35,4 +36,10 @@ function loadSystemSetting() {
     window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
+}
+
+function dimLabel() {
+  document
+    .querySelectorAll("label[for='toggle-theme']")
+    .forEach((label) => label.classList.toggle("is-muted"));
 }
