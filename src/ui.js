@@ -9,12 +9,6 @@ export const Ui = {
     submit: document.getElementById("submit"),
     customize: document.getElementById("btn-customize"),
     theme: document.querySelector(".theme-selector .theme-selector__toggle"),
-    shortenFromClipBoard: document.querySelector(
-      "#clipboard-alert #clipboard-alert__btn-shorten"
-    ),
-    customFromClipBoard: document.querySelector(
-      "#clipboard-alert #clipboard-alert__btn-custom"
-    ),
     dismissAlert: document.querySelector("label[for='alert-check']"),
   },
   Links: {
@@ -26,9 +20,6 @@ export const Ui = {
   },
   Text: {
     username: document.getElementById("username"),
-    suggestedUrl: document.querySelector(
-      "#clipboard-alert .clipboard-alert__url"
-    ),
   },
   Lists: {
     myLinks: document.querySelector("#my-links ul"),
@@ -88,10 +79,6 @@ export const Ui = {
     Ui.warning(message);
     setTimeout(Ui.hideAlert, timeout);
   },
-  clipboardAlert: (url) => {
-    Ui.Text.suggestedUrl.textContent = url;
-    displayAlertType("clipboard-alert");
-  },
   hideAlert: () => {
     document.getElementById("alert-check").checked = true;
   },
@@ -117,7 +104,6 @@ function displayAlertType(type) {
     "shortened-url-alert": "alert-success",
     "simple-message-success": "alert-success",
     "simple-message-error": "alert-danger",
-    "clipboard-alert": "alert-primary",
     waiting: "alert-primary",
     "simple-message-warning": "alert-warning",
   };

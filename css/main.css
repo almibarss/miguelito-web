@@ -83,29 +83,8 @@ img#oops {
 
 #alert:not(.waiting) #waiting,
 #alert:not(.shortened-url-alert) #shortened-url-alert,
-#alert:not(.clipboard-alert) #clipboard-alert,
 #alert:not(.simple-message) #simple-message {
     display: none;
-}
-
-#clipboard-alert {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    gap: .25rem;
-}
-
-#clipboard-alert .clipboard-alert__actions {
-    display: flex;
-    gap: .5rem;
-    justify-content: center;
-    font-size: small;
-}
-
-#clipboard-alert .clipboard-alert__url {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 #alert label[for="alert-check"] {

@@ -61,36 +61,11 @@
 			</ul>
 		</nav>
 
-		<input class="modal-state" id="modal-check" type="checkbox">
-		<div id="clipboard-modal" class="modal">
-			<label class="modal-bg" for="modal-check"></label>
-			<div class="modal-body">
-				<label class="btn-close" for="modal-check">X</label>
-				<h4 class="modal-title">👀📋 Clipboard read permission</h4>
-				<p class="modal-text">We request access to the clipboard in order to catch
-					copied URLs and make them easier to shorten. Promise we won't be evil 😇</p>
-				<label for="modal-check" class="paper-btn simple-button">Nice!</label>
-			</div>
-		</div>
-
 		<div class="row flex-center">
 			<div class="col-8 col">
 
 				<input class="alert-state" id="alert-check" type="checkbox" checked>
 				<div data-testid="alert" id="alert" class="alert dismissible">
-
-					<div id="clipboard-alert">
-						<span class="clipboard-alert__url"></span>
-						<div class="clipboard-alert__actions">
-							<button type="button" id="clipboard-alert__btn-shorten" class="paper-btn">
-								<i class="fa fa-link" aria-hidden="true"></i> Shorten
-							</button>
-							<button type="button" id="clipboard-alert__btn-custom" class="paper-btn">
-								<i class="fa fa-magic" aria-hidden="true"></i> Custom</button>
-							<label class="paper-btn" for="alert-check">
-								<i class="fa fa-times" aria-hidden="true"></i> Dismiss</label>
-						</div>
-					</div>
 
 					<div id="waiting">
 						<span class="dot"></span>

@@ -10,7 +10,6 @@ const apiUrl = awsconfig.API.endpoints[0].endpoint;
 describe("Create link", () => {
   beforeEach(() => {
     cy.fetchBaseUrl();
-    cy.grantClipboardPermission();
   });
 
   context("as an anonymous user", () => {

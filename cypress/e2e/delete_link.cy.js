@@ -7,7 +7,6 @@ describe("Delete link", () => {
   beforeEach(() => {
     cy.signIn();
     cy.removeAllLinksOwnedByUser();
-    cy.grantClipboardPermission();
     cy.createLinkCustom("https://www.cypress.io/", myTestLink);
     cy.visit("/");
     cy.contains("My Links").click();

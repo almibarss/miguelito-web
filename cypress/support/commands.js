@@ -28,18 +28,6 @@ Cypress.Commands.add("fetchBaseUrl", () => {
   });
 });
 
-Cypress.Commands.add("grantClipboardPermission", () => {
-  Cypress.automation("remote:debugger:protocol", {
-    command: "Browser.grantPermissions",
-    params: {
-      permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
-      // make the permission tighter by allowing the current origin only
-      // like "http://localhost:56978"
-      origin: window.location.origin,
-    },
-  });
-});
-
 Cypress.Commands.add("createLinkCustom", function (url, backhalf) {
   const options = {
     url: `${apiUrl}/links`,
