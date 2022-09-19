@@ -59,7 +59,7 @@ describe("Create link", () => {
 
     it("displays a success message containing the created link when given a valid URL and a valid backhalf", function () {
       cy.intercept("POST", `${apiUrl}/links`).as("apiCall");
-      const expectedBackhalf = "google";
+      const expectedBackhalf = "8deab33d-afd3-439b-b7b0-55e9ce5a47bf";
       const expectedOrigin = "https://www.google.com";
       cy.getByTestId("url").type(expectedOrigin);
       cy.contains("button", "Customize").click();
