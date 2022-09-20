@@ -1,0 +1,7 @@
+@use "../mixins";
+
+@include mixins.oneof("waiting", "label");
+
+.submit {
+  width: 6rem;
+}

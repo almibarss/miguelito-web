@@ -1,8 +1,8 @@
-import { Ui } from "./ui";
+const themeToggle = document.getElementById("toggle-theme");
 
 export const Theme = {
   init: () => {
-    Ui.Toggles.theme.addEventListener("change", switchTheme);
+    themeToggle.addEventListener("change", switchTheme);
     applyUserSetting();
   },
 };
@@ -10,7 +10,7 @@ export const Theme = {
 function switchTheme() {
   document.documentElement.classList.toggle("dark");
 
-  const newTheme = Ui.Toggles.theme.checked ? "dark" : "light";
+  const newTheme = themeToggle.checked ? "dark" : "light";
   saveUserSetting(newTheme);
   dimLabel();
 }
@@ -19,7 +19,7 @@ function applyUserSetting() {
   const savedTheme = loadUserSetting();
   const systemTheme = loadSystemSetting();
   if ([savedTheme, systemTheme].includes("dark")) {
-    Ui.Toggles.theme.click();
+    themeToggle.click();
   }
 }
 
@@ -41,5 +41,5 @@ function loadSystemSetting() {
 function dimLabel() {
   document
     .querySelectorAll("label[for='toggle-theme']")
-    .forEach((label) => label.classList.toggle("is-muted"));
+    .forEach((label) => label.classList.toggle("text-muted"));
 }

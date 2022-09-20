@@ -1,4 +1,4 @@
-import awsconfig from "../../aws-exports";
+import awsconfig from "../../aws-config.dev";
 
 const apiUrl = awsconfig.API.endpoints[0].endpoint;
 const myTestLink = "my-test-link";

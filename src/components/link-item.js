@@ -1,5 +1,6 @@
 import styles from "!raw-loader!sass-loader!./link.scss";
 
+import { Utils } from "../utils";
 import html from "./template.html";
 
 class LinkItem extends HTMLElement {
@@ -24,18 +25,114 @@ class LinkItem extends HTMLElement {
       origin: this.shadowRoot.querySelector(".input-origin"),
     };
     this.item = this.shadowRoot.querySelector("li");
+  }
 
-    this.inputs.backhalf.addEventListener("focus", this);
-    this.inputs.backhalf.addEventListener("blur", this);
+  // noinspection JSUnusedGlobalSymbols
+  connectedCallback() {
+    Object.values(this.inputs).forEach((input) => {
+      input.addEventListener("keydown", this.handleActionKeys.bind(this));
+      input.addEventListener(
+        "input",
+        this.disableConfirmOnEmptyInput.bind(this)
+      );
+    });
     Object.values(this.buttons).forEach((btn) => {
-      btn.addEventListener("click", this);
+      btn.addEventListener("click", this.handleButtonClick.bind(this));
     });
   }
 
   // noinspection JSUnusedGlobalSymbols
   disconnectedCallback() {
+    Object.values(this.inputs).forEach((input) => {
+      input.removeEventListener("keydown", this.handleActionKeys.bind(this));
+      input.removeEventListener(
+        "input",
+        this.disableConfirmOnEmptyInput.bind(this)
+      );
+    });
     Object.values(this.buttons).forEach((btn) => {
-      btn.removeEventListener("click", this);
+      btn.removeEventListener("click", this.handleButtonClick.bind(this));
+    });
+  }
+
+  disableConfirmOnEmptyInput() {
+    const isInputEmpty =
+      this.inputs.backhalf.value.trim().length === 0 ||
+      this.inputs.origin.value.trim().length === 0;
+    this.buttons.ok.disabled = isInputEmpty;
+  }
+
+  handleActionKeys({ key }) {
+    if (key === "Enter") {
+      if (this.buttons.ok.disabled === false) {
+        this.awaitConfirm();
+      }
+    } else if (key === "Escape") {
+      this.cancelAction();
+    }
+  }
+
+  handleButtonClick({ currentTarget: button }) {
+    if (button === this.buttons.edit) {
+      this.setAttribute("action", "edit");
+      this.inputs.backhalf.select();
+      this.inputs.backhalf.focus();
+    } else if (button === this.buttons.delete) {
+      this.setAttribute("action", "delete");
+    } else if (button === this.buttons.ok) {
+      this.awaitConfirm();
+    } else if (button === this.buttons.cancel) {
+      this.cancelAction();
+    }
+  }
+
+  awaitConfirm() {
+    this.buttons.ok.classList.add("waiting");
+    this.disableInput();
+    this.sendConfirmedEvent();
+  }
+
+  cancelAction() {
+    this.removeAttribute("action");
+    this.inputs.origin.value = this.data.origin.textContent;
+    this.updateUrl();
+  }
+
+  confirm({ success }) {
+    this.buttons.ok.classList.remove("waiting");
+    if (success) {
+      this.confirmSuccess();
+    } else {
+      this.confirmFailure();
+    }
+    return this.resetAfterDelay(); // so that the user can see the result feedback
+  }
+
+  confirmSuccess() {
+    if (this.getAttribute("action") === "edit") {
+      this.url.pathname = this.inputs.backhalf.value;
+      this.updateUrl();
+      this.setAttribute("origin", this.inputs.origin.value);
+    }
+    this.buttons.ok.classList.add("success");
+  }
+
+  confirmFailure() {
+    if (this.getAttribute("action") === "edit") {
+      this.updateUrl();
+      this.inputs.origin.value = this.getAttribute("origin");
+    }
+    this.buttons.ok.classList.add("failure");
+  }
+
+  resetAfterDelay() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.removeAttribute("action");
+        this.buttons.ok.classList.remove("success", "failure");
+        this.enableInput();
+        resolve();
+      }, 2000);
     });
   }
 
@@ -65,9 +162,10 @@ class LinkItem extends HTMLElement {
   updateUrl() {
     this.data.url.href = this.url.href;
     this.data.url.textContent = this.url.host + this.url.pathname;
-    this.inputs.backhalf.parentElement.replaceAllText(
-      "afterbegin",
-      `${this.url.host}/`
+    Utils.replaceAllTextWithinElement(
+      this.inputs.backhalf.parentElement,
+      `${this.url.host}/`,
+      "afterbegin"
     );
     this.inputs.backhalf.value = this.url.pathname.replace(/^\//, "");
   }
@@ -77,48 +175,11 @@ class LinkItem extends HTMLElement {
     this.inputs.origin.value = newValue;
   }
 
-  // noinspection JSUnusedGlobalSymbols
-
-  handleEvent({ currentTarget: target, type }) {
-    if (target === this.inputs.backhalf) {
-      if (type === "focus") {
-        this.inputs.backhalf.parentElement.style.borderColor =
-          "var(--secondary)";
-      } else if (type === "blur") {
-        this.inputs.backhalf.parentElement.removeAttribute("style");
-      }
-    }
-
-    if (type === "click") {
-      if (target === this.buttons.edit) {
-        this.setAttribute("action", "edit");
-        this.startEdit();
-      } else if (target === this.buttons.delete) {
-        this.setAttribute("action", "delete");
-      } else if (target === this.buttons.cancel) {
-        this.removeAttribute("action");
-      } else if (target === this.buttons.ok) {
-        this.handleConfirm();
-      }
-    }
-  }
-
-  startEdit() {
-    this.inputs.backhalf.select();
-    this.inputs.backhalf.focus();
-  }
-
-  handleConfirm() {
-    this.classList.add("is-confirm");
-    this.disable();
-    this.sendEvent();
-  }
-
-  disable() {
+  disableInput() {
     this.setDisabled(true);
   }
 
-  enable() {
+  enableInput() {
     this.setDisabled(false);
   }
 
@@ -130,66 +191,25 @@ class LinkItem extends HTMLElement {
     );
   }
 
-  sendEvent() {
-    const currentAction = this.getAttribute("action");
-    const event = new CustomEvent("confirm", {
-      detail: {
-        type: currentAction,
-      },
-    });
-    if (currentAction === "edit") {
-      event.detail.newData = {
-        ...(this.inputs.backhalf.value !== this.backhalf && {
-          backhalf: this.inputs.backhalf.value,
-        }),
-        ...(this.inputs.origin.value !== this.data.origin.textContent && {
-          origin: this.inputs.origin.value,
-        }),
-      };
-    }
-    this.dispatchEvent(event);
-  }
-
-  async confirm({ success }) {
-    this.classList.remove("is-confirm");
-    if (success) {
-      this.confirmSuccess();
-    } else {
-      this.confirmFailure();
-    }
-    return new Promise((resolve) => {
-      setTimeout(
-        (that) => {
-          that.removeAttribute("action");
-          that.classList.removeStartingWith("is-");
-          this.enable();
-          resolve();
-        },
-        2000,
-        this
+  sendConfirmedEvent() {
+    if (this.getAttribute("action") === "delete") {
+      this.dispatchEvent(new Event("deleteConfirmed"));
+    } else if (this.getAttribute("action") === "edit") {
+      this.dispatchEvent(
+        new CustomEvent("editConfirmed", { detail: this.changedData() })
       );
-    });
-  }
-
-  confirmSuccess() {
-    if (this.getAttribute("action") === "edit") {
-      this.url.pathname = this.inputs.backhalf.value;
-      this.updateUrl();
-      this.setAttribute("origin", this.inputs.origin.value);
     }
-    this.classList.add("is-success");
   }
 
-  confirmFailure() {
-    if (this.getAttribute("action") === "edit") {
-      this.reset();
-    }
-    this.classList.add("is-failure");
-  }
-
-  reset() {
-    this.updateUrl();
-    this.inputs.origin.value = this.getAttribute("origin");
+  changedData() {
+    return {
+      ...(this.inputs.backhalf.value !== this.backhalf && {
+        backhalf: this.inputs.backhalf.value,
+      }),
+      ...(this.inputs.origin.value !== this.data.origin.textContent && {
+        origin: this.inputs.origin.value,
+      }),
+    };
   }
 
   deleteAnimated() {
@@ -205,9 +225,11 @@ class LinkItem extends HTMLElement {
   filter(searchText) {
     this.highlightSearch(searchText);
     const match =
-      this.url.pathname.includesCaseInsensitive(searchText) ||
-      this.getAttribute("origin").includesCaseInsensitive(searchText);
-    this.classList.toggle("is-hidden", !match);
+      this.url.pathname.toLowerCase().includes(searchText.toLowerCase()) ||
+      this.getAttribute("origin")
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+    this.classList.toggle("hidden", !match);
     return match;
   }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 	<head>
 		<meta charset="UTF-8">
 		<meta name=viewport content="width=device-width,initial-scale=1">
@@ -21,123 +21,127 @@
 							<input id="toggle-theme" name="toggle-theme" type="checkbox">
 							<span class="paper-switch-slider round"></span>
 						</label>
-						<label for="toggle-theme" class="paper-switch-2-label is-muted">
+						<label for="toggle-theme" class="paper-switch-2-label text-muted">
 							<i class="fa fa-moon-o"></i>
 						</label>
 					</fieldset>
 				</li>
 
         <li>
-          <div class="container-exclusive user is-placeholder">
+          <div id="user" class="oneof is-user-placeholder">
 
-            <div class="placeholder">
-              <div class="avatar"></div>
-              <div class="name"></div>
+            <div class="user-placeholder">
+              <div class="user-placeholder__avatar"></div>
+              <div class="user-placeholder__name border">username</div>
             </div>
 
-            <div class="lnk-signin">
+            <div class="signin">
               <a id="lnk-signin" href="#">
                 <i class="fa fa-google" aria-hidden="true"></i> Sign in
               </a>
             </div>
 
-            <div class="profile submenu">
-              <a href="#">
+            <div class="user-menu submenu">
+              <span class="submenu__header">
                 <i class="fa fa-user"></i> Hi <span id="username"></span>
-              </a>
-              <div class="overflow-container">
-                <ul class="inline">
+              </span>
+              <div class="overflow-hidden">
+                <ul class="submenu__options inline">
                   <li>
                     <a id="lnk-signout" href="#">👋 Bye!</a>
                   </li>
                 </ul>
               </div>
             </div>
-
           </div>
         </li>
 			</ul>
 		</nav>
 
 		<div class="row flex-center">
-			<div class="col-8 col">
-
-				<input class="alert-state" id="alert-check" type="checkbox" checked>
-				<div data-testid="alert" id="alert" class="alert dismissible">
-
-					<div id="waiting">
-						<span class="dot"></span>
-						<span class="dot"></span>
-						<span class="dot"></span>
-					</div>
-
-					<div id="shortened-url-alert">
-						<a id="shortened-url-alert__url" target="_blank"></a>
-						<div class="shortened-url-alert__actions">
-							<button id="shortened-url-alert__btn-copy" class="paper-btn">
-								<i class="fa fa-clipboard"></i> Copy
-							</button>
-							<label class="paper-btn" for="alert-check">
-								<i class="fa fa-times" aria-hidden="true"></i> Dismiss</label>
-						</div>
-					</div>
-
-					<div id="simple-message">
+			<div class="sm-8 xs-10 col">
+				<input id="alert-error-state" class="alert-state" type="checkbox" checked>
+				<div id="alert-error" class="alert alert-danger dismissible"></div>
+				<input id="alert-success-state" class="alert-state" type="checkbox" checked>
+				<div id="alert-success" class="alert alert-success dismissible"></div>
+				<input id="alert-short-state" class="alert-state" type="checkbox" checked>
+				<div id="alert-short" class="alert alert-success dismissible">
+					<a></a>
+					<div>
+						<label class="btn-close" for="alert-short-state">
+							<i class="fa fa-clipboard"></i>
+						</label>
+						<label class="btn-close" for="alert-short-state">X</label>
 					</div>
 				</div>
 
-				<h2>Serverless url shortener</h2>
+				<h2 class="text-center">Serverless url shortener</h2>
 
 				<div class="row flex-spaces tabs">
 					<input id="tab1" type="radio" name="tabs" checked>
 					<label for="tab1">Shorten</label>
 
 					<input id="tab2" type="radio" name="tabs">
-					<label for="tab2">My Links <span data-testid="count-badge" class="badge"><i class="fa fa-filter"></i>-</span></label>
+					<label for="tab2">
+						My Links&nbsp;<div id="count-badge" data-testid="count-badge" class="badge count-badge secondary placeholder">
+						<i class="fa fa-filter icon-filtered"></i>
+						<span>&nbsp;</span>
+					</div>
+					</label>
 
-					<div class="content" id="content1">
-						<form>
-							<div class="form-group">
+					<div id="content1" class="content padding-top-large padding-bottom-large">
+						<form autocomplete="off" spellcheck="false">
+							<div class="form-group row flex-center">
 								<label for="input-url">Enter URL to shorten</label>
-								<input data-testid="url" name="url" id="input-url" class="input-block" autocomplete="off" required>
-								<button type="button" id="btn-customize" class="paper-btn">
-									<i class="fa fa-magic" aria-hidden="true"></i> Customize
-								</button>
-								<span id="input-backhalf" class="is-hidden">
-									<input data-testid="backhalf" name="backhalf" type="text" placeholder="my-custom-link" spellCheck="false" />
-								</span>
+								<input type="url" inputmode="url" tabindex="0" name="url" id="input-url" data-testid="url" class="input-block text-center" autofocus required>
+								<div id="custom-backhalf" data-mode="closed" class="prefixed-input col-12 row flex-center margin-small hidden-top">
+									<span class="prefixed-input__prefix text-right text-muted"></span>
+									<input type="text" class="prefixed-input__text" data-testid="backhalf" name="backhalf" placeholder="my-custom" />
+								</div>
+								<div class="row margin-large">
+									<button type="button" id="btn-customize" class="margin-right-small">
+										<i class="fa fa-magic" aria-hidden="true"></i> Customize
+									</button>
+									<button type="submit" id="submit" class="oneof submit btn-primary paper-btn is-label" disabled>
+										<div class="waiting">
+											<span class="dot"></span>
+											<span class="dot"></span>
+											<span class="dot"></span>
+										</div>
+										<span class="label">Shorten link</span>
+									</button>
+								</div>
 							</div>
-							<input id="submit" class="paper-btn btn-primary" type="submit" value="Shorten link" disabled>
 						</form>
 					</div>
 
-      <div class="content" id="content2">
-        <div id="my-links">
-          <input id="search-links" placeholder="Search" />
-          <ul>
-            <link-item class="placeholder"
-                       url="https://migueli.to/my-first-link"
-                       origin="https://www.example.com"></link-item>
-            <link-item class="placeholder"
-                       url="https://migueli.to/css-tricks"
-                       origin="https://css-tricks.com/snippets/css/a-guide-to-flexbox/"></link-item>
-            <link-item class="placeholder"
-                       url="https://migueli.to/3YuT2NN"
-                       origin="https://docs.cypress.io/guides/overview/why-cypress"></link-item>
-            <link-item class="placeholder"
-                       url="https://migueli.to/awaiting-the-return-of-monkey-island"
-                       origin="https://returntomonkeyisland.com/"></link-item>
-          </ul>
-        </div>
-      </div>
+					<div id="content2" class="content">
+						<div class="row">
+							<input type="search" id="search-links" class="col-12" placeholder="Search" />
+						</div>
+							<ul id="my-links" class="my-links hidden-scrollbar">
+								<link-item class="placeholder"
+													 url="https://migueli.to/my-link"
+													 origin="https://www.example.com/path/to/example"></link-item>
+								<link-item class="placeholder"
+													 url="https://migueli.to/my-link"
+													 origin="https://www.example.com/path/to/example"></link-item>
+								<link-item class="placeholder"
+													 url="https://migueli.to/my-link"
+													 origin="https://www.example.com/path/to/example"></link-item>
+								<link-item class="placeholder"
+													 url="https://migueli.to/my-link"
+													 origin="https://www.example.com/path/to/example"></link-item>
+							</ul>
+				</div>
     </div>
 
-				<p class="padding-top">
+				<p class="padding-top-large text-center">
 					<a href="https://github.com/mperezi/aws-lambda-url-shortener">Made with
 						<span popover-bottom="The Serverless Framework">⚡️</span>,
 						<span popover-bottom="Python 3.8">🐍</span> and
 						<span popover-bottom="AWS Lambda">ƛ</span>
-						by mperezi</a>
+						by almibarss</a>
 				</p>
 			</div>
 		</div>

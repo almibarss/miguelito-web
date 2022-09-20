@@ -1,7 +1,7 @@
 import { RestAPI } from "@aws-amplify/api-rest";
 import Amplify from "@aws-amplify/core";
+import awsconfig from "awsconfig";
 
-import awsconfig from "../aws-exports";
 import { currentUser } from "./auth";
 
 Amplify.configure(awsconfig);
@@ -29,8 +29,7 @@ export const API = {
   },
   shorten: async (url, backhalf) => {
     const requestBody = { origin: url };
-    const isCustom = !(backhalf ?? "").trim().isEmpty();
-    if (isCustom) {
+    if (backhalf !== undefined) {
       requestBody.backhalf = backhalf;
     }
 

@@ -1,6 +1,4 @@
-import "../node_modules/papercss/dist/paper.min.css";
-import "../css/main.css";
-import "../css/waiting.css";
+import "~styles/index.scss";
 
 import { API } from "./api";
 import { MyLinks } from "./feature/my-links";

@@ -1,0 +1,23 @@
+@use "mixins" as m;
+
+.hidden-right {
+  @include m.hidden(true);
+  transform: translateX(100%);
+}
+
+.hidden-top {
+  @include m.hidden(true);
+  transform: translateY(-100%);
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.hidden-scrollbar {
+  -ms-overflow-style: none; // IE and Edge
+  scrollbar-width: none;    // Firefox
+  &::-webkit-scrollbar {    // Chrome, Safari, Opera
+    display: none;
+  }
+}

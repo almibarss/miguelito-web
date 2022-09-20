@@ -1,0 +1,7 @@
+.prefixed-input__text {
+  padding: 0;
+
+  &, &:focus {
+    border: 0;
+  }
+}

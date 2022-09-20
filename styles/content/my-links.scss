@@ -1,0 +1,18 @@
+@use "../mixins" as m;
+
+.my-links {
+  height: 50vh;
+  overflow-y: auto;
+}
+
+.count-badge {
+  transition: background-color 1s ease-out 0s;
+
+  &.placeholder {
+    background-color: var(--muted-light);
+  }
+
+  &:not(.filtered) .icon-filtered {
+    @include m.hidden;
+  }
+}

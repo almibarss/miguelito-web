@@ -1,11 +1,15 @@
-const { merge } = require("webpack-merge");
+const { mergeWithRules } = require("webpack-merge");
 
 const common = require("./webpack.common.js");
+const path = require("path");
 
-module.exports = merge(common, {
+const dev = {
   resolve: {
     fallback: {
       crypto: false,
+    },
+    alias: {
+      awsconfig: path.resolve(__dirname, "aws-config.dev.js"),
     },
   },
   mode: "development",
@@ -14,4 +18,22 @@ module.exports = merge(common, {
   devServer: {
     contentBase: "./dist",
   },
-});
+  module: {
+    rules: [
+      {
+        test: /\.(c|sc|sa)ss$/,
+        use: ["style-loader"],
+      },
+    ],
+  },
+};
+
+// https://stackoverflow.com/a/73249173/13166837
+module.exports = mergeWithRules({
+  module: {
+    rules: {
+      test: "match",
+      use: "prepend",
+    },
+  },
+})(common, dev);

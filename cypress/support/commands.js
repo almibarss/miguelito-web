@@ -2,7 +2,7 @@ import "@testing-library/cypress/add-commands";
 
 import { Auth } from "@aws-amplify/auth";
 
-import awsconfig from "../../aws-exports";
+import awsconfig from "../../aws-config.dev";
 import { testuser } from "./e2e";
 
 const apiUrl = awsconfig.API.endpoints[0].endpoint;

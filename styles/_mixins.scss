@@ -1,0 +1,23 @@
+@mixin hidden($render: false) {
+  visibility: hidden;
+  opacity: 0;
+  @if not $render {
+    display: none !important;
+  }
+}
+
+@mixin visible {
+  visibility: visible;
+  opacity: 1;
+  display: revert;
+  transform: translate(0, 0);
+}
+
+@mixin oneof($parts...) {
+  @each $p in $parts {
+    .oneof.is-#{$p} > :not(.#{$p}) {
+      @include hidden;
+    }
+  }
+}
+

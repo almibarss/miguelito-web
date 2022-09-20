@@ -1,26 +1,33 @@
 import "../components/link-item";
 
+import { Alert } from "../alert";
 import { API } from "../api";
 import { currentUser } from "../auth";
-import { Ui } from "../ui";
+
+const searchInput = document.getElementById("search-links");
+const myLinksList = document.getElementById("my-links");
+const linkCountBadge = document.getElementById("count-badge");
+const linkCount = linkCountBadge.querySelector("span");
 
 export const MyLinks = {
   init: () => {
     currentUser().then(loadUserLinks).catch(showSimpleUi);
-    document.addEventListener("linkCreated", ({ detail: link }) => {
-      insertLinkFirst(link);
-      updateCount();
-      flashCountBadge("success");
-    });
+    document.addEventListener("linkCreated", insertLinkCreated);
   },
 };
 
-function loadUserLinks() {
-  API.list()
-    .then((links) => links.sort(byUpdateDate).reverse())
-    .then(insertAsLinkItems)
-    .finally(removePlaceholder);
-  Ui.Inputs.searchLinks.addEventListener("input", filter);
+async function loadUserLinks() {
+  try {
+    const links = await API.list();
+    links.sort(byUpdateDate).reverse();
+    insertAsLinkItems(links);
+    searchInput.addEventListener("input", filterList);
+  } catch (ignore) {
+    // TODO: show an error message
+  } finally {
+    removePlaceholder();
+    updateCount();
+  }
 }
 
 function byUpdateDate(link1, link2) {
@@ -34,82 +41,86 @@ function insertAsLinkItems(links) {
   links.forEach(insertLinkLast);
 }
 
+function insertLinkCreated({ detail: link }) {
+  insertLinkFirst(link);
+  updateCount();
+  flashCountBadge("success");
+}
+
 function insertLinkFirst(link) {
-  Ui.Lists.myLinks.prepend(createLinkItem(link));
+  myLinksList.prepend(createLinkItem(link));
 }
 
 function insertLinkLast(link) {
-  Ui.Lists.myLinks.appendChild(createLinkItem(link));
+  myLinksList.appendChild(createLinkItem(link));
 }
 
 function createLinkItem(link) {
   const linkItem = document.createElement("link-item");
   linkItem.setAttribute("url", link.url);
   linkItem.setAttribute("origin", link.origin);
-  linkItem.addEventListener("confirm", (ev) => {
-    if (ev.detail.type === "delete") {
-      handleConfirmDelete(linkItem);
-    } else {
-      handleConfirmEdit(linkItem, ev);
-    }
-  });
+  linkItem.addEventListener("editConfirmed", handleEditConfirmed);
+  linkItem.addEventListener("deleteConfirmed", handleDeleteConfirmed);
   return linkItem;
 }
 
+async function handleEditConfirmed(ev) {
+  const linkItem = ev.target;
+  try {
+    await API.update(linkItem.backhalf, ev.detail);
+    linkItem.confirm({ success: true });
+  } catch (error) {
+    Alert.error(error.message);
+    linkItem.confirm({ success: false });
+  }
+}
+
+async function handleDeleteConfirmed(ev) {
+  const linkItem = ev.target;
+  try {
+    await API.remove(linkItem.backhalf);
+    await linkItem.confirm({ success: true });
+    await linkItem.deleteAnimated();
+    updateCount();
+    flashCountBadge("danger");
+  } catch (error) {
+    Alert.error(error.message);
+    linkItem.confirm({ success: false });
+  }
+}
+
 function removePlaceholder() {
-  Ui.Lists.myLinks
-    .querySelectorAll(".placeholder")
-    .forEach((pl) => pl.remove());
-  updateCount();
+  myLinksList.querySelectorAll(".placeholder").forEach((p) => p.remove());
+  linkCountBadge.classList.remove("placeholder");
 }
 
-function handleConfirmDelete(linkItem) {
-  API.remove(linkItem.backhalf)
-    .then(() => linkItem.confirm({ success: true }))
-    .then(() => linkItem.deleteAnimated())
-    .then(updateCount)
-    .then(() => flashCountBadge("danger"))
-    .catch((error) => {
-      Ui.errorWithTimeout(error.message, 2000);
-      linkItem.confirm({ success: false });
-    });
-}
-
-function handleConfirmEdit(linkItem, confirmEvent) {
-  API.update(linkItem.backhalf, confirmEvent.detail.newData)
-    .then(() => linkItem.confirm({ success: true }))
-    .catch((error) => {
-      Ui.errorWithTimeout(error.message, 2000);
-      linkItem.confirm({ success: false });
-    });
-}
-
-function filter(inputEvent) {
+function filterList(inputEvent) {
   const searchText = inputEvent.target.value;
-  const links = Ui.Lists.myLinks.querySelectorAll("link-item");
+  const links = myLinksList.querySelectorAll("link-item");
   links.forEach((link) => link.filter(searchText));
   updateCount();
 }
 
 function updateCount() {
-  const searchText = Ui.Inputs.searchLinks.value;
-  const countBadge = Ui.Badges.linkCount;
+  const searchTextIsNotEmpty = searchInput.value.trim().length !== 0;
+  linkCountBadge.classList.toggle("filtered", searchTextIsNotEmpty);
   const itemCount = visibleItemCount();
-  countBadge.classList.toggle("is-filtered", !searchText.isEmpty());
-  countBadge.replaceAllText("beforeend", itemCount > 0 ? itemCount : "-");
+  linkCount.innerText = itemCount > 0 ? itemCount : "-";
 }
 
 function flashCountBadge(selector = "success") {
-  Ui.Badges.linkCount.classList.add(selector);
-  setTimeout(() => Ui.Badges.linkCount.classList.remove(selector), 2000);
+  linkCountBadge.classList.add(selector);
+  setTimeout(() => linkCountBadge.classList.remove(selector), 2000);
 }
 
 function visibleItemCount() {
-  return Ui.Lists.myLinks.querySelectorAll("link-item:not(.is-hidden)").length;
+  return myLinksList.querySelectorAll(
+    "link-item:not(.hidden):not(.placeholder)"
+  ).length;
 }
 
 function showSimpleUi() {
-  const form = Ui.Forms.shorten;
+  const form = document.getElementById("content1");
   const tabs = document.querySelector(".tabs");
   tabs.replaceWith(form);
 }

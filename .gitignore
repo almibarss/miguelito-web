@@ -2,10 +2,11 @@ node_modules/
 dist/
 
 cypress/screenshots/
-
 cypress.env.json
 
-# Sass files
-/**/components/*.css*
-/css/placeholder.css*
-/css/navbar.css*
+# Webpack
+*.css.map
+*.js.map
+
+/aws-config.*.js
+/stats.json

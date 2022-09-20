@@ -1,0 +1,89 @@
+@use "papercss/src/components/utilities" as spacing;
+@use "utilities" as utils;
+@use "mixins" as m;
+@import "papercss/src/core/config";
+@import "papercss/src/core/mixins";
+
+nav {
+  padding: spacing.$small;
+  flex-flow: row-reverse;
+
+  * {
+    font-size: 22px !important; // adjust text size to match the theme round toggle
+  }
+
+  div, ul, li, .form-group {
+    margin: 0 !important;
+  }
+
+  li {
+    text-indent: 0 !important;
+  }
+
+  .paper-switch-2 + .paper-switch-2-label {
+    margin-right: 0;
+  }
+
+  a, a:hover {
+    border: none;
+  }
+
+  @include m.oneof("user-placeholder", "signin", "user-menu");
+
+  ul {
+    gap: spacing.$small;
+
+    &, .submenu {
+      display: flex !important;
+      flex-flow: row-reverse !important;
+      align-items: center;
+    }
+  }
+
+  .user-placeholder {
+    display: flex;
+    gap: spacing.$small;
+
+    &__avatar {
+      background-color: var(--muted-light);
+      border-radius: 50%;
+      width: 1.25em;
+      height: 1.25em;
+    }
+
+    &__name {
+      border-width: 0; // we want the shape of the border, not the border itself
+      background-color: var(--muted-light);
+      color: transparent;
+    }
+  }
+}
+
+.submenu {
+  &__header {
+    cursor: default;
+
+    &:before {
+      content: "‹";
+      margin: 0 spacing.$small;
+    }
+  }
+
+  &__options {
+    @extend .hidden-right;
+    transition: .5s ease-in-out;
+  }
+
+  &:hover &__options {
+    @include m.visible;
+  }
+}
+
+@include resp(xsmall) {
+  .user-menu .submenu__header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 8rem;
+  }
+}

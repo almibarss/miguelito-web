@@ -1,16 +1,37 @@
-@use "papercss/dist/paper";
-@use "../../css/waiting.css";
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+@use "papercss/src/components/utilities" as spacing;
+@import "papercss/src/core/config";
+@import "papercss/src/content/fonts";
+@import "papercss/src/core/mixins";
+@import "papercss/src/components/buttons";
+@import "papercss/src/components/forms";
+@import "papercss/src/utilities/borders";
+@import "../../styles/waiting";
+
+/* https://adamsilver.io/blog/buttons-shouldnt-have-a-hand-cursor/ */
+button, label {
+  cursor: default !important;
+}
+
+@mixin hidden {
+  visibility: hidden;
+  opacity: 0;
+  display: none;
+}
+
+:host(.hidden) {
+  @include hidden;
+}
 
 :host(.placeholder) {
   user-select: none;
   -webkit-user-select: none;
 
   .btn-action {
-    @extend .background-primary;
+    background-color: var(--muted);
     border-color: transparent;
+
     i {
-      display: none;
+      @include hidden;
     }
   }
 
@@ -19,156 +40,85 @@
   }
 
   .url, .origin {
-    @extend .background-primary;
     @extend .border;
+    background-color: var(--muted-light);
     border-color: transparent;
     color: transparent;
     background-image: none;
   }
 }
 
-:host(.is-hidden) {
-  display: none;
-}
-
-:host([action]) {
-  & .btn-action {
-    display: none;
-  }
-
-  & li {
-    @extend .border;
-    border-style: solid;
-    border-width: 2px;
-  }
-
-
-  & .btn-confirm-ok {
-    $hidden: ico-success, ico-failure;
-    @each $h in $hidden {
-      & .#{$h} {
-      }
-    }
-  }
-}
-
-:host(:not(.is-success)) {
-  & .btn-confirm-ok .ico-success {
-    display: none;
-  }
-}
-
-:host(:not(.is-failure)) {
-  & .btn-confirm-ok .ico-failure {
-    display: none;
+:host([action="edit"]), :host([action="delete"]) {
+  .button-group:has(.btn-action) {
+    @include hidden;
   }
 }
 
 :host(:not([action])) {
-  & .btn-confirm {
-    display: none;
-  }
-}
-
-:host(.is-confirm) {
-  & .btn-confirm-ok {
-    @extend .btn-primary-outline;
-
-    $hidden: ico-success, ico-confirm, ico-failure;
-    @each $h in $hidden {
-      & .#{$h} {
-        display: none;
-      }
-    }
-  }
-}
-
-:host(.is-success) {
-  & .btn-confirm-ok {
-    @extend .btn-success;
-
-    $hidden: ico-confirm, ico-failure;
-    @each $h in $hidden {
-      & .#{$h} {
-        display: none;
-      }
-    }
-  }
-}
-
-:host(.is-failure) {
-  & .btn-confirm-ok {
-    @extend .btn-danger;
-
-    $hidden: ico-success, ico-confirm;
-    @each $h in $hidden {
-      & .#{$h} {
-        display: none;
-      }
-    }
+  .button-group:has(.btn-confirm) {
+    @include hidden;
   }
 }
 
 :host([action="edit"]) {
-  & .data {
-    display: none;
+  li {
+    @extend .border, .border-warning;
   }
 
-  & li {
-    @extend .border-warning;
-  }
-}
-
-:host([action="delete"]) {
-  & li {
-    @extend .border-danger;
+  .link-data:not(.editable) {
+    @include hidden;
   }
 }
 
 :host(:not([action="edit"])) {
-  & .edit {
-    display: none;
+  .link-data.editable {
+    @include hidden;
   }
 }
 
-@mixin data {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  flex-grow: 2;
-  gap: .2rem;
+:host([action="delete"]) {
+  li {
+    @extend .border, .border-danger;
+  }
 }
 
 li {
   display: flex;
+  gap: spacing.$small;
+  padding: spacing.$small;
+  margin-top: spacing.$small;
   justify-content: flex-end;
+
+  &.removed-item {
+    animation: slide-out-left .8s cubic-bezier(.65, -0.02, .72, .29);
+  }
+}
+
+.link-data {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: calc(spacing.$small / 2);
   align-items: flex-start;
-  gap: .5rem;
-  padding: 0.75rem;
-  text-indent: 0;
-  margin: .5rem 0;
 
-  $align: btn-action, btn-confirm;
-  @each $a in $align {
-    & .#{$a} {
-      // override papercss settings
-      align-self: flex-start;
-    }
+  &.editable {
+    gap: spacing.$small;
+    align-items: stretch;
+  }
+
+  .url {
+    word-break: break-all;
   }
 }
 
-.data {
-  @include data;
+.button-group {
+  display: flex;
+  gap: spacing.$small;
 
-  & .url {
-    align-self: flex-start;
+  button {
+    flex-grow: 1;
+    align-self: flex-start !important; // override main theme settings for buttons
   }
-}
-
-.edit {
-  @include data;
-  align-items: stretch;
-  gap: .5rem;
 }
 
 .url {
@@ -177,37 +127,56 @@ li {
 
 .origin {
   font-size: smaller;
-  word-break: break-word;
+  word-break: break-all;
 }
 
-@mixin button {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: default;
+@mixin square-button($size) {
+  width: $size;
+  height: $size;
+  padding: 0;
 }
 
-.btn-action {
-  @include button;
+button, [type=button] {
+  margin: 0 !important; // override main theme settings
+}
 
-  &-edit {
+.btn-action, .btn-confirm {
+  @include square-button(50px);
+}
+
+.btn {
+  &-action-edit {
     @extend .btn-primary-outline;
   }
-  &-delete {
+
+  &-action-delete {
     @extend .btn-danger-outline;
   }
-}
 
-.btn-confirm {
-  @include button;
-
-  &-cancel {
+  &-confirm-cancel {
     @extend .btn-primary-outline;
   }
-  &-ok {
+
+  &-confirm-ok {
     @extend .btn-success;
+
+    &.failure {
+      @extend .btn-danger;
+    }
+
+    &.waiting {
+      @extend .btn-primary-outline;
+    }
+
+    $states: success, failure, waiting;
+    @each $s in $states {
+      &:not(.#{$s}) .ico-#{$s} {
+        @include hidden;
+      }
+      &.#{$s} .ico-default {
+        @include hidden;
+      }
+    }
   }
 }
 
@@ -216,33 +185,52 @@ li {
   display: flex;
   color: var(--muted);
 
-  & input {
-    flex-grow: 2;
+  &:has(input:focus) {
+    border-color: var(--secondary);
+  }
+
+  input {
+    width: 100%;
     display: inline;
     border: 0;
     padding: 0;
   }
 }
 
-li.removed-item {
-  animation: slide-left .8s cubic-bezier(.65,-0.02,.72,.29);
+@include resp(xsmall) {
+  li {
+    flex-wrap: wrap;
+  }
+  .link-data {
+    flex-grow: 10000;
+  }
+  .button-group {
+    flex-grow: 1;
+  }
 }
 
-@keyframes slide-left {
+/* ----------------------------------------------
+ * Generated by Animista on 2022-11-4 6:38:26
+ * Licensed under FreeBSD License.
+ * See http://animista.net/license for more info.
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+@keyframes slide-out-left {
   0% {
-    opacity: 1;
     transform: translateX(0);
+    opacity: 1;
   }
   30% {
-    opacity: 1;
     transform: translateX(50px);
+    opacity: 1;
   }
   80% {
-    opacity: 1;
     transform: translateX(-800px);
+    opacity: 1;
   }
   100% {
-    opacity: 0;
     transform: translateX(-800px);
+    opacity: 0;
   }
 }

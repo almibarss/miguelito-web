@@ -14,8 +14,19 @@
   "extends": [
     "eslint:recommended",
     "plugin:prettier/recommended",
-    "plugin:jquery/deprecated"
+    "plugin:jquery/deprecated",
+    "plugin:import/recommended"
   ],
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["awsconfig", "./aws-config.dev.js"],
+          ["~styles", "./styles"]
+        ]
+      }
+    }
+  },
   "rules": {
     "no-console": ["error", { "allow": ["error"] }],
     "no-var": "error",

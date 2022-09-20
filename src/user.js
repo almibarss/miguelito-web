@@ -1,25 +1,35 @@
 import { currentUser, signin, signout } from "./auth";
-import { Ui } from "./ui";
 
-const usermenu = document.querySelector("nav .container-exclusive.user");
+const userOneof = document.getElementById("user");
+const signInLink = document.getElementById("lnk-signin");
+const signOutLink = document.getElementById("lnk-signout");
+const username = document.getElementById("username");
 
 export const User = {
   init: () => {
-    Ui.Links.signin.addEventListener("click", signin);
-    Ui.Links.signout.addEventListener("click", signout);
-    currentUser().then(userIsLoggedIn).catch(userIsNotLoggedIn);
+    signInLink.addEventListener("click", signin);
+    signOutLink.addEventListener("click", signout);
+    currentUser().then(userIsLoggedIn).catch(noUser).finally(removePlaceholder);
+  },
+  shakeSignIn: () => {
+    const signInBox = signInLink.closest("div");
+    signInBox.scrollIntoView({ behavior: "smooth", block: "center" });
+    signInBox.classList.add("shake-top");
+    signInBox.addEventListener("animationend", function () {
+      this.classList.remove("shake-top");
+    });
   },
 };
 
-function userIsLoggedIn({ name: username }) {
-  ["is-placeholder", "is-profile"].forEach((cl) =>
-    usermenu.classList.toggle(cl)
-  );
-  Ui.Text.username.textContent = username;
+function userIsLoggedIn({ name }) {
+  userOneof.classList.add("is-user-menu");
+  username.textContent = name;
 }
 
-function userIsNotLoggedIn() {
-  ["is-placeholder", "is-lnk-signin"].forEach((cl) =>
-    usermenu.classList.toggle(cl)
-  );
+function noUser() {
+  userOneof.classList.add("is-signin");
+}
+
+function removePlaceholder() {
+  userOneof.classList.remove("is-user-placeholder");
 }
