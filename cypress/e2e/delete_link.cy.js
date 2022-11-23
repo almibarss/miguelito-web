@@ -1,4 +1,5 @@
 import awsconfig from "../../aws-config.dev";
+import { expectLinkCountEqualsTo } from "../support/utils";
 
 const apiUrl = awsconfig.API.endpoints[0].endpoint;
 const myTestLink = "my-test-link";
@@ -29,6 +30,6 @@ describe("Delete link", () => {
         cy.getByTestId("edit", "delete").should("be.visible");
       });
     cy.get("@link").should("not.exist");
-    cy.getByTestId("count-badge").invoke("text").should("equal", "-");
+    expectLinkCountEqualsTo("-");
   });
 });

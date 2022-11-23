@@ -2,6 +2,7 @@ import awsconfig from "../../aws-config.dev";
 import {
   expectErrorMessageMatching,
   expectExistingLinkItem,
+  expectLinkCountEqualsTo,
   expectSuccessMessageContainingLink,
 } from "../support/utils";
 
@@ -54,12 +55,12 @@ describe("Create link", () => {
         expectSuccessMessageContainingLink(this.baseUrl, expectedBackhalf);
         expectExistingLinkItem(this.baseUrl, expectedBackhalf, expectedOrigin);
       });
-      cy.getByTestId("count-badge").invoke("text").should("equal", "1");
+      expectLinkCountEqualsTo(1);
     });
 
     it("displays a success message containing the created link when given a valid URL and a valid backhalf", function () {
       cy.intercept("POST", `${apiUrl}/links`).as("apiCall");
-      const expectedBackhalf = "8deab33d-afd3-439b-b7b0-55e9ce5a47bf";
+      const expectedBackhalf = "1Guv8mtq3I8uP5FXz6eJ";
       const expectedOrigin = "https://www.google.com";
       cy.getByTestId("url").type(expectedOrigin);
       cy.contains("button", "Customize").click();
@@ -70,17 +71,19 @@ describe("Create link", () => {
       cy.wait("@apiCall");
       expectSuccessMessageContainingLink(this.baseUrl, expectedBackhalf);
       expectExistingLinkItem(this.baseUrl, expectedBackhalf, expectedOrigin);
-      cy.getByTestId("count-badge").invoke("text").should("equal", "1");
+      expectLinkCountEqualsTo(1);
     });
 
-    it("displays an error message when given an invalid URL", () => {
+    it("displays an error message when given an invalid backhalf", () => {
       cy.intercept("POST", `${apiUrl}/links`).as("apiCall");
-      cy.getByTestId("url").type("google.com");
+      cy.getByTestId("url").type("https://www.google.com");
+      cy.contains("button", "Customize").click();
+      cy.getByTestId("backhalf").type("no spaces allowed");
 
       cy.contains("Shorten link").click();
 
       cy.wait("@apiCall");
-      expectErrorMessageMatching(/url is invalid/i);
+      expectErrorMessageMatching(/does not match regex/i);
     });
   });
 });

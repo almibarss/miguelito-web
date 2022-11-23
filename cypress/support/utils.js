@@ -2,7 +2,7 @@ export const expectSuccessMessageContainingLink = (
   expectedHostname,
   expectedBackhalf
 ) => {
-  cy.getByTestId("alert")
+  cy.getByTestId("alert-success")
     .should("be.visible")
     .and("have.class", "alert-success")
     .find("a")
@@ -10,7 +10,7 @@ export const expectSuccessMessageContainingLink = (
 };
 
 export const expectErrorMessageMatching = (expr) => {
-  cy.getByTestId("alert")
+  cy.getByTestId("alert-error")
     .should("be.visible")
     .and("have.class", "alert-danger")
     .invoke("text")
@@ -25,4 +25,11 @@ export const expectExistingLinkItem = (
   cy.get(
     `link-item[url="${expectedHostname}${expectedBackhalf}"][origin="${expectedOrigin}"]`
   );
+};
+
+export const expectLinkCountEqualsTo = (count) => {
+  cy.getByTestId("count-badge")
+    .invoke("text")
+    .then((t) => t.trim())
+    .should("equal", count.toString());
 };
