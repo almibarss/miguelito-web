@@ -1,5 +1,8 @@
+import { dom } from "@fortawesome/fontawesome-svg-core";
+
 import styles from "!raw-loader!sass-loader!./link.scss";
 
+import { Fontawesome } from "../fontawesome";
 import { Utils } from "../utils";
 import html from "./template.html";
 
@@ -29,6 +32,10 @@ class LinkItem extends HTMLElement {
 
   // noinspection JSUnusedGlobalSymbols
   connectedCallback() {
+    Fontawesome.init();
+    dom.i2svg({
+      node: this.shadowRoot,
+    });
     Object.values(this.inputs).forEach((input) => {
       input.addEventListener("keydown", this.handleActionKeys.bind(this));
       input.addEventListener(

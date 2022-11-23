@@ -17,7 +17,10 @@
   "dependencies": {
     "@aws-amplify/api-rest": "^2.0.0",
     "@aws-amplify/auth": "^4.0.0",
-    "@aws-amplify/core": "^4.0.0"
+    "@aws-amplify/core": "^4.0.0",
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.13.13",

@@ -4,7 +4,6 @@
 		<meta charset="UTF-8">
 		<meta name=viewport content="width=device-width,initial-scale=1">
 		<title>Serverless URL shortener</title>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	</head>
 	<style>
 
@@ -15,14 +14,14 @@
 				<li>
 					<fieldset class="form-group">
 						<label for="toggle-theme" class="paper-switch-2-label">
-							<i class="fa fa-sun-o"></i>
+							<i class="fa fa-sun"></i>
 						</label>
 						<label class="paper-switch-2">
 							<input id="toggle-theme" name="toggle-theme" type="checkbox">
 							<span class="paper-switch-slider round"></span>
 						</label>
 						<label for="toggle-theme" class="paper-switch-2-label text-muted">
-							<i class="fa fa-moon-o"></i>
+							<i class="fa fa-moon"></i>
 						</label>
 					</fieldset>
 				</li>
@@ -37,13 +36,13 @@
 
             <div class="signin">
               <a id="lnk-signin" href="#">
-                <i class="fa fa-google" aria-hidden="true"></i> Sign in
+                <i class="fab fa-google" aria-hidden="true"></i> Sign in
               </a>
             </div>
 
             <div class="user-menu submenu">
               <span class="submenu__header">
-                <i class="fa fa-user"></i> Hi <span id="username"></span>
+                <I class="fa fa-user"></I> Hi <span id="username"></span>
               </span>
               <div class="overflow-hidden">
                 <ul class="submenu__options inline">
@@ -61,11 +60,11 @@
 		<div class="row flex-center">
 			<div class="sm-8 xs-10 col">
 				<input id="alert-error-state" class="alert-state" type="checkbox" checked>
-				<div id="alert-error" class="alert alert-danger dismissible"></div>
+				<div data-testid="alert3" id="alert-error" class="alert alert-danger dismissible"></div>
 				<input id="alert-success-state" class="alert-state" type="checkbox" checked>
-				<div id="alert-success" class="alert alert-success dismissible"></div>
+				<div data-testid="alert2" id="alert-success" class="alert alert-success dismissible"></div>
 				<input id="alert-short-state" class="alert-state" type="checkbox" checked>
-				<div id="alert-short" class="alert alert-success dismissible">
+				<div data-testid="alert" id="alert-short" class="alert alert-success dismissible">
 					<a></a>
 					<div>
 						<label class="btn-close" for="alert-short-state">
@@ -100,7 +99,7 @@
 								</div>
 								<div class="row margin-large">
 									<button type="button" id="btn-customize" class="margin-right-small">
-										<i class="fa fa-magic" aria-hidden="true"></i> Customize
+										<i class="fa fa-magic-wand-sparkles" aria-hidden="true"></i> Customize
 									</button>
 									<button type="submit" id="submit" class="oneof submit btn-primary paper-btn is-label" disabled>
 										<div class="waiting">
