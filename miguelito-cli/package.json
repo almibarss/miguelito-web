@@ -1,0 +1,31 @@
+{
+  "name": "miguelito-cli",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Helper script for deployments",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "miguelito": "src/index.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudfront": "^3.218.0",
+    "@aws-sdk/client-s3": "^3.216.0",
+    "chalk": "^5.1.2",
+    "inquirer": "^9.1.4",
+    "meow": "^11.0.0",
+    "mime-types": "^2.1.35",
+    "ora": "^6.1.2",
+    "s3-sync-client": "^3.0.3",
+    "shelljs": "^0.8.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.28.0"
+  }
+}

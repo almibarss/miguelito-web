@@ -1,0 +1,30 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "plugins": [
+    "simple-import-sort",
+    "import"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended"
+  ],
+  "rules": {
+    "no-console": "off",
+    "no-var": "error",
+    "object-shorthand": "error",
+    "prefer-const": "error",
+    "prefer-template": "error",
+    "prefer-destructuring": "warn",
+    "prefer-rest-params": "warn",
+    "prefer-spread": "warn",
+    "yoda": "error",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error"
+  }
+}

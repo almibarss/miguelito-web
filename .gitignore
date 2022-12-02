@@ -10,3 +10,4 @@ cypress.env.json
 
 /aws-config.*.js
 /stats.json
+miguelito-cli.log
