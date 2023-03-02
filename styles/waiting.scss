@@ -2,8 +2,10 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+
   background-color: var(--primary-text);
+  border-radius: 50%;
+
   animation: wave 1.3s linear infinite;
 
   + .dot {

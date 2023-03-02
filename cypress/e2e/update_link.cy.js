@@ -1,24 +1,22 @@
-import awsconfig from "../../aws-config.dev";
-import { expectErrorMessageMatching } from "../support/utils";
+import { error500, expectErrorMessageMatching, expectUnexpectedErrorMessage } from "../support/utils";
 
 const myTestLink = "my-test-link";
 
-const apiUrl = awsconfig.API.endpoints[0].endpoint;
-describe("Edit link", () => {
+describe("Update link", () => {
   beforeEach(() => {
     cy.signIn();
-    cy.removeAllLinksOwnedByUser();
+    cy.deleteAllLinks();
     cy.createLinkCustom("https://www.cypress.io/", myTestLink);
     cy.visit("/");
     cy.contains("My Links").click();
   });
 
-  it("updates the link data when given the correct input", function () {
+  it("updates the link data when given the correct input", function() {
     cy.fetchBaseUrl();
-    cy.get(`link-item[url$="/${myTestLink}"]`)
+    cy.get(`short-link[url$="/${myTestLink}"]`)
       .shadow()
       .within(() => {
-        cy.intercept("PATCH", `${apiUrl}/links/${myTestLink}`).as("apiCall");
+        cy.intercept("PATCH", `${this.apiUrl}/links/${myTestLink}`).as("apiCall");
         cy.getByTestId("edit").click();
         cy.getByTestId("cancel", "confirm").should("be.visible");
         cy.getByTestId("backhalf-edit")
@@ -46,11 +44,11 @@ describe("Edit link", () => {
       });
   });
 
-  it("displays an error message when the new data is invalid", () => {
-    cy.get(`link-item[url$="/${myTestLink}"]`)
+  it("displays an error message when the new data is invalid", function() {
+    cy.get(`short-link[url$="/${myTestLink}"]`)
       .shadow()
       .within(() => {
-        cy.intercept("PATCH", `${apiUrl}/links/${myTestLink}`).as("apiCall");
+        cy.intercept("PATCH", `${this.apiUrl}/links/${myTestLink}`).as("apiCall");
         cy.getByTestId("edit").click();
         cy.getByTestId("backhalf-edit")
           .clear()
@@ -63,5 +61,20 @@ describe("Edit link", () => {
         cy.getByTestId("edit", "delete").should("be.visible");
       });
     expectErrorMessageMatching(/backhalf does not match/i);
+  });
+
+  it("displays an error message on unexpected errors", function() {
+    cy.get(`short-link[url$="/${myTestLink}"]`)
+      .shadow()
+      .within(() => {
+        cy.intercept("PATCH", `${this.apiUrl}/links/${myTestLink}`, error500).as("apiError");
+        cy.getByTestId("edit").click();
+
+        cy.getByTestId("confirm").click();
+
+        cy.wait("@apiError");
+        cy.getByTestId("ico-failure").should("be.visible");
+      });
+    expectUnexpectedErrorMessage();
   });
 });

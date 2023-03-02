@@ -4,95 +4,93 @@
 @import "papercss/src/core/mixins";
 @import "papercss/src/components/buttons";
 @import "papercss/src/components/forms";
-@import "papercss/src/utilities/borders";
 @import "@fortawesome/fontawesome-svg-core/styles";
 @import "../../styles/waiting";
+
+@mixin hidden {
+  display: none;
+
+  visibility: hidden;
+  opacity: 0;
+}
+
+@mixin border($style: 'primary') {
+  @include border-style(1);
+  @include color('border-color', $style);
+  @include shadow;
+  border-style: solid;
+  border-width: 2px;
+}
+
+@mixin square-button($size) {
+  width: $size;
+  height: $size;
+  padding: 0;
+}
+
+@mixin btn-outline($style:'primary') {
+  @include color('background-color', main-background);
+  @include color('color', $style);
+  @include color('border-color', $style);
+
+  &:hover {
+    @extend %bg-#{$style}-light;
+
+    &:active {
+      @extend %bg-#{$style}-light-darker-10;
+    }
+  }
+}
+
+@mixin btn($style) {
+  @include color('color', #{$style}-text);
+  @include color('background-color', #{$style}-light);
+  @include color('border-color', #{$style});
+
+  &:hover {
+    &:active {
+      @extend %bg-#{$style}-light-darker-10;
+    }
+  }
+}
 
 /* https://adamsilver.io/blog/buttons-shouldnt-have-a-hand-cursor/ */
 button, label {
   cursor: default !important;
 }
 
-@mixin hidden {
-  visibility: hidden;
-  opacity: 0;
-  display: none;
-}
-
 :host(.hidden) {
   @include hidden;
 }
 
-:host(.placeholder) {
-  user-select: none;
-  -webkit-user-select: none;
-
-  .btn-action {
-    background-color: var(--muted);
-    border-color: transparent;
-
-    i {
-      @include hidden;
-    }
-  }
-
-  a, button {
-    pointer-events: none;
-  }
-
-  .url, .origin {
-    @extend .border;
-    background-color: var(--muted-light);
-    border-color: transparent;
-    color: transparent;
-    background-image: none;
-  }
-}
-
-:host([action="edit"]), :host([action="delete"]) {
-  .button-group:has(.btn-action) {
-    @include hidden;
-  }
-}
-
-:host(:not([action])) {
-  .button-group:has(.btn-confirm) {
-    @include hidden;
-  }
-}
-
-:host([action="edit"]) {
-  li {
-    @extend .border, .border-warning;
-  }
-
-  .link-data:not(.editable) {
-    @include hidden;
-  }
-}
-
-:host(:not([action="edit"])) {
-  .link-data.editable {
-    @include hidden;
-  }
-}
-
-:host([action="delete"]) {
-  li {
-    @extend .border, .border-danger;
-  }
-}
-
-li {
+:host > div {
   display: flex;
   gap: spacing.$small;
-  padding: spacing.$small;
-  margin-top: spacing.$small;
   justify-content: flex-end;
+  margin-top: spacing.$small;
+  padding: spacing.$small;
+
+  outline: none;
 
   &.removed-item {
     animation: slide-out-left .8s cubic-bezier(.65, -0.02, .72, .29);
   }
+}
+
+:host([action='edit']) > div {
+  @include border('warning');
+}
+
+:host([action='delete']) > div {
+  @include border('danger');
+}
+
+:host(:not([action])) > div:is(:focus, :focus-visible, :focus-within) {
+  @include border;
+}
+
+.url {
+  font-size: larger;
 }
 
 .link-data {
@@ -112,6 +110,22 @@ li {
   }
 }
 
+:host(:not([action="edit"])) {
+  .link-data.editable {
+    @include hidden;
+  }
+}
+
+:host([action="edit"]) {
+  .link-data:not(.editable) {
+    @include hidden;
+  }
+}
+
+button, [type="button"] {
+  margin: 0 !important; // override main theme settings
+}
+
 .button-group {
   display: flex;
   gap: spacing.$small;
@@ -122,8 +136,16 @@ li {
   }
 }
 
-.url {
-  font-size: larger;
+:host(:not([action])) {
+  .button-group:has(.btn-confirm) {
+    @include hidden;
+  }
+}
+
+:host([action="edit"]), :host([action="delete"]) {
+  .button-group:has(.btn-action) {
+    @include hidden;
+  }
 }
 
 .origin {
@@ -131,45 +153,57 @@ li {
   word-break: break-all;
 }
 
-@mixin square-button($size) {
-  width: $size;
-  height: $size;
-  padding: 0;
-}
-
-button, [type=button] {
-  margin: 0 !important; // override main theme settings
-}
-
 .btn-action, .btn-confirm {
   @include square-button(50px);
 }
 
+%bg-primary-light {
+  background-color: $primary-light;
+}
+
+%bg-success-light-darker-10 {
+  background-color: darken($success-light, 10%);
+}
+
+%bg-primary-light-darker-10 {
+  background-color: darken($primary-light, 10%);
+}
+
+%bg-danger-light {
+  background-color: $danger-light;
+}
+
+%bg-danger-light-darker-10 {
+  background-color: darken($danger-light, 10%);
+}
+
+
 .btn {
   &-action-edit {
-    @extend .btn-primary-outline;
+    @include btn-outline;
   }
 
   &-action-delete {
-    @extend .btn-danger-outline;
+    @include btn-outline('danger');
   }
 
   &-confirm-cancel {
-    @extend .btn-primary-outline;
+    @include btn-outline;
   }
 
   &-confirm-ok {
-    @extend .btn-success;
+    @include btn('success');
 
     &.failure {
-      @extend .btn-danger;
+      @include btn('danger');
     }
 
     &.waiting {
-      @extend .btn-primary-outline;
+      @include btn-outline;
     }
 
     $states: success, failure, waiting;
+
     @each $s in $states {
       &:not(.#{$s}) .ico-#{$s} {
         @include hidden;
@@ -182,8 +216,10 @@ button, [type=button] {
 }
 
 .input-url {
+  /* stylelint-disable-next-line scss/at-extend-no-missing-placeholder  -- Vendor CSS */
   @extend input;
   display: flex;
+
   color: var(--muted);
 
   &:has(input:focus) {
@@ -191,20 +227,66 @@ button, [type=button] {
   }
 
   input {
-    width: 100%;
     display: inline;
-    border: 0;
+    width: 100%;
     padding: 0;
+
+    border: 0;
+  }
+}
+
+:host([disabled]) {
+  pointer-events: none;
+
+  a {
+    background: none;
+  }
+
+  a, span {
+    @include color('color', 'muted');
+  }
+
+  button, input {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+:host(.placeholder) {
+  user-select: none;
+
+  .btn-action {
+    background-color: var(--muted);
+    border-color: transparent;
+
+    i {
+      @include hidden;
+    }
+  }
+
+  a, button {
+    pointer-events: none;
+  }
+
+  .url, .origin {
+    @include border;
+    color: transparent;
+
+    background-color: var(--muted-light);
+    background-image: none;
+    border-color: transparent;
   }
 }
 
 @include resp(xsmall) {
-  li {
+  div {
     flex-wrap: wrap;
   }
+
   .link-data {
     flex-grow: 10000;
   }
+
   .button-group {
     flex-grow: 1;
   }
@@ -222,14 +304,17 @@ button, [type=button] {
     transform: translateX(0);
     opacity: 1;
   }
+
   30% {
     transform: translateX(50px);
     opacity: 1;
   }
+
   80% {
     transform: translateX(-800px);
     opacity: 1;
   }
+
   100% {
     transform: translateX(-800px);
     opacity: 0;

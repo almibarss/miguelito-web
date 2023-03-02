@@ -1,0 +1,47 @@
+@forward "sun-and-moon";
+
+.theme-toggle {
+  &:is(:hover, :focus) {
+    border: none;
+    box-shadow: none !important;
+    transform: none !important;
+
+    transition: none;
+  }
+
+  &:focus-visible {
+    outline: solid var(--secondary);
+  }
+
+  --size: 1.25rem;
+  --icon-fill: hsl(210deg 10% 30%);
+  --icon-fill-hover: hsl(210deg 10% 15%);
+
+  padding: 0;
+
+  background: none;
+  border: none;
+  border-radius: 50%;
+
+  touch-action: manipulation;
+
+  inline-size: var(--size);
+  block-size: var(--size);
+  aspect-ratio: 1;
+  -webkit-tap-highlight-color: transparent;
+
+  & > svg {
+    inline-size: 100%;
+    block-size: 100%;
+    stroke-linecap: round;
+  }
+
+  html.dark & {
+    --icon-fill: hsl(210deg 10% 70%);
+    --icon-fill-hover: hsl(210deg 15% 90%);
+  }
+
+  @media (hover: none) {
+    //--size: 48px;
+  }
+}

@@ -1,7 +1,17 @@
 @use "../mixins";
-
 @include mixins.oneof("waiting", "label");
 
 .submit {
   width: 6rem;
+}
+
+input[name="url"]:not(:focus, :placeholder-shown):invalid {
+  border-color: var(--danger);
+}
+
+form:has(input:invalid) button[type='submit'] {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+
+  pointer-events: none;
 }

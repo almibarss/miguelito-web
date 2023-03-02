@@ -4,6 +4,7 @@ import {
   faCheck,
   faClipboard,
   faFilter,
+  faLock,
   faMagicWandSparkles,
   faMoon,
   faPen,
@@ -16,11 +17,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export const Fontawesome = {
-  init: () => {
+  init() {
     library.add(
       faCheck,
       faClipboard,
       faFilter,
+      faLock,
       faMagicWandSparkles,
       faMoon,
       faPen,

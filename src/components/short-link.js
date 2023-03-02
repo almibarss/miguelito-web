@@ -6,86 +6,80 @@ import { Fontawesome } from "../fontawesome";
 import { Utils } from "../utils";
 import html from "./template.html";
 
-class LinkItem extends HTMLElement {
+class ShortLink extends HTMLElement {
   constructor() {
-    super();
+    super()
+      .attachShadow({ mode: "open", delegatesFocus: true })
+      .innerHTML = `<style>${styles}</style>${html}`;
 
-    this.attachShadow({ mode: "open" });
-    this.shadowRoot.innerHTML = `<style>${styles}</style>${html}`;
-
+    const sr = this.shadowRoot;
+    this.wrapperDiv = sr.querySelector("div");
     this.buttons = {
-      edit: this.shadowRoot.querySelector(".btn-action-edit"),
-      delete: this.shadowRoot.querySelector(".btn-action-delete"),
-      ok: this.shadowRoot.querySelector(".btn-confirm-ok"),
-      cancel: this.shadowRoot.querySelector(".btn-confirm-cancel"),
+      edit: sr.querySelector(".btn-action-edit"),
+      delete: sr.querySelector(".btn-action-delete"),
+      ok: sr.querySelector(".btn-confirm-ok"),
+      cancel: sr.querySelector(".btn-confirm-cancel")
     };
     this.data = {
-      url: this.shadowRoot.querySelector(".url"),
-      origin: this.shadowRoot.querySelector(".origin"),
+      url: sr.querySelector(".url"),
+      origin: sr.querySelector(".origin")
     };
     this.inputs = {
-      backhalf: this.shadowRoot.querySelector(".input-url input"),
-      origin: this.shadowRoot.querySelector(".input-origin"),
+      backhalf: sr.querySelector(".input-url input"),
+      origin: sr.querySelector(".input-origin")
     };
-    this.item = this.shadowRoot.querySelector("li");
   }
 
-  // noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols
   connectedCallback() {
     Fontawesome.init();
     dom.i2svg({
-      node: this.shadowRoot,
+      node: this.shadowRoot
     });
-    Object.values(this.inputs).forEach((input) => {
-      input.addEventListener("keydown", this.handleActionKeys.bind(this));
-      input.addEventListener(
-        "input",
-        this.disableConfirmOnEmptyInput.bind(this)
-      );
-    });
+    this.wrapperDiv.addEventListener("keydown", this);
     Object.values(this.buttons).forEach((btn) => {
-      btn.addEventListener("click", this.handleButtonClick.bind(this));
+      btn.addEventListener("click", this);
     });
   }
 
   // noinspection JSUnusedGlobalSymbols
   disconnectedCallback() {
-    Object.values(this.inputs).forEach((input) => {
-      input.removeEventListener("keydown", this.handleActionKeys.bind(this));
-      input.removeEventListener(
-        "input",
-        this.disableConfirmOnEmptyInput.bind(this)
-      );
-    });
+    this.wrapperDiv.removeEventListener("keydown", this);
     Object.values(this.buttons).forEach((btn) => {
-      btn.removeEventListener("click", this.handleButtonClick.bind(this));
+      btn.removeEventListener("click", this);
     });
   }
 
-  disableConfirmOnEmptyInput() {
-    const isInputEmpty =
-      this.inputs.backhalf.value.trim().length === 0 ||
-      this.inputs.origin.value.trim().length === 0;
-    this.buttons.ok.disabled = isInputEmpty;
+  // noinspection JSUnusedGlobalSymbols
+  handleEvent(event) {
+    if (event.type === "keydown") {
+      this.handleKeyPress(event);
+    }
+    if (event.type === "click") {
+      this.handleButtonClick(event);
+    }
   }
 
-  handleActionKeys({ key }) {
-    if (key === "Enter") {
-      if (this.buttons.ok.disabled === false) {
-        this.awaitConfirm();
-      }
-    } else if (key === "Escape") {
+  handleKeyPress(event) {
+    const userIsEditing = () => Object.values(this.inputs).includes(event.target);
+    const buttonIsFocused = () => Object.values(this.buttons).includes(event.target);
+
+    if (event.key === "Enter" && !buttonIsFocused()) {
+      userIsEditing() || this.getAttribute("action") !== null ? this.awaitConfirm() : this.startEdit();
+    }
+    if (event.key === "Escape") {
       this.cancelAction();
+    }
+    if (["Backspace", "Delete"].includes(event.key) && !userIsEditing()) {
+      this.startDelete();
     }
   }
 
   handleButtonClick({ currentTarget: button }) {
     if (button === this.buttons.edit) {
-      this.setAttribute("action", "edit");
-      this.inputs.backhalf.select();
-      this.inputs.backhalf.focus();
+      this.startEdit();
     } else if (button === this.buttons.delete) {
-      this.setAttribute("action", "delete");
+      this.startDelete();
     } else if (button === this.buttons.ok) {
       this.awaitConfirm();
     } else if (button === this.buttons.cancel) {
@@ -93,9 +87,22 @@ class LinkItem extends HTMLElement {
     }
   }
 
+  startDelete() {
+    this.setAttribute("action", "delete");
+    this.wrapperDiv.focus();
+    this.dispatchEvent(new Event("actionRequired"));
+  }
+
+  startEdit() {
+    this.setAttribute("action", "edit");
+    this.inputs.backhalf.focus();
+    this.dispatchEvent(new Event("actionRequired"));
+  }
+
   awaitConfirm() {
     this.buttons.ok.classList.add("waiting");
-    this.disableInput();
+    this.setAttribute("disabled", "")
+    // this.disableInput();
     this.sendConfirmedEvent();
   }
 
@@ -103,9 +110,10 @@ class LinkItem extends HTMLElement {
     this.removeAttribute("action");
     this.inputs.origin.value = this.data.origin.textContent;
     this.updateUrl();
+    this.focus();
   }
 
-  confirm({ success }) {
+  confirmAction({ success }) {
     this.buttons.ok.classList.remove("waiting");
     if (success) {
       this.confirmSuccess();
@@ -137,14 +145,15 @@ class LinkItem extends HTMLElement {
       setTimeout(() => {
         this.removeAttribute("action");
         this.buttons.ok.classList.remove("success", "failure");
-        this.enableInput();
+        this.removeAttribute("disabled");
+        // this.enableInput();
         resolve();
       }, 2000);
     });
   }
 
   static get observedAttributes() {
-    return ["url", "origin"];
+    return ["url", "origin", "disabled"];
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -155,6 +164,9 @@ class LinkItem extends HTMLElement {
         break;
       case "origin":
         this.setOrigin(newValue);
+        break;
+      case "disabled":
+        newValue !== null ? this.disable() : this.enable();
         break;
       default:
         throw `invalid attribute ${name}`;
@@ -182,21 +194,38 @@ class LinkItem extends HTMLElement {
     this.inputs.origin.value = newValue;
   }
 
-  disableInput() {
-    this.setDisabled(true);
+  disable() {
+    [this.wrapperDiv, this.data.url,
+      ...Object.values(this.inputs),
+      ...Object.values(this.buttons)
+    ].forEach((focusable) => {
+      focusable.setAttribute("tabindex", -1);
+    });
   }
 
-  enableInput() {
-    this.setDisabled(false);
+  enable() {
+    [this.wrapperDiv, this.data.url,
+      ...Object.values(this.inputs),
+      ...Object.values(this.buttons)
+    ].forEach((focusable) => {
+      focusable.setAttribute("tabindex", 0);
+    });
   }
 
-  setDisabled(value) {
-    [...Object.values(this.buttons), ...Object.values(this.inputs)].forEach(
-      (elem) => {
-        elem.disabled = value;
-      }
-    );
-  }
+  // disableInput() {
+  //   this.setDisabled(true);
+  // }
+  //
+  // enableInput() {
+  //   this.setDisabled(false);
+  // }
+  //
+  // setDisabled(value) {
+  //   [...Object.values(this.buttons), ...Object.values(this.inputs)].forEach((elem) => {
+  //       elem.disabled = value;
+  //     }
+  //   );
+  // }
 
   sendConfirmedEvent() {
     if (this.getAttribute("action") === "delete") {
@@ -211,18 +240,18 @@ class LinkItem extends HTMLElement {
   changedData() {
     return {
       ...(this.inputs.backhalf.value !== this.backhalf && {
-        backhalf: this.inputs.backhalf.value,
+        backhalf: this.inputs.backhalf.value
       }),
       ...(this.inputs.origin.value !== this.data.origin.textContent && {
-        origin: this.inputs.origin.value,
-      }),
+        origin: this.inputs.origin.value
+      })
     };
   }
 
   deleteAnimated() {
-    this.item.classList.add("removed-item");
+    this.wrapperDiv.classList.add("removed-item");
     return new Promise((resolve) => {
-      this.item.addEventListener("animationend", () => {
+      this.wrapperDiv.addEventListener("animationend", () => {
         this.remove();
         resolve();
       });
@@ -236,7 +265,6 @@ class LinkItem extends HTMLElement {
       this.getAttribute("origin")
         .toLowerCase()
         .includes(searchText.toLowerCase());
-    this.classList.toggle("hidden", !match);
     return match;
   }
 
@@ -245,7 +273,7 @@ class LinkItem extends HTMLElement {
     for (const elem of [this.data.url, this.data.origin]) {
       elem.innerHTML = elem.innerHTML
         .replace(/(<mark class="background-warning">|<\/mark>)/gim, "")
-        .replace(regex, '<mark class="background-warning">$&</mark>');
+        .replace(regex, "<mark class=\"background-warning\">$&</mark>");
     }
   }
 
@@ -254,4 +282,4 @@ class LinkItem extends HTMLElement {
   }
 }
 
-window.customElements.define("link-item", LinkItem);
+window.customElements.define("short-link", ShortLink);

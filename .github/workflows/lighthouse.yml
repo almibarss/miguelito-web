@@ -1,0 +1,28 @@
+name: Lighthouse
+
+on: push
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run build
+        run: 'npm run build:lighthouse'
+
+      - name: Start http server
+        run: npx servor dist &
+
+      - name: Run Lighthouse on urls and validate with lighthouserc
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          urls: 'http://localhost:8080/'
+          uploadArtifacts: true

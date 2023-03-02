@@ -3,14 +3,20 @@
 declare namespace Cypress {
   interface Chainable<Subject> {
 
-    signIn(): Chainable<any>
+    createTestUser(): Chainable<any>;
 
-    fetchBaseUrl(): Chainable<any>
+    deleteTestUser(): Chainable<any>;
 
-    createLinkCustom(url: string, path: string): Chainable<any>
+    signUp(): Chainable<any>;
 
-    removeAllLinksOwnedByUser(): Chainable<any>
+    signIn(): Chainable<any>;
 
-    getByTestId(...dataTestId: string[]): Chainable<any>
+    fetchBaseUrl(): Chainable<any>;
+
+    createLinkCustom(url: string, path: string): Chainable<any>;
+
+    deleteAllLinks(): Chainable<any>;
+
+    getByTestId(...dataTestId: string[]): Chainable<any>;
   }
 }

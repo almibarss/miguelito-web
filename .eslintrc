@@ -13,12 +13,12 @@
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:prettier/recommended",
     "plugin:jquery/deprecated",
     "plugin:import/recommended"
   ],
   "settings": {
     "import/resolver": {
+      "webpack": true,
       "alias": {
         "map": [
           ["awsconfig", "./aws-config.dev.js"],
@@ -41,6 +41,7 @@
     "simple-import-sort/exports": "error",
     "import/first": "error",
     "import/newline-after-import": "error",
-    "import/no-duplicates": "error"
+    "import/no-duplicates": "error",
+    "space-before-function-paren": ["error", "never"]
   }
 }

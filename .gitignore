@@ -8,6 +8,6 @@ cypress.env.json
 *.css.map
 *.js.map
 
-/aws-config.*.js
+/aws-config.pro.js
 /stats.json
 miguelito-cli.log

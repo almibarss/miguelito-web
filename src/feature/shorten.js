@@ -1,7 +1,5 @@
 import { Alert } from "../alert";
-import { API } from "../api";
-import { currentUser } from "../auth";
-import { User } from "../user";
+import { Api, AuthError, UnknownError } from "../api";
 
 const urlInput = document.getElementById("input-url");
 const submitBtn = document.getElementById("submit");
@@ -12,28 +10,24 @@ const customizeInput = customizeBox.querySelector(".prefixed-input__text");
 const form = document.forms.item(0);
 
 export const Shorten = {
-  init: () => {
+  init() {
     document.addEventListener("baseUrlReceived", ({ detail: baseUrl }) => {
       customizePrefix.textContent = `${baseUrl.hostname}/`;
-      customizeInput.style.maxWidth = `${customizePrefix.clientWidth}px` ;
-    });
-    urlInput.addEventListener("input", function () {
-      const isInputEmpty = this.value.trim().length === 0;
-      submitBtn.disabled = isInputEmpty;
+      customizeInput.style.maxWidth = `${customizePrefix.clientWidth}px`;
     });
     form.addEventListener("submit", submitUrl);
-    customizeInput.addEventListener("keydown", collapseIfEscPressed);
-    customizeBtn.addEventListener("click", handleCustomize);
+    customizeInput.addEventListener("keydown", collapseCustomizeIfEscPressed);
+    customizeBtn.addEventListener("click", toggleCustomize);
     customizeBox.addEventListener("animationstart", showCustomizeAnimated);
     customizeBox.addEventListener("animationend", hideCustomizeAnimated);
-  },
+  }
 };
 
 function submitUrl(ev) {
   ev.preventDefault();
   const {
     url: { value: url },
-    backhalf: { value: backhalf },
+    backhalf: { value: backhalf }
   } = ev.target;
   const trimmedUrl = url.trim();
   if (customizeBox.dataset.mode === "open") {
@@ -45,20 +39,26 @@ function submitUrl(ev) {
 
 function shorten(url, backhalf) {
   startWaiting();
-  API.shorten(url, backhalf)
+  Api.shorten(url, backhalf)
     .then(handleOk)
     .catch(handleError)
     .finally(doneWaiting);
 }
 
 function handleOk(newLink) {
-  Alert.shortLinkCreated(newLink.url, newLink.origin);
+  Alert.shortLinkCreated(newLink.url);
   sendLinkCreatedEvent(newLink);
   resetForm();
 }
 
 function handleError(error) {
-  Alert.error(error.message);
+  if (error instanceof AuthError) {
+    Alert.error("oops, it looks like your account is not activated ( ´･_･`)");
+  } else if (error instanceof UnknownError) {
+    Alert.error("oops, something went wrong (◕‸ ◕✿)");
+  } else {
+    Alert.error(error.message);
+  }
 }
 
 function startWaiting() {
@@ -75,16 +75,12 @@ function doneWaiting() {
 
 function enableInput() {
   urlInput.disabled = false;
-  submitBtn.disabled = urlInput.value.trim().length === 0;
+  submitBtn.disabled = false;
 }
 
 function disableInput() {
   submitBtn.disabled = true;
   urlInput.disabled = true;
-}
-
-function handleCustomize() {
-  currentUser().then(toggleCustomize).catch(denyCustomizeAndPromptSignIn);
 }
 
 function toggleCustomize() {
@@ -98,12 +94,16 @@ function toggleCustomize() {
   }
 }
 
-function denyCustomizeAndPromptSignIn() {
-  customizeBtn.classList.add("shake-horizontal");
-  customizeBtn.addEventListener("animationend", function () {
-    this.classList.remove("shake-horizontal");
-    User.shakeSignIn();
-  });
+function collapseCustomize() {
+  if (customizeBox.dataset.mode === "open") {
+    toggleCustomize();
+  }
+}
+
+function collapseCustomizeIfEscPressed({ key }) {
+  if (key === "Escape") {
+    collapseCustomize();
+  }
 }
 
 function resetForm() {
@@ -112,23 +112,11 @@ function resetForm() {
   collapseCustomize();
 }
 
-function collapseCustomize() {
-  if (customizeBox.dataset.mode === "open") {
-    toggleCustomize();
-  }
-}
-
 function sendLinkCreatedEvent(newLink) {
   const event = new CustomEvent("linkCreated", {
-    detail: newLink,
+    detail: newLink
   });
   document.dispatchEvent(event);
-}
-
-function collapseIfEscPressed({ key }) {
-  if (key === "Escape") {
-    collapseCustomize();
-  }
 }
 
 function showCustomizeAnimated({ animationName }) {

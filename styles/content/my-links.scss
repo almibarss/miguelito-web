@@ -3,6 +3,18 @@
 .my-links {
   height: 50vh;
   overflow-y: auto;
+
+  li {
+    text-indent: 0;
+  }
+
+  li::before {
+    content: none;
+  }
+}
+
+.filtered {
+  @include m.hidden;
 }
 
 .count-badge {

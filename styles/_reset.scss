@@ -1,0 +1,40 @@
+body {
+  background-color: var(--main-background);
+}
+
+* {
+  outline-offset: 5px;
+}
+
+:is(a, label):focus-visible {
+  outline: solid var(--secondary);
+
+  transition: outline 0s !important;
+}
+
+.btn-close:has(i, img, svg) {
+  display: inline-block;  // for getting a square outline
+}
+
+[aria-hidden="true"] {
+  a[href], .btn-close {
+    visibility: hidden;
+  }
+}
+
+[popover-top], [popover-right], [popover-bottom], [popover-left] {
+  margin: 0;
+}
+
+/* https://adamsilver.io/blog/buttons-shouldnt-have-a-hand-cursor/ */
+button, label {
+  cursor: default !important;
+}
+
+ul {
+  padding-inline-start: 0;
+}
+
+.tabs input:not([name="tabs"], .alert-state) {
+  display: revert;  // none by default
+}

@@ -1,17 +1,21 @@
 import "~styles/index.scss";
 
-import { API } from "./api";
-import { MyLinks } from "./feature/my-links";
-import { Shorten } from "./feature/shorten";
+import { Api } from "./api";
+import { Auth } from "./auth";
 import { Fontawesome } from "./fontawesome";
-import { Theme } from "./theme";
-import { User } from "./user";
+import { ThemeToggle } from "./theme-toggle";
+import { Accessibility } from "./accessibility";
+import { Shorten } from "./feature/shorten";
+import { MyLinks } from "./feature/my-links";
+
+Auth.alertSignInFailure();
 
 document.addEventListener("DOMContentLoaded", () => {
+  Accessibility.init();
+  Auth.init();
+  Api.init();
+  ThemeToggle.init();
   Fontawesome.init();
-  API.init();
-  User.init();
-  Theme.init();
   Shorten.init();
   MyLinks.init();
 });

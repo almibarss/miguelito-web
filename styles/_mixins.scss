@@ -1,16 +1,18 @@
 @mixin hidden($render: false) {
   visibility: hidden;
   opacity: 0;
+
   @if not $render {
     display: none !important;
   }
 }
 
 @mixin visible {
+  display: revert;
+
+  transform: translate(0, 0);
   visibility: visible;
   opacity: 1;
-  display: revert;
-  transform: translate(0, 0);
 }
 
 @mixin oneof($parts...) {

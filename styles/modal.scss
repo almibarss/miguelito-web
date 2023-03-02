@@ -1,0 +1,2 @@
+@use "mixins" as m;
+@include m.oneof("user-not-found", "waiting-approval");

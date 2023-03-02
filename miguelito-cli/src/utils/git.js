@@ -47,5 +47,5 @@ export const git = {
     }
     const gitCommand = `git tag --force ${name} ${value}`;
     return logExec(gitCommand);
-  }
+  },
 };

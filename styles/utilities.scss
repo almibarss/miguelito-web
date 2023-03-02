@@ -1,8 +1,14 @@
 @use "mixins" as m;
 
-.hidden-right {
+%hidden-right {
   @include m.hidden(true);
   transform: translateX(100%);
+}
+
+%reverse-list {
+  display: flex !important;
+  flex-flow: row-reverse !important;
+  align-items: center;
 }
 
 .hidden-top {
