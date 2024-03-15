@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const config = require("./metadata.json");
 
 module.exports = {
   entry: "./src/main.js",
@@ -10,6 +11,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
+      metadata: config,
       template: "index.html",
     }),
   ],
@@ -22,6 +24,7 @@ module.exports = {
     rules: [
       {
         test: /\.html$/,
+        exclude: /index.html/,
         loader: "html-loader",
       },
       {

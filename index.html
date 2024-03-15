@@ -224,11 +224,11 @@
   </div>
 </main>
 <footer class="padding-top-large text-center">
-  <a href="https://github.com/mperezi/aws-lambda-url-shortener">Made with
+  <a href="<%= htmlWebpackPlugin.options.metadata.repo.url %>">Made with
     <span popover-bottom="The Serverless Framework">⚡️</span>,
     <span popover-bottom="Python 3.8">🐍</span> and
     <span popover-bottom="AWS Lambda">ƛ</span>
-    by almibarss</a>
+    by <%= htmlWebpackPlugin.options.metadata.repo.author %></a>
 </footer>
 </body>
 </html>
