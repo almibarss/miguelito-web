@@ -1,4 +1,5 @@
 const { mergeWithRules } = require("webpack-merge");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const common = require("./webpack.common.js");
 const path = require("path");
@@ -18,12 +19,16 @@ const dev = {
   devServer: {
     contentBase: "./dist",
   },
+  plugins: [
+    new MiniCssExtractPlugin({}),
+  ],
   module: {
     rules: [
       {
         test: /\.(c|sc|sa)ss$/,
-        use: ["style-loader"],
+        use: [MiniCssExtractPlugin.loader],
       },
+
     ],
   },
 };
