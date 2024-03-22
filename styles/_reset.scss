@@ -31,6 +31,14 @@ button, label {
   cursor: default !important;
 }
 
+.alert {
+  width: auto;
+  
+  .btn-close {
+    margin-left: .25rem;
+  }
+}
+
 ul {
   padding-inline-start: 0;
 }
