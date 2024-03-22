@@ -30,7 +30,7 @@ class ShortLink extends HTMLElement {
     };
   }
 
-// noinspection JSUnusedGlobalSymbols
+  // noinspection JSUnusedGlobalSymbols
   connectedCallback() {
     Fontawesome.init();
     dom.i2svg({
@@ -102,7 +102,6 @@ class ShortLink extends HTMLElement {
   awaitConfirm() {
     this.buttons.ok.classList.add("waiting");
     this.setAttribute("disabled", "")
-    // this.disableInput();
     this.sendConfirmedEvent();
   }
 
@@ -196,8 +195,8 @@ class ShortLink extends HTMLElement {
 
   disable() {
     [this.wrapperDiv, this.data.url,
-      ...Object.values(this.inputs),
-      ...Object.values(this.buttons)
+    ...Object.values(this.inputs),
+    ...Object.values(this.buttons)
     ].forEach((focusable) => {
       focusable.setAttribute("tabindex", -1);
     });
@@ -205,27 +204,12 @@ class ShortLink extends HTMLElement {
 
   enable() {
     [this.wrapperDiv, this.data.url,
-      ...Object.values(this.inputs),
-      ...Object.values(this.buttons)
+    ...Object.values(this.inputs),
+    ...Object.values(this.buttons)
     ].forEach((focusable) => {
       focusable.setAttribute("tabindex", 0);
     });
   }
-
-  // disableInput() {
-  //   this.setDisabled(true);
-  // }
-  //
-  // enableInput() {
-  //   this.setDisabled(false);
-  // }
-  //
-  // setDisabled(value) {
-  //   [...Object.values(this.buttons), ...Object.values(this.inputs)].forEach((elem) => {
-  //       elem.disabled = value;
-  //     }
-  //   );
-  // }
 
   sendConfirmedEvent() {
     if (this.getAttribute("action") === "delete") {
