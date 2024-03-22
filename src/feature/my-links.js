@@ -110,7 +110,7 @@ async function handleEditConfirmed(ev) {
   const shortLink = ev.target;
   try {
     await Api.update(shortLink.backhalf, ev.detail);
-    shortLink.confirmAction({ success: true });
+    shortLink.confirmAction({ success: true }).then(resetSearch);
   } catch (error) {
     confirmActionWithError(error, shortLink);
   }
