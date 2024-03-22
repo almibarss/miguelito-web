@@ -6,7 +6,6 @@ import { Auth } from "../auth";
 
 const searchInput = document.getElementById("search-links");
 const myLinksList = document.getElementById("my-links");
-const alertSearchState = document.getElementById("alert-search-state");
 const linkCountBadge = document.getElementById("count-badge");
 const linkCount = linkCountBadge.querySelector("span");
 const mutationObserver = new MutationObserver(disableLinksOnPendingAction);
@@ -50,17 +49,16 @@ function insertAsLinkItems(links) {
   links.forEach(insertLinkLast);
 }
 
-function showAlertWhenListIsFiltered() {
-  if (isListFiltered()) {
-    alertSearchState.checked = false;
-  }
+function resetSearch() {
+  searchInput.value = ''
+  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function insertLinkCreated({ detail: link }) {
   insertLinkFirst(link, { filtered: isListFiltered() });
   updateCount();
   flashCountBadge();
-  showAlertWhenListIsFiltered();
+  resetSearch();
 }
 
 function isListFiltered() {
@@ -156,7 +154,6 @@ function filterList() {
   const links = myLinksList.querySelectorAll("short-link");
   links.forEach((link) => link.classList.toggle("filtered", !link.filter(searchText)));
   updateCount();
-  alertSearchState.checked = true;
 }
 
 function updateCount() {
