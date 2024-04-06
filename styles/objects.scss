@@ -5,3 +5,8 @@
     border: 0;
   }
 }
+
+.collapsable label[role="button"] {
+  padding: 0;
+  margin-left: .5rem;
+}

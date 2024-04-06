@@ -161,11 +161,14 @@
               class="input-block text-center"
               placeholder="http://www.example.com"
               autofocus required>
+            <input id="custom-backhalf-state" class="collapsable-state" type="checkbox" checked>
             <div id="custom-backhalf" data-mode="closed"
-                 class="prefixed-input col-12 row flex-center margin-small hidden-top">
+                 class="prefixed-input collapsable col-12 row flex-center margin-small">
               <span class="prefixed-input__prefix text-right text-muted"></span>
               <input type="text" class="prefixed-input__text" data-testid="backhalf" name="backhalf"
                      placeholder="my-custom" />
+              <label role="button" for="custom-backhalf-state" aria-expanded="false" aria-controls="alert-short" aria-label="close"
+                    class="btn-close" tabindex="0">X</label>
             </div>
             <div class="row margin-large">
               <button type="button" id="btn-customize" class="margin-right-small">

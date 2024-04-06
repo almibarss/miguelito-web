@@ -31,6 +31,10 @@ button, label {
   cursor: default !important;
 }
 
+button[disabled] {
+  pointer-events: none;
+}
+
 .alert {
   width: auto;
   
@@ -43,6 +47,6 @@ ul {
   padding-inline-start: 0;
 }
 
-.tabs input:not([name="tabs"], .alert-state) {
+.tabs input:not([name="tabs"], .alert-state, .collapsable-state) {
   display: revert;  // none by default
 }

@@ -3,10 +3,11 @@ import { Api, AuthError, UnknownError } from "../api";
 
 const urlInput = document.getElementById("input-url");
 const submitBtn = document.getElementById("submit");
-const customizeBtn = document.getElementById("btn-customize");
+const customizeExpandBtn = document.getElementById("btn-customize");
 const customizeBox = document.getElementById("custom-backhalf");
 const customizePrefix = customizeBox.querySelector(".prefixed-input__prefix");
 const customizeInput = customizeBox.querySelector(".prefixed-input__text");
+const customizeState = document.getElementById("custom-backhalf-state");
 const form = document.forms.item(0);
 
 export const Shorten = {
@@ -17,9 +18,8 @@ export const Shorten = {
     });
     form.addEventListener("submit", submitUrl);
     customizeInput.addEventListener("keydown", collapseCustomizeIfEscPressed);
-    customizeBtn.addEventListener("click", toggleCustomize);
-    customizeBox.addEventListener("animationstart", showCustomizeAnimated);
-    customizeBox.addEventListener("animationend", hideCustomizeAnimated);
+    customizeExpandBtn.addEventListener("click", changeCustomizeExpanded);
+    customizeState.addEventListener("change", handleCustomizeStateChange);
   }
 };
 
@@ -30,7 +30,8 @@ function submitUrl(ev) {
     backhalf: { value: backhalf }
   } = ev.target;
   const trimmedUrl = url.trim();
-  if (customizeBox.dataset.mode === "open") {
+  const customizeExpanded = !customizeState.checked;
+  if (customizeExpanded) {
     shorten(trimmedUrl, backhalf);
   } else {
     shorten(trimmedUrl);
@@ -83,33 +84,39 @@ function disableInput() {
   urlInput.disabled = true;
 }
 
-function toggleCustomize() {
-  if (customizeBox.dataset.mode === "closed") {
-    customizeBox.classList.add("slide-in-top");
-    customizeBox.dataset.mode = "open";
-    customizeInput.value = "";
-  } else {
-    customizeBox.classList.add("slide-out-top");
-    customizeBox.dataset.mode = "closed";
-  }
-}
-
-function collapseCustomize() {
-  if (customizeBox.dataset.mode === "open") {
-    toggleCustomize();
-  }
-}
-
 function collapseCustomizeIfEscPressed({ key }) {
-  if (key === "Escape") {
-    collapseCustomize();
+  if (key !== "Escape") {
+    return;
   }
+  changeCustomizeCollapsed();
+}
+
+function changeCustomizeCollapsed() {
+  setCustomizeState({ expanded: false });
+}
+
+function changeCustomizeExpanded() {
+  setCustomizeState({ expanded: true });
+}
+
+function handleCustomizeStateChange({ target: stateCheckbox }) {
+  const customizeExpanded = !stateCheckbox.checked;
+  customizeExpandBtn.disabled = customizeExpanded;
+  if (customizeExpanded) {
+    customizeInput.value = "";
+    customizeInput.focus();
+  }
+}
+
+function setCustomizeState({ expanded }) {
+  customizeState.checked = !expanded;
+  customizeState.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 function resetForm() {
   urlInput.value = "";
   customizeInput.value = "";
-  collapseCustomize();
+  changeCustomizeCollapsed();
 }
 
 function sendLinkCreatedEvent(newLink) {
@@ -117,19 +124,4 @@ function sendLinkCreatedEvent(newLink) {
     detail: newLink
   });
   document.dispatchEvent(event);
-}
-
-function showCustomizeAnimated({ animationName }) {
-  if (animationName === "slide-in-top") {
-    this.classList.remove("hidden-top");
-  }
-}
-
-function hideCustomizeAnimated({ animationName }) {
-  this.classList.remove(animationName);
-  if (animationName === "slide-out-top") {
-    this.classList.add("hidden-top");
-  } else if (animationName === "slide-in-top") {
-    customizeInput.focus();
-  }
 }
