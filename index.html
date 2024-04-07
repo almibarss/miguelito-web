@@ -1,231 +1,383 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="migueli.to is a free URL shortener built with AWS Lambda"
+    />
+    <title>Serverless URL shortener</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="migueli.to is a free URL shortener built with AWS Lambda">
-  <title>Serverless URL shortener</title>
-</head>
-
-<body>
-
-<input id="signin-failure-modal" class="modal-state" type="checkbox">
-<div
-  role="alertdialog"
-  aria-modal="true"
-  aria-live="assertive"
-  aria-labelledby="modal-title"
-  aria-describedby="signin-failure-desc"
-  id="modal"
-  class="modal">
-  <label aria-hidden="true" class="modal-bg" for="signin-failure-modal"></label>
-  <div class="modal-body">
-    <h4 id="modal-title" class="modal-title">
-      <i class="fa fa-lock"></i> User account not activated</h4>
-    <div id="signin-failure-desc" class="oneof">
-      <p class="modal-text user-not-found">
-        We inform you that migueli.to is <span class="text-warning">invite-only</span>.<br />
-        But don't fret because an email has been sent requesting access for your user 📩<br />
-        Hopefully you'll be notified soon! 🤞
-      </p>
-      <p class="modal-text waiting-approval">
-        Your user account is already waiting for approval. Please come back
-        when you receive your confirmation email.
-      </p>
-    </div>
-    <label
-      role="button"
-      id="signin-failure-close-btn"
-      tabindex="0"
-      for="signin-failure-modal" class="modal-link">Got it!</label>
-  </div>
-</div>
-
-<header>
-  <button
-    id="theme-toggle"
-    class="theme-toggle"
-    title="Toggles light & dark"
-    aria-label="auto"
-    aria-live="polite"
-  >
-    <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
-      <circle class="sun" cx="12" cy="12" r="6" mask="url(#moon-mask)" fill="currentColor" />
-      <g class="sun-beams" stroke="currentColor">
-        <line x1="12" y1="1" x2="12" y2="3" />
-        <line x1="12" y1="21" x2="12" y2="23" />
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-        <line x1="1" y1="12" x2="3" y2="12" />
-        <line x1="21" y1="12" x2="23" y2="12" />
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-      </g>
-      <mask class="moon" id="moon-mask">
-        <rect x="0" y="0" width="100%" height="100%" fill="white" />
-        <circle cx="24" cy="10" r="6" fill="black" />
-      </mask>
-    </svg>
-  </button>
-
-  <div id="user" class="oneof is-user-placeholder">
-
-    <div class="user-placeholder">
-      <div class="user-placeholder__avatar"></div>
-      <div class="user-placeholder__name border">username</div>
-    </div>
-
-    <a id="lnk-signout" class="user-menu" aria-label="Sign out" title="Sign out" href="#">
-      <span><i class="fa fa-user"></i> Hi</span>
-      <span id="username"></span>
-    </a>
-    <!--    <div class="user-menu submenu">-->
-    <!--              <span class="submenu__header">-->
-    <!--                <I class="fa fa-user"></I> Hi <span id="username"></span>-->
-    <!--              </span>-->
-    <!--      <div class="overflow-hidden">-->
-    <!--        <ul class="submenu__options inline">-->
-    <!--          <li>-->
-    <!--            <a id="lnk-signout" href="#">👋 Bye!</a>-->
-    <!--          </li>-->
-    <!--        </ul>-->
-    <!--      </div>-->
-    <!--    </div>-->
-
-  </div>
-</header>
-<main class="row flex-center">
-  <div class="sm-8 xs-10 col">
-
-    <div class="row flex-center">
-      <input id="alert-error-state" class="alert-state" type="checkbox" checked>
-      <div role="alert" aria-hidden="true" aria-live="polite"
-          data-testid="alert-error" id="alert-error" class="alert alert-danger dismissible"></div>
-    </div>
-
-    <div class="row flex-center">
-      <input id="alert-success-state" class="alert-state" type="checkbox" checked>
-      <div role="alert" aria-hidden="true" aria-live="polite"
-          id="alert-success" class="alert alert-success dismissible"></div>
-    </div>
-
-    <div class="row flex-center">
-      <input id="alert-short-state" class="alert-state" type="checkbox" checked>
-      <div role="alert" aria-hidden="true" aria-live="polite"
-          data-testid="alert-success" id="alert-short" class="alert alert-success dismissible">
-        <a href="#"></a>
-        <div class="margin-left">
-          <label role="button" aria-expanded="false" aria-controls="alert-short" aria-label="copy to clipboard"
-                class="btn-close" for="alert-short-state" tabindex="0">
-            <i class="fa fa-clipboard"></i>
-          </label>
-          <label role="button" aria-expanded="false" aria-controls="alert-short" aria-label="close"
-                class="btn-close" for="alert-short-state" tabindex="0">X</label>
+  <body>
+    <input id="signin-failure-modal" class="modal-state" type="checkbox" />
+    <div
+      role="alertdialog"
+      aria-modal="true"
+      aria-live="assertive"
+      aria-labelledby="modal-title"
+      aria-describedby="signin-failure-desc"
+      id="modal"
+      class="modal"
+    >
+      <label
+        aria-hidden="true"
+        class="modal-bg"
+        for="signin-failure-modal"
+      ></label>
+      <div class="modal-body">
+        <h4 id="modal-title" class="modal-title">
+          <i class="fa fa-lock"></i> User account not activated
+        </h4>
+        <div id="signin-failure-desc" class="oneof">
+          <p class="modal-text user-not-found">
+            We inform you that migueli.to is
+            <span class="text-warning">invite-only</span>.<br />
+            But don't fret because an email has been sent requesting access for
+            your user 📩<br />
+            Hopefully you'll be notified soon! 🤞
+          </p>
+          <p class="modal-text waiting-approval">
+            Your user account is already waiting for approval. Please come back
+            when you receive your confirmation email.
+          </p>
         </div>
+        <label
+          role="button"
+          id="signin-failure-close-btn"
+          tabindex="0"
+          for="signin-failure-modal"
+          class="modal-link"
+          >Got it!</label
+        >
       </div>
     </div>
 
-    <h2 class="text-center">Serverless url shortener</h2>
-
-    <div id="welcome-pane" class="content row flex-center padding-large">
-      <button type="button" id="btn-signin" autofocus>
-        <i class="fab fa-google" aria-hidden="true"></i> Sign in with Google
+    <header>
+      <button
+        id="theme-toggle"
+        class="theme-toggle"
+        title="Toggles light & dark"
+        aria-label="auto"
+        aria-live="polite"
+      >
+        <svg
+          class="sun-and-moon"
+          aria-hidden="true"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="sun"
+            cx="12"
+            cy="12"
+            r="6"
+            mask="url(#moon-mask)"
+            fill="currentColor"
+          />
+          <g class="sun-beams" stroke="currentColor">
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </g>
+          <mask class="moon" id="moon-mask">
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            <circle cx="24" cy="10" r="6" fill="black" />
+          </mask>
+        </svg>
       </button>
-    </div>
 
-    <div role="tablist" class="row flex-spaces tabs">
-      <input id="tab1" type="radio" name="tabs" checked>
-      <label id="tab1-lbl" for="tab1" role="tab" aria-selected="true" aria-controls="content1"
-             tabindex="0">Shorten</label>
+      <div id="user" class="oneof is-user-placeholder">
+        <div class="user-placeholder">
+          <div class="user-placeholder__avatar"></div>
+          <div class="user-placeholder__name border">username</div>
+        </div>
 
-      <input id="tab2" type="radio" name="tabs">
-      <label id="tab2-lbl" for="tab2" role="tab" aria-selected="false" aria-controls="content2" tabindex="-1">
-        My Links&nbsp;<div aria-hidden="true" id="count-badge" data-testid="count-badge" class="badge count-badge secondary placeholder">
-        <i class="fa fa-filter icon-filtered"></i>
-        <span>&nbsp;</span>
+        <a
+          id="lnk-signout"
+          class="user-menu"
+          aria-label="Sign out"
+          title="Sign out"
+          href="#"
+        >
+          <span><i class="fa fa-user"></i> Hi</span>
+          <span id="username"></span>
+        </a>
+        <!--    <div class="user-menu submenu">-->
+        <!--              <span class="submenu__header">-->
+        <!--                <I class="fa fa-user"></I> Hi <span id="username"></span>-->
+        <!--              </span>-->
+        <!--      <div class="overflow-hidden">-->
+        <!--        <ul class="submenu__options inline">-->
+        <!--          <li>-->
+        <!--            <a id="lnk-signout" href="#">👋 Bye!</a>-->
+        <!--          </li>-->
+        <!--        </ul>-->
+        <!--      </div>-->
+        <!--    </div>-->
       </div>
-      </label>
+    </header>
+    <main class="row flex-center">
+      <div class="sm-8 xs-10 col">
+        <div class="row flex-center">
+          <input
+            id="alert-error-state"
+            class="alert-state"
+            type="checkbox"
+            checked
+          />
+          <div
+            role="alert"
+            aria-hidden="true"
+            aria-live="polite"
+            data-testid="alert-error"
+            id="alert-error"
+            class="alert alert-danger dismissible"
+          ></div>
+        </div>
 
-      <div role="tabpanel" aria-labelledby="tab1-lbl" id="content1"
-           class="content padding-top-large padding-bottom-large">
-        <form autocomplete="off" spellcheck="false">
-          <div class="form-group row flex-center">
-            <label for="input-url">Enter URL to shorten</label>
-            <input
-              type="url"
-              inputmode="url"
-              name="url"
-              id="input-url"
-              data-testid="url"
-              class="input-block text-center"
-              placeholder="http://www.example.com"
-              autofocus required>
-            <input id="custom-backhalf-state" class="collapsable-state" type="checkbox" checked>
-            <div id="custom-backhalf" data-mode="closed"
-                 class="prefixed-input collapsable col-12 row flex-center margin-small">
-              <span class="prefixed-input__prefix text-right text-muted"></span>
-              <input type="text" class="prefixed-input__text" data-testid="backhalf" name="backhalf"
-                     placeholder="my-custom" />
-              <label role="button" for="custom-backhalf-state" aria-expanded="false" aria-controls="alert-short" aria-label="close"
-                    class="btn-close" tabindex="0">X</label>
-            </div>
-            <div class="row margin-large">
-              <button type="button" id="btn-customize" class="margin-right-small">
-                <i class="fa fa-magic-wand-sparkles" aria-hidden="true"></i> Customize
-              </button>
-              <button type="submit" id="submit" class="oneof submit btn-primary paper-btn is-label">
-                <div aria-label="waiting response" class="waiting">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                </div>
-                <span class="label">Shorten link</span>
-              </button>
+        <div class="row flex-center">
+          <input
+            id="alert-success-state"
+            class="alert-state"
+            type="checkbox"
+            checked
+          />
+          <div
+            role="alert"
+            aria-hidden="true"
+            aria-live="polite"
+            id="alert-success"
+            class="alert alert-success dismissible"
+          ></div>
+        </div>
+
+        <div class="row flex-center">
+          <input
+            id="alert-short-state"
+            class="alert-state"
+            type="checkbox"
+            checked
+          />
+          <div
+            role="alert"
+            aria-hidden="true"
+            aria-live="polite"
+            data-testid="alert-success"
+            id="alert-short"
+            class="alert alert-success dismissible"
+          >
+            <a href="#"></a>
+            <div class="margin-left">
+              <label
+                role="button"
+                aria-expanded="false"
+                aria-controls="alert-short"
+                aria-label="copy to clipboard"
+                class="btn-close"
+                for="alert-short-state"
+                tabindex="0"
+              >
+                <i class="fa fa-clipboard"></i>
+              </label>
+              <label
+                role="button"
+                aria-expanded="false"
+                aria-controls="alert-short"
+                aria-label="close"
+                class="btn-close"
+                for="alert-short-state"
+                tabindex="0"
+                >X</label
+              >
             </div>
           </div>
-        </form>
-      </div>
-
-      <div role="tabpanel" aria-labelledby="tab2-lbl" id="content2" class="content">
-        <div class="row">
-          <input aria-label="Search" accesskey="s" type="search" id="search-links" class="col-12"
-                 placeholder="Search" />
         </div>
 
-        <ul id="my-links" class="my-links hidden-scrollbar">
-          <li>
-            <short-link class="placeholder"
-                        url="https://migueli.to/my-link"
-                        origin="https://www.example.com/path/to/example"></short-link>
-          </li>
-          <li>
-            <short-link class="placeholder"
-                        url="https://migueli.to/my-link"
-                        origin="https://www.example.com/path/to/example"></short-link>
-          </li>
-          <li>
-            <short-link class="placeholder"
-                        url="https://migueli.to/my-link"
-                        origin="https://www.example.com/path/to/example"></short-link>
-          </li>
-          <li>
-            <short-link class="placeholder"
-                        url="https://migueli.to/my-link"
-                        origin="https://www.example.com/path/to/example"></short-link>
-          </li>
-        </ul>
-      </div>
-    </div>
+        <h2 class="text-center">Serverless url shortener</h2>
 
-  </div>
-</main>
-<footer class="padding-top-large text-center">
-  <a href="<%= htmlWebpackPlugin.options.metadata.repo.url %>">Made with
-    <span popover-bottom="The Serverless Framework">⚡️</span>,
-    <span popover-bottom="Python 3.8">🐍</span> and
-    <span popover-bottom="AWS Lambda">ƛ</span>
-    by <%= htmlWebpackPlugin.options.metadata.repo.author %></a>
-</footer>
-</body>
+        <div id="welcome-pane" class="content row flex-center padding-large">
+          <button type="button" id="btn-signin" autofocus>
+            <i class="fab fa-google" aria-hidden="true"></i> Sign in with Google
+          </button>
+        </div>
+
+        <div role="tablist" class="row flex-spaces tabs">
+          <input id="tab1" type="radio" name="tabs" checked />
+          <label
+            id="tab1-lbl"
+            for="tab1"
+            role="tab"
+            aria-selected="true"
+            aria-controls="content1"
+            tabindex="0"
+            >Shorten</label
+          >
+
+          <input id="tab2" type="radio" name="tabs" />
+          <label
+            id="tab2-lbl"
+            for="tab2"
+            role="tab"
+            aria-selected="false"
+            aria-controls="content2"
+            tabindex="-1"
+          >
+            My Links&nbsp;
+            <div
+              aria-hidden="true"
+              id="count-badge"
+              data-testid="count-badge"
+              class="badge count-badge secondary placeholder"
+            >
+              <i class="fa fa-filter icon-filtered"></i>
+              <span>&nbsp;</span>
+            </div>
+          </label>
+
+          <div
+            role="tabpanel"
+            aria-labelledby="tab1-lbl"
+            id="content1"
+            class="content padding-top-large padding-bottom-large"
+          >
+            <form autocomplete="off" spellcheck="false">
+              <div class="form-group row flex-center">
+                <label for="input-url">Enter URL to shorten</label>
+                <input
+                  type="url"
+                  inputmode="url"
+                  name="url"
+                  id="input-url"
+                  data-testid="url"
+                  class="input-block text-center"
+                  placeholder="http://www.example.com"
+                  autofocus
+                  required
+                />
+                <input
+                  id="custom-backhalf-state"
+                  class="collapsable-state"
+                  type="checkbox"
+                  checked
+                />
+                <div
+                  id="custom-backhalf"
+                  class="prefixed-input collapsable col-12 row flex-center margin-small"
+                  aria-hidden="true"
+                >
+                  <span
+                    class="prefixed-input__prefix text-right text-muted"
+                  ></span>
+                  <input
+                    type="text"
+                    class="prefixed-input__text"
+                    data-testid="backhalf"
+                    name="backhalf"
+                    placeholder="my-custom"
+                  />
+                  <label
+                    for="custom-backhalf-state"
+                    role="button"
+                    class="btn-close"
+                    aria-expanded="false"
+                    aria-controls="custom-backhalf"
+                    aria-label="close"
+                    tabindex="0"
+                    >X</label
+                  >
+                </div>
+                <div class="row margin-large">
+                  <button
+                    type="button"
+                    id="btn-customize"
+                    class="margin-right-small"
+                  >
+                    <i class="fa fa-magic-wand-sparkles" aria-hidden="true"></i>
+                    Customize
+                  </button>
+                  <button
+                    type="submit"
+                    id="submit"
+                    class="oneof submit btn-primary paper-btn is-label"
+                  >
+                    <div aria-label="waiting response" class="waiting">
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                    </div>
+                    <span class="label">Shorten link</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div
+            role="tabpanel"
+            aria-labelledby="tab2-lbl"
+            id="content2"
+            class="content"
+          >
+            <div class="row">
+              <input
+                aria-label="Search"
+                accesskey="s"
+                type="search"
+                id="search-links"
+                class="col-12"
+                placeholder="Search"
+              />
+            </div>
+
+            <ul id="my-links" class="my-links hidden-scrollbar">
+              <li>
+                <short-link
+                  class="placeholder"
+                  url="https://migueli.to/my-link"
+                  origin="https://www.example.com/path/to/example"
+                ></short-link>
+              </li>
+              <li>
+                <short-link
+                  class="placeholder"
+                  url="https://migueli.to/my-link"
+                  origin="https://www.example.com/path/to/example"
+                ></short-link>
+              </li>
+              <li>
+                <short-link
+                  class="placeholder"
+                  url="https://migueli.to/my-link"
+                  origin="https://www.example.com/path/to/example"
+                ></short-link>
+              </li>
+              <li>
+                <short-link
+                  class="placeholder"
+                  url="https://migueli.to/my-link"
+                  origin="https://www.example.com/path/to/example"
+                ></short-link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="padding-top-large text-center">
+      <a href="<%= htmlWebpackPlugin.options.metadata.repo.url %>"
+        >Made with <span popover-bottom="The Serverless Framework">⚡️</span>,
+        <span popover-bottom="Python 3.8">🐍</span> and
+        <span popover-bottom="AWS Lambda">ƛ</span>
+        by <%= htmlWebpackPlugin.options.metadata.repo.author %></a
+      >
+    </footer>
+  </body>
 </html>
