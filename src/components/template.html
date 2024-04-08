@@ -1,30 +1,61 @@
-<div tabindex="0">  <!--wrapper element for receiving keyboard events -->
+<div tabindex="0" aria-live="assertive">
+  <!--wrapper element for receiving keyboard events -->
   <div class="link-data">
     <a data-testid="link-url" class="url"></a>
     <span data-testid="link-origin" class="origin"></span>
   </div>
 
   <div class="link-data editable">
-      <span class="input-url">
-        <input type="text" data-testid="backhalf-edit" spellCheck="false" />
-      </span>
-    <input type="text" data-testid="origin-edit" class="input-origin" />
+    <span class="input-url">
+      <input
+        type="text"
+        data-testid="backhalf-edit"
+        aria-label="backhalf"
+        spellcheck="false"
+      />
+    </span>
+    <input
+      class="input-origin"
+      data-testid="origin-edit"
+      type="text"
+      aria-label="origin"
+    />
   </div>
 
   <div class="button-group">
-    <button aria-label="edit" type="button" data-testid="edit" class="btn-action btn-action-edit">
+    <button
+      aria-label="edit"
+      type="button"
+      data-testid="edit"
+      class="btn-action btn-action-edit"
+    >
       <i class="fa fa-pen fa-lg"></i>
     </button>
-    <button aria-label="delete" type="button" data-testid="delete" class="btn-action btn-action-delete">
+    <button
+      aria-label="delete"
+      type="button"
+      data-testid="delete"
+      class="btn-action btn-action-delete"
+    >
       <i class="fa fa-trash fa-lg"></i>
     </button>
   </div>
 
   <div class="button-group">
-    <button aria-label="cancel" type="button" data-testid="cancel" class="btn-confirm btn-confirm-cancel">
+    <button
+      aria-label="cancel"
+      type="button"
+      data-testid="cancel"
+      class="btn-confirm btn-confirm-cancel"
+    >
       <i class="fa fa-times fa-lg"></i>
     </button>
-    <button aria-label="confirm" type="button" data-testid="confirm" class="btn-confirm btn-confirm-ok">
+    <button
+      aria-label="confirm"
+      type="button"
+      data-testid="confirm"
+      class="btn-confirm btn-confirm-ok"
+    >
       <i data-testid="ico-confirm" class="fa fa-check ico-default"></i>
       <i data-testid="ico-success" class="fa fa-thumbs-up ico-success"></i>
       <i data-testid="ico-failure" class="fa fa-thumbs-down ico-failure"></i>

@@ -8,10 +8,3 @@
 input[name="url"]:not(:focus, :placeholder-shown):invalid {
   border-color: var(--danger);
 }
-
-form:has(input:invalid) button[type='submit'] {
-  cursor: not-allowed !important;
-  opacity: 0.5;
-
-  pointer-events: none;
-}

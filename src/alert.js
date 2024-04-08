@@ -4,26 +4,10 @@ const alert = {
   show() {
     this.content.scrollIntoView({ behavior: "smooth", block: "center" });
     this.state.checked = false;
-    this.toggleAccessibleContent();    // triggered manually because the checked state changed via js
-    this.state.addEventListener("change", () => {
-      this.toggleAccessibleContent();  // triggered when clicking the close button
-    });
   },
   hide() {
     this.state.checked = true;
-    this.toggleAccessibleContent();    // triggered manually because the checked state changed via js
   },
-  toggleAccessibleContent() {
-    const alertIsHidden = this.state.checked;
-    this.content.querySelectorAll("[aria-expanded]").forEach((closeBtn) => {
-      closeBtn.setAttribute("aria-expanded", !alertIsHidden);
-    })
-    if (alertIsHidden) {
-      this.content.setAttribute("aria-hidden", true);
-    } else {
-      this.content.removeAttribute("aria-hidden");
-    }
-  }
 };
 
 const error = {

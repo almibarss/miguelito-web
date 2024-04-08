@@ -14,9 +14,9 @@
   opacity: 0;
 }
 
-@mixin border($style: 'primary') {
+@mixin border($style: "primary") {
   @include border-style(1);
-  @include color('border-color', $style);
+  @include color("border-color", $style);
   @include shadow;
   border-style: solid;
   border-width: 2px;
@@ -28,10 +28,10 @@
   padding: 0;
 }
 
-@mixin btn-outline($style:'primary') {
-  @include color('background-color', main-background);
-  @include color('color', $style);
-  @include color('border-color', $style);
+@mixin btn-outline($style: "primary") {
+  @include color("background-color", main-background);
+  @include color("color", $style);
+  @include color("border-color", $style);
 
   &:hover {
     @extend %bg-#{$style}-light;
@@ -43,9 +43,9 @@
 }
 
 @mixin btn($style) {
-  @include color('color', #{$style}-text);
-  @include color('background-color', #{$style}-light);
-  @include color('border-color', #{$style});
+  @include color("color", #{$style}-text);
+  @include color("background-color", #{$style}-light);
+  @include color("border-color", #{$style});
 
   &:hover {
     &:active {
@@ -55,7 +55,8 @@
 }
 
 /* https://adamsilver.io/blog/buttons-shouldnt-have-a-hand-cursor/ */
-button, label {
+button,
+label {
   cursor: default !important;
 }
 
@@ -73,16 +74,16 @@ button, label {
   outline: none;
 
   &.removed-item {
-    animation: slide-out-left .8s cubic-bezier(.65, -0.02, .72, .29);
+    animation: slide-out-left 0.8s cubic-bezier(0.65, -0.02, 0.72, 0.29);
   }
 }
 
-:host([action='edit']) > div {
-  @include border('warning');
+:host([action="edit"]) > div {
+  @include border("warning");
 }
 
-:host([action='delete']) > div {
-  @include border('danger');
+:host([action="delete"]) > div {
+  @include border("danger");
 }
 
 :host(:not([action])) > div:is(:focus, :focus-visible, :focus-within) {
@@ -122,7 +123,8 @@ button, label {
   }
 }
 
-button, [type="button"] {
+button,
+[type="button"] {
   margin: 0 !important; // override main theme settings
 }
 
@@ -142,7 +144,8 @@ button, [type="button"] {
   }
 }
 
-:host([action="edit"]), :host([action="delete"]) {
+:host([action="edit"]),
+:host([action="delete"]) {
   .button-group:has(.btn-action) {
     @include hidden;
   }
@@ -153,7 +156,8 @@ button, [type="button"] {
   word-break: break-all;
 }
 
-.btn-action, .btn-confirm {
+.btn-action,
+.btn-confirm {
   @include square-button(50px);
 }
 
@@ -177,14 +181,13 @@ button, [type="button"] {
   background-color: darken($danger-light, 10%);
 }
 
-
 .btn {
   &-action-edit {
     @include btn-outline;
   }
 
   &-action-delete {
-    @include btn-outline('danger');
+    @include btn-outline("danger");
   }
 
   &-confirm-cancel {
@@ -192,10 +195,10 @@ button, [type="button"] {
   }
 
   &-confirm-ok {
-    @include btn('success');
+    @include btn("success");
 
     &.failure {
-      @include btn('danger');
+      @include btn("danger");
     }
 
     &.waiting {
@@ -220,8 +223,6 @@ button, [type="button"] {
   @extend input;
   display: flex;
 
-  color: var(--muted);
-
   &:has(input:focus) {
     border-color: var(--secondary);
   }
@@ -242,13 +243,9 @@ button, [type="button"] {
     background: none;
   }
 
-  a, span {
-    @include color('color', 'muted');
-  }
-
-  button, input {
-    cursor: not-allowed;
-    opacity: 0.5;
+  a,
+  span {
+    @include color("color", "primary");
   }
 }
 
@@ -264,11 +261,13 @@ button, [type="button"] {
     }
   }
 
-  a, button {
+  a,
+  button {
     pointer-events: none;
   }
 
-  .url, .origin {
+  .url,
+  .origin {
     @include border;
     color: transparent;
 

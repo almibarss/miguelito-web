@@ -8,9 +8,10 @@ import html from "./template.html";
 
 class ShortLink extends HTMLElement {
   constructor() {
-    super()
-      .attachShadow({ mode: "open", delegatesFocus: true })
-      .innerHTML = `<style>${styles}</style>${html}`;
+    super().attachShadow({
+      mode: "open",
+      delegatesFocus: true,
+    }).innerHTML = `<style>${styles}</style>${html}`;
 
     const sr = this.shadowRoot;
     this.wrapperDiv = sr.querySelector("div");
@@ -18,15 +19,15 @@ class ShortLink extends HTMLElement {
       edit: sr.querySelector(".btn-action-edit"),
       delete: sr.querySelector(".btn-action-delete"),
       ok: sr.querySelector(".btn-confirm-ok"),
-      cancel: sr.querySelector(".btn-confirm-cancel")
+      cancel: sr.querySelector(".btn-confirm-cancel"),
     };
     this.data = {
       url: sr.querySelector(".url"),
-      origin: sr.querySelector(".origin")
+      origin: sr.querySelector(".origin"),
     };
     this.inputs = {
       backhalf: sr.querySelector(".input-url input"),
-      origin: sr.querySelector(".input-origin")
+      origin: sr.querySelector(".input-origin"),
     };
   }
 
@@ -34,7 +35,7 @@ class ShortLink extends HTMLElement {
   connectedCallback() {
     Fontawesome.init();
     dom.i2svg({
-      node: this.shadowRoot
+      node: this.shadowRoot,
     });
     this.wrapperDiv.addEventListener("keydown", this);
     Object.values(this.buttons).forEach((btn) => {
@@ -61,11 +62,15 @@ class ShortLink extends HTMLElement {
   }
 
   handleKeyPress(event) {
-    const userIsEditing = () => Object.values(this.inputs).includes(event.target);
-    const buttonIsFocused = () => Object.values(this.buttons).includes(event.target);
+    const userIsEditing = () =>
+      Object.values(this.inputs).includes(event.target);
+    const buttonIsFocused = () =>
+      Object.values(this.buttons).includes(event.target);
 
     if (event.key === "Enter" && !buttonIsFocused()) {
-      userIsEditing() || this.getAttribute("action") !== null ? this.awaitConfirm() : this.startEdit();
+      userIsEditing() || this.getAttribute("action") !== null
+        ? this.awaitConfirm()
+        : this.startEdit();
     }
     if (event.key === "Escape") {
       this.cancelAction();
@@ -101,7 +106,7 @@ class ShortLink extends HTMLElement {
 
   awaitConfirm() {
     this.buttons.ok.classList.add("waiting");
-    this.setAttribute("disabled", "")
+    this.setAttribute("disabled", "");
     this.sendConfirmedEvent();
   }
 
@@ -194,18 +199,32 @@ class ShortLink extends HTMLElement {
   }
 
   disable() {
-    [this.wrapperDiv, this.data.url,
-    ...Object.values(this.inputs),
-    ...Object.values(this.buttons)
+    [...Object.values(this.inputs), ...Object.values(this.buttons)].forEach(
+      (elem) => {
+        elem.disabled = true;
+      }
+    );
+    [
+      this.wrapperDiv,
+      this.data.url,
+      ...Object.values(this.inputs),
+      ...Object.values(this.buttons),
     ].forEach((focusable) => {
       focusable.setAttribute("tabindex", -1);
     });
   }
 
   enable() {
-    [this.wrapperDiv, this.data.url,
-    ...Object.values(this.inputs),
-    ...Object.values(this.buttons)
+    [...Object.values(this.inputs), ...Object.values(this.buttons)].forEach(
+      (elem) => {
+        elem.disabled = false;
+      }
+    );
+    [
+      this.wrapperDiv,
+      this.data.url,
+      ...Object.values(this.inputs),
+      ...Object.values(this.buttons),
     ].forEach((focusable) => {
       focusable.setAttribute("tabindex", 0);
     });
@@ -224,11 +243,11 @@ class ShortLink extends HTMLElement {
   changedData() {
     return {
       ...(this.inputs.backhalf.value !== this.backhalf && {
-        backhalf: this.inputs.backhalf.value
+        backhalf: this.inputs.backhalf.value,
       }),
       ...(this.inputs.origin.value !== this.data.origin.textContent && {
-        origin: this.inputs.origin.value
-      })
+        origin: this.inputs.origin.value,
+      }),
     };
   }
 
@@ -257,7 +276,7 @@ class ShortLink extends HTMLElement {
     for (const elem of [this.data.url, this.data.origin]) {
       elem.innerHTML = elem.innerHTML
         .replace(/(<mark class="background-warning">|<\/mark>)/gim, "")
-        .replace(regex, "<mark class=\"background-warning\">$&</mark>");
+        .replace(regex, '<mark class="background-warning">$&</mark>');
     }
   }
 

@@ -47,6 +47,28 @@ ul {
   padding-inline-start: 0;
 }
 
-.tabs input:not([name="tabs"], .alert-state, .collapsable-state) {
-  display: revert;  // none by default
+.tabs {
+
+  label {
+    color: var(--primary);
+  }
+
+  &[role="tablist"] label[aria-selected="true"] {
+    border-bottom-color: var(--secondary);
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
+  }
+
+  :not([role="tablist"]) label:hover {
+    color: var(--primary);
+  }
+
+  form input, input[type="search"] {
+    display: revert;  // none by default
+  }
+}
+
+.alert-state:checked + .dismissible {
+  // prevent focus
+  visibility: hidden;
 }

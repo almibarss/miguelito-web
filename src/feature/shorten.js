@@ -7,6 +7,7 @@ const customizeExpandBtn = document.getElementById("btn-customize");
 const customizeBox = document.getElementById("custom-backhalf");
 const customizePrefix = customizeBox.querySelector(".prefixed-input__prefix");
 const customizeInput = customizeBox.querySelector(".prefixed-input__text");
+const customizeCloseBtn = customizeBox.querySelector(".btn-close");
 const customizeState = document.getElementById("custom-backhalf-state");
 const form = document.forms.item(0);
 
@@ -17,17 +18,20 @@ export const Shorten = {
       customizeInput.style.maxWidth = `${customizePrefix.clientWidth}px`;
     });
     form.addEventListener("submit", submitUrl);
+    form.addEventListener("input", function () {
+      submitBtn.disabled = this.matches(":invalid");
+    });
     customizeInput.addEventListener("keydown", collapseCustomizeIfEscPressed);
     customizeExpandBtn.addEventListener("click", changeCustomizeExpanded);
     customizeState.addEventListener("change", handleCustomizeStateChange);
-  }
+  },
 };
 
 function submitUrl(ev) {
   ev.preventDefault();
   const {
     url: { value: url },
-    backhalf: { value: backhalf }
+    backhalf: { value: backhalf },
   } = ev.target;
   const trimmedUrl = url.trim();
   const customizeExpanded = !customizeState.checked;
@@ -102,6 +106,8 @@ function changeCustomizeExpanded() {
 function handleCustomizeStateChange({ target: stateCheckbox }) {
   const customizeExpanded = !stateCheckbox.checked;
   customizeExpandBtn.disabled = customizeExpanded;
+  customizeCloseBtn.setAttribute("aria-expanded", customizeExpanded);
+  customizeExpandBtn.setAttribute("aria-expanded", customizeExpanded);
   if (customizeExpanded) {
     customizeInput.value = "";
     customizeInput.focus();
@@ -114,14 +120,19 @@ function setCustomizeState({ expanded }) {
 }
 
 function resetForm() {
-  urlInput.value = "";
-  customizeInput.value = "";
+  clearAllTextFields();
   changeCustomizeCollapsed();
+}
+
+function clearAllTextFields() {
+  form
+    .querySelectorAll('input[type="text"], input[type="url"]')
+    .forEach((input) => (input.value = ""));
 }
 
 function sendLinkCreatedEvent(newLink) {
   const event = new CustomEvent("linkCreated", {
-    detail: newLink
+    detail: newLink,
   });
   document.dispatchEvent(event);
 }

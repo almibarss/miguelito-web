@@ -134,12 +134,10 @@
             checked
           />
           <div
-            role="alert"
-            aria-hidden="true"
-            aria-live="polite"
-            data-testid="alert-error"
             id="alert-error"
             class="alert alert-danger dismissible"
+            data-testid="alert-error"
+            role="alert"
           ></div>
         </div>
 
@@ -151,11 +149,9 @@
             checked
           />
           <div
-            role="alert"
-            aria-hidden="true"
-            aria-live="polite"
             id="alert-success"
             class="alert alert-success dismissible"
+            role="alert"
           ></div>
         </div>
 
@@ -167,33 +163,30 @@
             checked
           />
           <div
-            role="alert"
-            aria-hidden="true"
-            aria-live="polite"
-            data-testid="alert-success"
             id="alert-short"
+            data-testid="alert-success"
             class="alert alert-success dismissible"
+            role="alertdialog"
+            aria-label="shortened link"
           >
-            <a href="#"></a>
+            <a href="#" aria-label="shortened link"></a>
             <div class="margin-left">
               <label
+                for="alert-short-state"
                 role="button"
-                aria-expanded="false"
+                class="btn-close"
                 aria-controls="alert-short"
                 aria-label="copy to clipboard"
-                class="btn-close"
-                for="alert-short-state"
                 tabindex="0"
               >
                 <i class="fa fa-clipboard"></i>
               </label>
               <label
+                for="alert-short-state"
                 role="button"
-                aria-expanded="false"
+                class="btn-close"
                 aria-controls="alert-short"
                 aria-label="close"
-                class="btn-close"
-                for="alert-short-state"
                 tabindex="0"
                 >X</label
               >
@@ -201,7 +194,7 @@
           </div>
         </div>
 
-        <h2 class="text-center">Serverless url shortener</h2>
+        <h1 class="text-center">Serverless url shortener</h1>
 
         <div id="welcome-pane" class="content row flex-center padding-large">
           <button type="button" id="btn-signin" autofocus>
@@ -210,7 +203,6 @@
         </div>
 
         <div role="tablist" class="row flex-spaces tabs">
-          <input id="tab1" type="radio" name="tabs" checked />
           <label
             id="tab1-lbl"
             for="tab1"
@@ -221,7 +213,6 @@
             >Shorten</label
           >
 
-          <input id="tab2" type="radio" name="tabs" />
           <label
             id="tab2-lbl"
             for="tab2"
@@ -241,7 +232,11 @@
               <span>&nbsp;</span>
             </div>
           </label>
+        </div>
 
+        <div class="tabs">
+          <input id="tab1" type="radio" name="tabs" checked />
+          <input id="tab2" type="radio" name="tabs" />
           <div
             role="tabpanel"
             aria-labelledby="tab1-lbl"
@@ -250,14 +245,13 @@
           >
             <form autocomplete="off" spellcheck="false">
               <div class="form-group row flex-center">
-                <label for="input-url">Enter URL to shorten</label>
                 <input
+                  id="input-url"
+                  class="input-block text-center margin-top-large"
+                  name="url"
+                  data-testid="url"
                   type="url"
                   inputmode="url"
-                  name="url"
-                  id="input-url"
-                  data-testid="url"
-                  class="input-block text-center"
                   placeholder="http://www.example.com"
                   autofocus
                   required
@@ -271,24 +265,23 @@
                 <div
                   id="custom-backhalf"
                   class="prefixed-input collapsable col-12 row flex-center margin-small"
-                  aria-hidden="true"
+                  aria-live="polite"
                 >
-                  <span
-                    class="prefixed-input__prefix text-right text-muted"
-                  ></span>
+                  <label class="prefixed-input__prefix"></label>
                   <input
                     type="text"
                     class="prefixed-input__text"
                     data-testid="backhalf"
                     name="backhalf"
                     placeholder="my-custom"
+                    aria-required="false"
                   />
                   <label
                     for="custom-backhalf-state"
                     role="button"
                     class="btn-close"
-                    aria-expanded="false"
                     aria-controls="custom-backhalf"
+                    aria-expanded="false"
                     aria-label="close"
                     tabindex="0"
                     >X</label
@@ -299,6 +292,8 @@
                     type="button"
                     id="btn-customize"
                     class="margin-right-small"
+                    aria-controls="custom-backhalf"
+                    aria-expanded="false"
                   >
                     <i class="fa fa-magic-wand-sparkles" aria-hidden="true"></i>
                     Customize
@@ -307,6 +302,7 @@
                     type="submit"
                     id="submit"
                     class="oneof submit btn-primary paper-btn is-label"
+                    disabled
                   >
                     <div aria-label="waiting response" class="waiting">
                       <span class="dot"></span>

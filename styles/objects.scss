@@ -1,12 +1,19 @@
-.prefixed-input__text {
-  padding: 0;
+.prefixed-input {
+  &__prefix {
+    padding: 0 !important;
+  }
 
-  &, &:focus {
-    border: 0;
+  &__text {
+    padding: 0;
+
+    &,
+    &:focus {
+      border: 0;
+    }
   }
 }
 
 .collapsable label[role="button"] {
   padding: 0;
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 }
