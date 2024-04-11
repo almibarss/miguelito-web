@@ -18,9 +18,7 @@ export const Shorten = {
       customizeInput.style.maxWidth = `${customizePrefix.clientWidth}px`;
     });
     form.addEventListener("submit", submitUrl);
-    form.addEventListener("input", function () {
-      submitBtn.disabled = this.matches(":invalid");
-    });
+    form.addEventListener("input", disableSubmitOnInvalidData);
     customizeInput.addEventListener("keydown", collapseCustomizeIfEscPressed);
     customizeExpandBtn.addEventListener("click", changeCustomizeExpanded);
     customizeState.addEventListener("change", handleCustomizeStateChange);
@@ -88,6 +86,10 @@ function disableInput() {
   urlInput.disabled = true;
 }
 
+function disableSubmitOnInvalidData() {
+  submitBtn.disabled = form.matches(":invalid");
+}
+
 function collapseCustomizeIfEscPressed({ key }) {
   if (key !== "Escape") {
     return;
@@ -108,10 +110,12 @@ function handleCustomizeStateChange({ target: stateCheckbox }) {
   customizeExpandBtn.disabled = customizeExpanded;
   customizeCloseBtn.setAttribute("aria-expanded", customizeExpanded);
   customizeExpandBtn.setAttribute("aria-expanded", customizeExpanded);
+  customizeInput.disabled = !customizeExpanded;
   if (customizeExpanded) {
     customizeInput.value = "";
     customizeInput.focus();
   }
+  disableSubmitOnInvalidData();
 }
 
 function setCustomizeState({ expanded }) {
