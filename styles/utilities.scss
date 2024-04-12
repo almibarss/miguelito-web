@@ -1,3 +1,4 @@
+@use "papercss/src/components/utilities" as spacing;
 @use "mixins" as m;
 
 %hidden-right {
@@ -22,6 +23,10 @@
     // Chrome, Safari, Opera
     display: none;
   }
+}
+
+.flex-gap-small {
+  gap: spacing.$small;
 }
 
 .collapsable-state {
